@@ -16,4 +16,5 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Option {
     String value();
+    String help() default "";
 }

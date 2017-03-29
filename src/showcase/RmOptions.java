@@ -32,7 +32,7 @@ public class RmOptions implements Options {
         prompt = Prompt.ONCE;
     }
 
-    @Option("--interactive")
+    @Option(value = "--interactive", help = "--interactive=WHEN")
     @Help("prompt according to WHEN: never, once (-I), or always (-i); without WHEN prompt always")
     public void interactive(Optional<Prompt> value) {
         if(value.isPresent()) {
