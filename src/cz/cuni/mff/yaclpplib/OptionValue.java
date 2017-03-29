@@ -5,6 +5,9 @@ package cz.cuni.mff.yaclpplib;
  */
 public interface OptionValue {
 
+    /**
+     * @return the parser which parsed this option and created this instance
+     */
     ArgumentParser getParser();
 
     /**

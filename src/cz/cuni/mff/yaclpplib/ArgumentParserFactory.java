@@ -1,7 +1,6 @@
 package cz.cuni.mff.yaclpplib;
 
-
-import cz.cuni.mff.yaclpplib.driver.StringDriver;
+import cz.cuni.mff.yaclpplib.driver.*;
 import cz.cuni.mff.yaclpplib.implementation.ArgumentParserImpl;
 import cz.cuni.mff.yaclpplib.implementation.DefaultHelpOption;
 
@@ -14,6 +13,8 @@ public final class ArgumentParserFactory {
     public static ArgumentParser createDefaultTypesParser() {
         final ArgumentParserImpl parser = (ArgumentParserImpl) createPlainParser();
         parser.addDriver(new StringDriver());
+        parser.addDriver(new IntegerDriver());
+        parser.addDriver(new BooleanDriver());
         return parser;
     }
 

@@ -4,6 +4,9 @@ import cz.cuni.mff.yaclpplib.annotation.Help;
 
 import java.util.List;
 
+/**
+ * An interface for classes responsible for parsing command line arguments.
+ */
 public interface ArgumentParser {
 
     /**
@@ -16,7 +19,7 @@ public interface ArgumentParser {
 
     /**
      * Read the arguments, fill all argument classes
-     * @param args
+     * @param args array of arguments given to main method
      * @throws UnhandledArgumentException When you don't request positional arguments and they are present
      */
     void parse(String[] args) throws UnhandledArgumentException;
@@ -29,12 +32,24 @@ public interface ArgumentParser {
      */
     String getHelp();
 
+    /**
+     * Prints structured help in standard error output. The help is constructed
+     * using {@link Help} annotation.
+     */
     default void printHelp() {
         System.err.println(getHelp());
     }
 
+    /**
+     * Creates a list, which will be filled with positional arguments when the argument list is parsed.
+     * @return reference to a list which will later be filled with positional arguments
+     */
     List<String> requestPositionalArguments();
 
+    /**
+     * Creates a list, which will be filled with plain arguments when the argument list is parsed.
+     * @return reference to a list which will later be filled with plain arguments
+     */
     default List<String> requestPlainArguments() {
         return requestPositionalArguments();
     }

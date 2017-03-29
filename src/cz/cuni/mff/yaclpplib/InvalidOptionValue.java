@@ -1,9 +1,10 @@
 package cz.cuni.mff.yaclpplib;
 
 /**
- * Created by ohlavaty on 3/29/17.
+ * Exception thrown when the value doesn't pass the validation.
  */
 public class InvalidOptionValue extends Throwable {
     public InvalidOptionValue(String s) {
+
     }
 }
