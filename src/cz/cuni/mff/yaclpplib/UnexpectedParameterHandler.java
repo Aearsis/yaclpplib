@@ -1,4 +1,4 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib;
 
 import cz.cuni.mff.yaclpplib.UnhandledArgumentException;
 

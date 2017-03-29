@@ -2,6 +2,7 @@ package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.Options;
+import cz.cuni.mff.yaclpplib.UnexpectedParameterHandler;
 import cz.cuni.mff.yaclpplib.UnhandledArgumentException;
 import cz.cuni.mff.yaclpplib.driver.Driver;
 
@@ -14,7 +15,6 @@ public class ArgumentParserImpl implements ArgumentParser {
 
     private final List<Options> definitions = new ArrayList<>();
     private final Map<Class, Driver> drivers = new HashMap<>();
-    private final ArrayList<String> positionalArgumentsList = new ArrayList<>();
 
     private UnexpectedParameterHandler unexpectedParameterHandler = value -> {
         throw new UnhandledArgumentException();
@@ -38,13 +38,19 @@ public class ArgumentParserImpl implements ArgumentParser {
     }
 
     @Override
+    public void setUnexpectedParameterHandler(UnexpectedParameterHandler handler) {
+        unexpectedParameterHandler = handler;
+    }
+
+    @Override
     public String getHelp() {
         return "";
     }
 
     @Override
     public List<String> requestPositionalArguments() {
-        unexpectedParameterHandler = positionalArgumentsList::add;
+        final ArrayList<String> positionalArgumentsList = new ArrayList<>();
+        setUnexpectedParameterHandler(positionalArgumentsList::add);
         return positionalArgumentsList;
     }
 }

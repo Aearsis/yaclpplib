@@ -42,9 +42,21 @@ public interface ArgumentParser {
 
     /**
      * Creates a list, which will be filled with positional arguments when the argument list is parsed.
+     * Do not use in conjunction with {@link ArgumentParser::setUnexpectedParameterHandler},
+     * because then all parameters are expected.
+     *
      * @return reference to a list which will later be filled with positional arguments
      */
     List<String> requestPositionalArguments();
+
+    /**
+     * Changes the way parser handles unknown arguments.
+     * Do not use in conjunction with {@link ArgumentParser::requestPositionalArguments},
+     * because then all parameters are expected.
+     *
+     * @param handler new handler that would be called on unexpected argument
+     */
+    void setUnexpectedParameterHandler(UnexpectedParameterHandler handler);
 
     /**
      * Creates a list, which will be filled with plain arguments when the argument list is parsed.
