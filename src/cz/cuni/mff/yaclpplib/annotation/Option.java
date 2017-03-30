@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * Sets a short or long option text to go with this attribute
- * or method.
+ * or method. Each value can also have a custom help message associated.
  *
  * This annotation may be used multiple times to allow synonyms.
  */
