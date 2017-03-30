@@ -10,9 +10,9 @@ import java.util.List;
 public interface ArgumentParser {
 
     /**
-     * Register instance of Options class. It will be filled with argument values, when you call parse.
-     * @param instance An instance of Options interface
-     * @param <T> Type of your Options class
+     * Register instance of OptionList class. It will be filled with argument values, when you call parse.
+     * @param instance An instance of OptionList interface
+     * @param <T> Type of your OptionList class
      * @return your instance (so you can use it as a oneliner)
      */
     <T extends Options> T addOptions(T instance);
@@ -28,7 +28,7 @@ public interface ArgumentParser {
      * Get a nicely formatted, structured help about available arguments.
      *
      * Uses the {@link Help} annotation to document arguments and modules.
-     * @return
+     * @return Structured help ready to print on output
      */
     String getHelp();
 
@@ -41,22 +41,22 @@ public interface ArgumentParser {
     }
 
     /**
-     * Creates a list, which will be filled with positional arguments when the argument list is parsed.
-     * Do not use in conjunction with {@link ArgumentParser::setUnexpectedParameterHandler},
-     * because then all parameters are expected.
-     *
-     * @return reference to a list which will later be filled with positional arguments
-     */
-    List<String> requestPositionalArguments();
-
-    /**
      * Changes the way parser handles unknown arguments.
-     * Do not use in conjunction with {@link ArgumentParser::requestPositionalArguments},
+     * Do not use in conjunction with {@link ArgumentParser#requestPositionalArguments},
      * because then all parameters are expected.
      *
      * @param handler new handler that would be called on unexpected argument
      */
     void setUnexpectedParameterHandler(UnexpectedParameterHandler handler);
+
+    /**
+     * Creates a list, which will be filled with positional arguments when the argument list is parsed.
+     * Do not use in conjunction with {@link ArgumentParser#setUnexpectedParameterHandler},
+     * because then all parameters are expected.
+     *
+     * @return reference to a list which will later be filled with positional arguments
+     */
+    List<String> requestPositionalArguments();
 
     /**
      * Creates a list, which will be filled with plain arguments when the argument list is parsed.
