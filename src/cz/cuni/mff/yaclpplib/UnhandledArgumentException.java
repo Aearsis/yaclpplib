@@ -5,5 +5,22 @@ package cz.cuni.mff.yaclpplib;
  * and they were not requested by {@link ArgumentParser#requestPositionalArguments()}
  */
 public class UnhandledArgumentException extends RuntimeException {
+    /** Problematic option */
+    private final String value;
 
+    /**
+     * Constructs a new exception for a specific option.
+     * @param value unhandled option
+     */
+    public UnhandledArgumentException(String value) {
+        this.value = value;
+    }
+
+    /**
+     * Gets the option which caused this exception.
+     * @return malicious option
+     */
+    public String getOptionValue() {
+        return value;
+    }
 }

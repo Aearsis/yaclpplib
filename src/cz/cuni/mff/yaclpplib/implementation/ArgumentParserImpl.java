@@ -17,7 +17,7 @@ public class ArgumentParserImpl implements ArgumentParser {
     private final Map<Class, Driver> drivers = new HashMap<>();
 
     private UnexpectedParameterHandler unexpectedParameterHandler = value -> {
-        throw new UnhandledArgumentException();
+        throw new UnhandledArgumentException(value);
     };
 
     @Override
@@ -33,7 +33,7 @@ public class ArgumentParserImpl implements ArgumentParser {
     @Override
     public void parse(String[] args) throws UnhandledArgumentException {
         for (String s : args) {
-            unexpectedParameterHandler.handle(s);
+            // unexpectedParameterHandler.handle(s);
         }
     }
 

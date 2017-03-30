@@ -17,7 +17,7 @@ public class HeadOptions implements Options {
     @Option("--lines")
     @Help("print the first NUM lines instead of the first 10; with the leading '-'," +
                     " print all but the last NUM lines of each file")
-    public int lines = 0;
+    public int lines = 10;
 
     @Option("-q")
     @Option("--quiet")

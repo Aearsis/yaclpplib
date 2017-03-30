@@ -1,9 +1,10 @@
 package cz.cuni.mff.yaclpplib.annotation;
 
-import cz.cuni.mff.yaclpplib.annotation.Option;
-
 import java.lang.annotation.*;
 
+/**
+ * Dummy annotation to allow using annotation {@link Option} more than once.
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
