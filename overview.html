@@ -1,0 +1,97 @@
+<body>
+
+<p><b>Yaclpplib</b> je knihovna v jazyce Java verze 8 a novější pro pohodlné parsování argumentů předaných při spouštění programu. Knihovna využívá reflexe jazyka Java a anotací. Uživatel knihovny nadefinuje třídu implementující rozhraní <code>Options</code> a anotuje jednotlivé atributy a knihovna za něj sama nastaví hodnoty atributů na hodnoty předané v argumentech.
+</p><p>
+Základní použití knihovny ukážeme na příkladu, který demonstruje základní možnosti knihovny. Další příklady je možné nalézt v balíčku showcase.
+</p>
+<pre>
+public class MyOptions implements Options {
+
+    \@Option("-s")
+    \@Option("--size")
+    \@Mandatory
+    \@Range(minimumValue=1024, maximumValue=1048576)
+    \@Help("Sets up the size of created file (1kB-1MB)")
+    public int bytes = 4096;
+    
+    \@Option("-q")
+    \@Option("--quiet")
+    \@Option("--silent")
+    \@Help("Don't print anything to stdout")
+    public boolean quiet = false;
+
+    \@Option("--text")
+    \@Help("Custom text message.")
+    public String text = "Hello";
+
+    enum Frequency {
+        Always, Auto, Once, Never;
+    }
+
+    \@Option("-f")
+    \@Option("--frequency")
+    \@Help("Sets polling frequency")
+    public Frequency freq = Frequency.Auto;
+
+    public int endTime;
+	
+    \@Option("-d")
+    \@Option("--duration")
+    \@Help("Sets the duration of the test");	
+    \@Mandatory
+    public void setDuration(long duration) {
+        endTime = System.currentTimeMillis() + duration * 1000;
+    }	
+
+    \@Option("--version")
+    \@Help("output version information and exit")
+    public void displayVersion() {
+        System.out.println("Version 1.0");
+        System.exit(0);
+    }
+
+    \@Validator
+    public void validateFileSize() throws InvalidOptionValue {
+        if(bytes &lt; text.length() * 512) {
+            throw new InvalidOptionValue("The file size must be bigger.");
+        }
+    }
+
+    public static void main(String[] args) {
+        ArgumentParser parser = ArgumentParserFactory.create();
+        MyOptions opts = parser.addOptions(new MyOptions());
+
+        List<String> files = parser.requestPositionalArguments();
+        parser.parse(args);
+
+        for(String file : files) {
+            System.out.println(file);
+        }
+
+        // work with options using opts.endTime, etc.
+    }
+}
+</pre>
+<p>
+Rozebereme ukázkový kód. Programátor definuje třídu implementující rozhraní <code>Options</code>, tím říká, že tato třída se bude využívat pro parsování optionů a bude obsahovat anotace. Dále už popisuje jednotlivé optiony. 
+</p><p>
+
+První option je <code>-s</code>, popřípadě <code>--size</code>. Chceme, aby hodnota tohoto argumentu byla celé číslo, takže jeho typ bude <code>int</code>. Anotací <code>Help</code> dále řekneme, jaký text se má zobrazit v nápovědě k tomuto optionu. Anotací <code>Mandatory</code> zajistíme, že argument je povinný a anotací <code>Range</code> nastavíme rozsah povolených hodnot.
+</p><p>
+Druhý option je hodnota typu boolean. Ta má dokonce tři varianty, <code>-q</code>, <code>--quiet</code> a <code>--silent</code>". To, že je typ boolean už značí, že nepotřebuje mít žádnou hodnotu.
+</p><p>
+Třetí option je textová zpráva, kterou bude program vypisovat. 
+</p><p>
+Další option je frekvence. Tady chceme dát uživateli na výběr z několika hodnot, vytvoříme tedy enum a nastavíme typ atributu frequency na Enum. Knihovna se postará o čtení možných hodnot.
+</p><p>
+Náš program by chtěl běžet do nějakého času, který si uživatel zvolí. To udělá pomocí optionu <code>--duration</code>. Ten nebudeme parsovat jako prosté číslo, ale proženeme ho metodou, která spočítá koncový čas. Knihovna za nás automaticky zavolá metodu díky anotacím.
+</p><p>
+Poslední option je <code>--version</code>, ten uživateli zobrazí verzi programu a ukončí program. To, že metoda nebere parametr implikuje, že argument version nemá dovolenou žádnou hodnotu.
+</p><p>
+V třídě vytvoříme ještě validační metodu pomocí anotace <code>Validator</code>, který spáruje hodnoty optionů <code>--size</code> a <code>--text</code>. Pokud validace selže, selže celé parsování argumentů.
+</p><p>
+Po deklaraci třídy už stačí vytvořit parser a předat mu instanci této třídy. Využijeme nějakou dostupnou tovární metodu na parser a předáme parseru instanci implementující interface <code>Options</code> pomocí metody <code>addOptions()</code>. Jelikož máme zájem i o poziční argumenty, požádáme si o ně metodou <code>requestPositionalArguments()</code>. Ta nám vrátí list, který bude při parsování naplněn těmito argumenty. 
+</p><p>
+Poslední, co zbývá, je zavolat metodu <code>parse()</code> a předat ji načtené argumenty. To za nás naplní naši instanci. K hodnotám argumentů pak přistoupíme jednoduše přečtením atributu naší instance.
+</p>
+</body>

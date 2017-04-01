@@ -30,7 +30,7 @@
 
     <target name="doc" depends="clean">
         <mkdir dir="${docdir}"/>
-        <javadoc destdir="${docdir}">
+        <javadoc destdir="${docdir}" Overview="overview.html">
             <fileset dir="${basedir}/src" defaultexcludes="yes">
                 <include name="**/*.java"/>
             </fileset>
