@@ -11,7 +11,8 @@
 
     <path id="classpath">
         <pathelement location="${outdir}"/>
-        <pathelement location="lib/*"/>
+        <pathelement location="lib/junit-4.12.jar" />
+        <pathelement location="lib/hamcrest-core-1.3.jar" />
     </path>
 
     <path id="sourcepath">
@@ -43,7 +44,7 @@
     </target>
 
     <target name="test" depends="compile.tests">
-        <junit showoutput="yes" printsummary="yes" haltonfailure="no">
+        <junit showoutput="yes" printsummary="yes" haltonfailure="yes">
             <classpath location="${testdir}"/>
             <classpath refid="classpath"/>
 
