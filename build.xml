@@ -11,10 +11,15 @@
 
     <path id="classpath">
         <pathelement location="${outdir}"/>
+        <pathelement location="lib/*"/>
     </path>
 
     <path id="sourcepath">
         <pathelement location="${basedir}/src"/>
+    </path>
+
+    <path id="testpath">
+        <pathelement location="${basedir}/test"/>
     </path>
 
     <target name="compile" depends="compile.production,compile.tests"
@@ -37,8 +42,29 @@
         </javadoc>
     </target>
 
+    <target name="test" depends="compile.tests">
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath refid="testpath"/>
+            <classpath refid="classpath"/>
+
+            <formatter type="plain"/>
+
+            <batchtest fork="yes" todir="report/">
+                <fileset dir="${testdir}">
+                    <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
     <target name="compile.tests" depends="compile.production"
-        description="Compile test classes" />
+            description="Compile test classes">
+        <mkdir dir="${testdir}"/>
+        <javac destdir="${testdir}" fork="true" includeantruntime="false">
+            <classpath refid="classpath"/>
+            <src refid="testpath"/>
+        </javac>
+    </target>
 
     <target name="clean" description="cleanup module">
         <delete dir="${outdir}"/>
@@ -48,5 +74,5 @@
 
     <target name="build" depends="compile, doc" description="Build everything"/>
 
-    <target name="all" depends="clean, build" description="Build from scratch"/>
+    <target name="all" depends="clean, build, test" description="Build from scratch and test"/>
 </project>
