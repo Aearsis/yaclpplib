@@ -1,18 +1,13 @@
 package cz.cuni.mff.yaclpplib.driver;
 
-import cz.cuni.mff.yaclpplib.ArgumentParser;
-import cz.cuni.mff.yaclpplib.OptionValue;
+import cz.cuni.mff.yaclpplib.implementation.OptionValueBase;
 
-class JustOptionValue implements OptionValue {
+class JustOptionValue extends OptionValueBase {
     private final String input;
 
     public JustOptionValue(String input) {
+        super(null);
         this.input = input;
-    }
-
-    @Override
-    public ArgumentParser getParser() {
-        return null;
     }
 
     @Override

@@ -13,6 +13,6 @@ abstract public class OptionValueBase implements OptionValue {
 
     @Override
     public ArgumentParser getParser() {
-        return null;
+        return parser;
     }
 }

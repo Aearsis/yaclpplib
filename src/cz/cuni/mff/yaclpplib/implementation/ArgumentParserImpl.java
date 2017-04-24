@@ -33,7 +33,7 @@ public class ArgumentParserImpl implements ArgumentParser {
     @Override
     public void parse(String[] args) throws UnhandledArgumentException {
         for (String s : args) {
-            // unexpectedParameterHandler.handle(s);
+            unexpectedParameterHandler.handle(s);
         }
     }
 
