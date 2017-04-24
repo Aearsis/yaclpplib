@@ -10,18 +10,19 @@ import java.util.Set;
 public class BooleanDriver implements Driver<Boolean> {
 
     private static Set<String> truishValues = new HashSet<>(Arrays.asList(
-            "true", "1", "yes", "on"
+            "true", "t", "1", "yes", "y", "on", "enable", "enabled", null
     ));
 
     private static Set<String> falsyValues = new HashSet<>(Arrays.asList(
-            "false", "0", "no", "off"
+            "false", "f", "0", "no", "n", "off", "disable", "disabled"
     ));
 
     @Override
     public Boolean parse(OptionValue x) throws InvalidOptionValue {
-        if (truishValues.contains(x)) {
+        final String value = x.getValue();
+        if (truishValues.contains(value)) {
             return true;
-        } else if (falsyValues.contains(x)) {
+        } else if (falsyValues.contains(value)) {
             return false;
         } else {
             throw new InvalidOptionValue("The value of " + x.getOption() + " can be either 'true' or 'false'.");
@@ -30,6 +31,6 @@ public class BooleanDriver implements Driver<Boolean> {
 
     @Override
     public Class getReturnType() {
-        return String.class;
+        return Boolean.class;
     }
 }

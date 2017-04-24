@@ -43,14 +43,12 @@
     </target>
 
     <target name="test" depends="compile.tests">
-        <junit printsummary="yes" haltonfailure="no">
-            <classpath refid="testpath"/>
+        <junit showoutput="yes" printsummary="yes" haltonfailure="no">
+            <classpath location="${testdir}"/>
             <classpath refid="classpath"/>
 
-            <formatter type="plain"/>
-
-            <batchtest fork="yes" todir="report/">
-                <fileset dir="${testdir}">
+            <batchtest fork="yes">
+                <fileset dir="test">
                     <include name="**/*Test*.java"/>
                 </fileset>
             </batchtest>

@@ -7,11 +7,15 @@ public class IntegerDriver implements Driver<Integer> {
 
     @Override
     public Integer parse(OptionValue x) throws InvalidOptionValue {
-        return Integer.parseInt(x.getValue());
+        try {
+            return Integer.parseInt(x.getValue());
+        } catch (NumberFormatException e) {
+            throw new InvalidOptionValue(e.getMessage());
+        }
     }
 
     @Override
-    public Class getReturnType() {
-        return String.class;
+    public Class getReturnType(){
+        return Integer.class;
     }
 }

@@ -1,2 +1,4 @@
 build/
+testbuild/
 doc/
+.idea
