@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class BooleanDriver implements Driver<Boolean> {
 
-    private static Set<String> truishValues = new HashSet<>(Arrays.asList(
+    private static Set<String> truthyValues = new HashSet<>(Arrays.asList(
             "true", "t", "1", "yes", "y", "on", "enable", "enabled", null
     ));
 
@@ -20,7 +20,7 @@ public class BooleanDriver implements Driver<Boolean> {
     @Override
     public Boolean parse(OptionValue x) throws InvalidOptionValue {
         final String value = x.getValue();
-        if (truishValues.contains(value)) {
+        if (truthyValues.contains(value)) {
             return true;
         } else if (falsyValues.contains(value)) {
             return false;
