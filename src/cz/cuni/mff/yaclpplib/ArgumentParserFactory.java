@@ -10,7 +10,7 @@ public final class ArgumentParserFactory {
         return new ArgumentParserImpl();
     }
 
-    public static ArgumentParser createDefaultTypesParser() {
+    public static ArgumentParser createDefaultTypesParser() throws InvalidSetupError {
         final ArgumentParserImpl parser = (ArgumentParserImpl) createPlainParser();
         parser.addDriver(new StringDriver());
         parser.addDriver(new IntegerDriver());
@@ -18,7 +18,7 @@ public final class ArgumentParserFactory {
         return parser;
     }
 
-    public static ArgumentParser create() {
+    public static ArgumentParser create() throws InvalidSetupError {
         final ArgumentParser parser = createDefaultTypesParser();
         parser.addOptions(new DefaultHelpOption());
         return parser;

@@ -30,7 +30,7 @@ public class BooleanDriver implements Driver<Boolean> {
     }
 
     @Override
-    public Class getReturnType() {
+    public Class<Boolean> getReturnType() {
         return Boolean.class;
     }
 }

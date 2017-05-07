@@ -21,7 +21,7 @@ public interface Driver<T extends Object> {
      * but generic arguments are stripped at compilation time.
      * @return T.class
      */
-    Class getReturnType();
+    Class<T> getReturnType();
 
 
 }

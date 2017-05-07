@@ -14,7 +14,7 @@ public class StringDriver implements Driver<String> {
     }
 
     @Override
-    public Class getReturnType() {
+    public Class<String> getReturnType() {
         return String.class;
     }
 }

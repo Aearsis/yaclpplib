@@ -1,20 +1,15 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.ArgumentParser;
-import cz.cuni.mff.yaclpplib.Options;
-import cz.cuni.mff.yaclpplib.UnexpectedParameterHandler;
-import cz.cuni.mff.yaclpplib.UnhandledArgumentException;
+import cz.cuni.mff.yaclpplib.*;
 import cz.cuni.mff.yaclpplib.driver.Driver;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ArgumentParserImpl implements ArgumentParser {
 
     private final List<Options> definitions = new ArrayList<>();
-    private final Map<Class, Driver> drivers = new HashMap<>();
+    private final DriverStorage drivers = new CachedDriverStorage(new HashDriverStorage());
 
     private UnexpectedParameterHandler unexpectedParameterHandler = value -> {
         throw new UnhandledArgumentException(value);
@@ -26,8 +21,9 @@ public class ArgumentParserImpl implements ArgumentParser {
         return instance;
     }
 
-    public void addDriver(Driver driver) {
-        drivers.put(driver.getReturnType(), driver);
+    public <T> Driver<T> addDriver(Driver<T> driver) throws DuplicateDriverError {
+        drivers.add(driver);
+        return driver;
     }
 
     @Override
@@ -53,4 +49,5 @@ public class ArgumentParserImpl implements ArgumentParser {
         setUnexpectedParameterHandler(positionalArgumentsList::add);
         return positionalArgumentsList;
     }
+
 }
