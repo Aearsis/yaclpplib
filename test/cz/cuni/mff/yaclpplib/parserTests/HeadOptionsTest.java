@@ -46,4 +46,5 @@ public class HeadOptionsTest {
         assertEquals("Long option --lines=42 not parsed correctly.", 42, options.lines);
         assertEquals("Long option --bytes 42 not parsed correctly.", 42, options.bytes);
     }
+
 }

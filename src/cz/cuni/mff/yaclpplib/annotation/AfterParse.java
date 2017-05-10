@@ -7,10 +7,10 @@ import cz.cuni.mff.yaclpplib.InvalidOptionValue;
  * Marks the method as a generic argument validator.
  *
  * This method is invoked after all arguments are parsed.
- * If the annotated method returns false, parsing failed and an {@link InvalidOptionValue} is thrown to user.
+ * If the final state is invalid, throw any runtime exception.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Validator {
+public @interface AfterParse {
 }

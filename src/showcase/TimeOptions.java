@@ -36,10 +36,10 @@ public class TimeOptions implements Options {
     @Help("(Used together with -o.) Do not overwrite but append.")
     private boolean append = false;
 
-    @Validator
-    public void validateAppendArgument() throws InvalidOptionValue {
+    @AfterParse
+    public void validateAppendArgument() {
         if (append && outputStream == System.out)
-             throw new InvalidOptionValue("Append can be used only in conjuction with -o.");
+             throw new IllegalOptionValue("Append can be used only in conjuction with -o.");
     }
 
     @Option("-v")

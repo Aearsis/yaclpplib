@@ -18,6 +18,7 @@ public class ArgumentParserImpl implements ArgumentParser {
     @Override
     public <T extends Options> T addOptions(T instance) {
         definitions.add(instance);
+        // TODO: create {Method,Field}Options, register them
         return instance;
     }
 
@@ -28,9 +29,23 @@ public class ArgumentParserImpl implements ArgumentParser {
 
     @Override
     public void parse(String[] args) throws UnhandledArgumentException {
+        // TODO:
+        // identify [option] [value]:
+            // unexpected parameter XOR
+            // find OptionBase
+            // let it sort out
+
+        // for every option:
+            // call finish
+
+        // for every AfterParse:
+            // call it
+
         for (String s : args) {
             unexpectedParameterHandler.handle(s);
         }
+
+        // TODO: call finish on all TheOptions
     }
 
     @Override
@@ -40,6 +55,9 @@ public class ArgumentParserImpl implements ArgumentParser {
 
     @Override
     public String getHelp() {
+        // For all options:
+            // for all @Option:
+                // print help line
         return "";
     }
 

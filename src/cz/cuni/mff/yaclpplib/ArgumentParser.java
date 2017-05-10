@@ -15,12 +15,17 @@ public interface ArgumentParser {
      * @param <T> Type of your OptionList class
      * @return your instance (so you can use it as a oneliner)
      */
-    <T extends Options> T addOptions(T instance);
+    <T extends Options> T addOptions(T instance) throws InvalidSetupError;
 
     /**
      * Read the arguments, fill all argument classes
+     *
+     * TODO: Document how multiple calls to parse behave
      * @param args array of arguments given to main method
      * @throws UnhandledArgumentException When you don't request positional arguments and they are present
+     * @throws InvalidOptionValue When a value cannot be parsed into the type of option
+     * @throws IllegalOptionValue When a value is rejected by a method option or @Range validator
+     * @throws MissingMandatoryOptionException When a @Mandatory option is missing
      */
     void parse(String[] args) throws UnhandledArgumentException;
 
