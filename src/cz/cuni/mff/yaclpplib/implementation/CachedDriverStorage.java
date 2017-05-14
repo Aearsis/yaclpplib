@@ -29,4 +29,9 @@ public class CachedDriverStorage implements DriverStorage {
     public <T> Driver<T> find(final Class<? super T> type) throws AmbiguousDriverError, NoSuchDriverError {
         return (Driver<T>) cache.computeIfAbsent(type, (x) -> decoratedStorage.find(type));
     }
+
+    @Override
+    public <T> boolean contains(final Class<? super T> type) {
+        return cache.containsKey(type) || decoratedStorage.contains(type);
+    }
 }

@@ -61,4 +61,13 @@ public class HashDriverStorage implements DriverStorage {
         }
     }
 
+    /**
+     * Checks if the driver storage contains a driver with given return type.
+     * @param type desired return type
+     * @return true if there exists a driver with such return type
+     */
+    public <T> boolean contains(Class <? super T> type) {
+        return drivers.containsKey(type);
+    }
+
 }

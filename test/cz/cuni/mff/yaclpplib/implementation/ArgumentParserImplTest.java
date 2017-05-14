@@ -18,9 +18,7 @@ public class ArgumentParserImplTest {
         String in = "param";
 
         ArgumentParser parser = new ArgumentParserImpl();
-        parser.setUnexpectedParameterHandler((parameter) -> {
-            out[0] = parameter;
-        });
+        parser.setUnexpectedParameterHandler((parameter) -> out[0] = parameter);
 
         parser.parse(new String[] { in });
 

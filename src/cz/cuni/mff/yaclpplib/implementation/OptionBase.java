@@ -31,7 +31,7 @@ abstract public class OptionBase {
     OptionBase(Options definitionClass, AccessibleObject from) {
         this.definitionClass = definitionClass;
 
-        annotations = from.getDeclaredAnnotation(OptionList.class).value();
+        annotations = from.getDeclaredAnnotationsByType(Option.class);
         mandatory = from.getDeclaredAnnotation(Mandatory.class) != null;
         Help helpAnnotation = from.getDeclaredAnnotation(Help.class);
         help = helpAnnotation != null ? helpAnnotation.value() : "";
@@ -42,6 +42,34 @@ abstract public class OptionBase {
                 String.join(", ", Arrays.stream(annotations).map((x) -> x.help().equals("") ? x.help() : x.value()).toArray(String[]::new)),
                 help);
 
+    }
+
+    Class autoBox(Class type) {
+        if (type == boolean.class) {
+            return Boolean.class;
+        }
+        else if (type == int.class) {
+            return Integer.class;
+        }
+        else if (type == long.class) {
+            return Long.class;
+        }
+        else if (type == double.class) {
+            return Double.class;
+        }
+        else if (type == float.class) {
+            return Float.class;
+        }
+        else if (type == short.class) {
+            return Short.class;
+        }
+        else if (type == byte.class) {
+            return Byte.class;
+        }
+        else if (type == char.class) {
+            return Character.class;
+        }
+        return type;
     }
 
     void finish() {

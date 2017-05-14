@@ -9,17 +9,33 @@ import java.lang.reflect.Field;
 public class FieldOption extends OptionBase {
 
     final private Field field;
+    final private ValuePolicy policy;
+    final private Class type;
 
     public FieldOption(Options definitionClass, Field field) {
         super(definitionClass, field);
         this.field = field;
-        field.setAccessible(true);
+        this.type = autoBox(field.getType());
+        if(field.getType().equals(Boolean.TYPE)) {
+            policy = ValuePolicy.OPTIONAL;
+        }
+        else {
+            policy = ValuePolicy.MANDATORY;
+        }
+        if (!field.isAccessible()) {
+            field.setAccessible(true);
+        }
     }
 
     @Override
     protected void haveTypedValue(OptionValue optionValue, Object typedValue) {
         try {
-            field.set(definitionClass, typedValue);
+            if (typedValue == null && field.getType().equals(Boolean.TYPE)) {
+                field.set(definitionClass, true);
+            }
+            else {
+                field.set(definitionClass, typedValue);
+            }
         } catch (IllegalAccessException | IllegalArgumentException e) {
             throw new InternalError();
         }
@@ -27,11 +43,11 @@ public class FieldOption extends OptionBase {
 
     @Override
     public Class getType() {
-        return field.getType();
+        return type;
     }
 
     @Override
     public ValuePolicy getValuePolicy() {
-        return ValuePolicy.MANDATORY;
+        return policy;
     }
 }

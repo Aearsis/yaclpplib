@@ -9,4 +9,5 @@ import cz.cuni.mff.yaclpplib.driver.Driver;
 public interface DriverStorage {
     <T> void add(Driver<T> driver) throws DuplicateDriverError;
     <T> Driver<T> find(Class<? super T> type) throws AmbiguousDriverError, NoSuchDriverError;
+    <T> boolean contains(Class<? super T> type);
 }

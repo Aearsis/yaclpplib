@@ -22,7 +22,9 @@ public class MethodOption extends OptionBase {
 
     public MethodOption(Options definitionClass, Method method) {
         super(definitionClass, method);
-        method.setAccessible(true);
+        if (!method.isAccessible()) {
+            method.setAccessible(true);
+        }
 
         optional = method.getDeclaredAnnotation(OptionalValue.class) != null;
 
@@ -37,7 +39,7 @@ public class MethodOption extends OptionBase {
                     type = Void.class;
                     call = ((value, typedValue) -> method.invoke(definitionClass, value));
                 } else {
-                    type = argType;
+                    type = autoBox(argType);
                     call = ((value, typedValue) -> method.invoke(definitionClass, typedValue));
                 }
                 break;
@@ -45,10 +47,10 @@ public class MethodOption extends OptionBase {
                 Class<?>[] argTypes = method.getParameterTypes();
                 if (method.getParameterTypes()[0].equals(OptionValue.class)) {
                     call = (value, typedValue) -> method.invoke(definitionClass, value, typedValue);
-                    type = argTypes[1];
+                    type = autoBox(argTypes[1]);
                 } else if (method.getParameterTypes()[1].equals(OptionValue.class)) {
                     call = (value, typedValue) -> method.invoke(definitionClass, typedValue, value);
-                    type = argTypes[0];
+                    type = autoBox(argTypes[0]);
                 } else {
                     throw new InvalidSetupError("@Option method with two arguments must have one of them OptionValue.");
                 }

@@ -15,7 +15,7 @@ public class IntegerDriver implements Driver<Integer> {
     }
 
     @Override
-    public Class<Integer> getReturnType(){
+    public Class<Integer> getReturnType() {
         return Integer.class;
     }
 }

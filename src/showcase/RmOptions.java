@@ -13,11 +13,11 @@ public class RmOptions implements Options {
     @Help("ignore nonexistent files and arguments, never prompt")
     public boolean force = false;
 
-    enum Prompt {
+    public enum Prompt {
         ALWAYS, ONCE, NEVER;
     }
 
-    private Prompt prompt = null;
+    public Prompt prompt = null;
 
     @Option("-i")
     @Help("prompt before every removal")
@@ -33,10 +33,11 @@ public class RmOptions implements Options {
     }
 
     @Option(value = "--interactive", help = "--interactive=WHEN")
+    @OptionalValue
     @Help("prompt according to WHEN: never, once (-I), or always (-i); without WHEN prompt always")
-    public void interactive(Optional<Prompt> value) {
-        if(value.isPresent()) {
-            prompt = value.get();
+    public void interactive(Prompt value) {
+        if(value != null) {
+            prompt = value;
         }
         else {
             prompt = Prompt.ALWAYS;
@@ -46,9 +47,13 @@ public class RmOptions implements Options {
     @Option("--one-file-system")
     @Help("when removing a hierarchy recursively, skip any directory " +
             "that is on a file system different from that of the corresponding command line argument")
-    public boolean oneFileSystem = false;
+    private boolean oneFileSystem = false;
 
-    private boolean removeRoot = false;
+    public boolean isOneFileSystem() {
+        return oneFileSystem;
+    }
+
+    public boolean removeRoot = false;
 
     @Option("--preserve-root")
     @Help("do not remove '/' (default)")

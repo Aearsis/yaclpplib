@@ -3,6 +3,7 @@ package showcase;
 import cz.cuni.mff.yaclpplib.annotation.*;
 import cz.cuni.mff.yaclpplib.*;
 
+import java.io.IOException;
 import java.util.List;
 
 public class HeadOptions implements Options {
@@ -34,6 +35,13 @@ public class HeadOptions implements Options {
     @Option("--zero-terminated")
     @Help("line delimiter is NUL, not newline")
     public boolean zeroTerminated = false;
+
+    @AfterParse
+    public void checkValidity() {
+        if (lines < 1) {
+            throw new RuntimeException("The amount of lines must be a positive number.");
+        }
+    }
 
     @Option("--version")
     @Help("output version information and exit")
