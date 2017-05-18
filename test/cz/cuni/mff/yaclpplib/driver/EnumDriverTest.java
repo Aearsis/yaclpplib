@@ -1,7 +1,6 @@
 package cz.cuni.mff.yaclpplib.driver;
 
 import cz.cuni.mff.yaclpplib.InvalidOptionValue;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +23,7 @@ public class EnumDriverTest {
         GenericEnumDriver driver = new GenericEnumDriver(SimpleEnum.class);
 
         for (SimpleEnum val : SimpleEnum.values()) {
-            JustOptionValue a = new JustOptionValue(val.toString());
+            JustValue a = new JustValue(val.toString());
             assertEquals(val, driver.parse(a));
         }
     }
@@ -33,7 +32,7 @@ public class EnumDriverTest {
     public void testInvalid() throws Exception {
         GenericEnumDriver driver = new GenericEnumDriver(SimpleEnum.class);
 
-        driver.parse(new JustOptionValue("Invalid"));
+        driver.parse(new JustValue("Invalid"));
     }
 
 }

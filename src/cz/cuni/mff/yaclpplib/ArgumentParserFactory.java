@@ -12,6 +12,7 @@ public final class ArgumentParserFactory {
 
     public static ArgumentParser createDefaultTypesParser() throws InvalidSetupError {
         final ArgumentParserImpl parser = (ArgumentParserImpl) createPlainParser();
+        parser.addDriver(new VoidDriver());
         parser.addDriver(new StringDriver());
         parser.addDriver(new IntegerDriver());
         parser.addDriver(new BooleanDriver());

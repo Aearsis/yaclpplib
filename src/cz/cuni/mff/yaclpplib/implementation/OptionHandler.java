@@ -1,12 +1,15 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
 
+import cz.cuni.mff.yaclpplib.InvalidOptionValue;
+import cz.cuni.mff.yaclpplib.MissingOptionValue;
 import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.Options;
 import cz.cuni.mff.yaclpplib.annotation.Help;
 import cz.cuni.mff.yaclpplib.annotation.Mandatory;
 import cz.cuni.mff.yaclpplib.annotation.Option;
 import cz.cuni.mff.yaclpplib.annotation.OptionList;
+import cz.cuni.mff.yaclpplib.driver.Driver;
 
 import java.lang.*;
 import java.lang.reflect.AccessibleObject;
@@ -15,9 +18,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * TODO!!! Comment
+ * A class handling one target of an option (field, method, etc.)
  */
-abstract public class OptionBase {
+abstract public class OptionHandler {
 
     final Options definitionClass;
 
@@ -28,7 +31,7 @@ abstract public class OptionBase {
 
     boolean found = false;
 
-    OptionBase(Options definitionClass, AccessibleObject from) {
+    OptionHandler(Options definitionClass, AccessibleObject from) {
         this.definitionClass = definitionClass;
 
         annotations = from.getDeclaredAnnotationsByType(Option.class);
@@ -69,6 +72,9 @@ abstract public class OptionBase {
         else if (type == char.class) {
             return Character.class;
         }
+        else if (type == void.class) {
+            return Void.class;
+        }
         return type;
     }
 
@@ -76,14 +82,21 @@ abstract public class OptionBase {
         // TODO: override, when array, call method([]) / fill field
     }
 
-    public void optionFound(OptionValue value) {
-        // if not optional:
-        // type
-        // call havetyped
+    public void optionFound(OptionValue optionValue, Driver driver) {
+        if (getValuePolicy() == ValuePolicy.MANDATORY && !optionValue.hasValue()) {
+            throw new MissingOptionValue(optionValue);
+        }
+        if (getValuePolicy() == ValuePolicy.NEVER && optionValue.hasValue()) {
+            throw new InvalidOptionValue("Parameter " + optionValue.getOption() + " cannot have an associated value.");
+        }
+
+        final Object typedValue = driver.parse(optionValue);
+        haveTypedValue(optionValue, typedValue);
     }
 
     protected abstract void haveTypedValue(OptionValue optionValue, Object typedValue);
 
     public abstract Class getType();
     public abstract ValuePolicy getValuePolicy();
+
 }

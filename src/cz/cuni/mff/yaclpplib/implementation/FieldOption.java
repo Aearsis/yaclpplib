@@ -3,10 +3,9 @@ package cz.cuni.mff.yaclpplib.implementation;
 import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.Options;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 
-public class FieldOption extends OptionBase {
+public class FieldOption extends OptionHandler {
 
     final private Field field;
     final private ValuePolicy policy;

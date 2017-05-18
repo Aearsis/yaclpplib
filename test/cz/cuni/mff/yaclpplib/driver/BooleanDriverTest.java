@@ -20,7 +20,7 @@ public class BooleanDriverTest {
 
     @Test
     public void integration() throws Exception {
-        DriverIntegration.test(instance, new JustOptionValue("false"));
+        DriverIntegration.test(instance, new JustValue("false"));
     }
 
     @Test
@@ -50,13 +50,13 @@ public class BooleanDriverTest {
 
     private void testFailing(String input) {
         try {
-            instance.parse(new JustOptionValue(input));
+            instance.parse(new JustValue(input));
             fail();
         } catch (InvalidOptionValue expected) {}
     }
 
     private void testParse(String input, boolean expected) throws InvalidOptionValue {
-        assertEquals(expected, instance.parse(new JustOptionValue(input)));
+        assertEquals(expected, instance.parse(new JustValue(input)));
     }
 
     @Test

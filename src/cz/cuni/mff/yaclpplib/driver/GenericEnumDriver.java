@@ -20,6 +20,8 @@ public class GenericEnumDriver implements Driver {
     @Override
     public Object parse(OptionValue x) throws InvalidOptionValue {
         try {
+            if (!x.hasValue())
+                return null;
             return Enum.valueOf(enumType, x.getValue());
         } catch (IllegalArgumentException e) {
             throw new InvalidOptionValue("Invalid value for " + x.getOption());

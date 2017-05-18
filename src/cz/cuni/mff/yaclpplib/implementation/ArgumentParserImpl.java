@@ -16,11 +16,9 @@ public class ArgumentParserImpl implements ArgumentParser {
     private final List<Options> definitions = new ArrayList<>();
     private final DriverStorage drivers = new CachedDriverStorage(new HashDriverStorage());
 
-    private final Map<String, OptionBase> optionHandlerMap;
-    private final List<OptionBase> optionHandlerList;
+    private final Map<String, OptionHandler> optionHandlerMap;
+    private final List<OptionHandler> optionHandlerList;
     private final List<AfterParseHandler> afterParseMethods;
-
-    private int parseIndex;
 
     public ArgumentParserImpl() {
         optionHandlerMap = new HashMap<>();
@@ -32,7 +30,7 @@ public class ArgumentParserImpl implements ArgumentParser {
         throw new UnhandledArgumentException(value);
     };
 
-    private void mapOption(String text, OptionBase handler) {
+    private void mapOption(String text, OptionHandler handler) {
         if (optionHandlerMap.containsKey(text)) {
             throw new InvalidSetupError("One option (" + text + ") can't be used at multiple methods or fields.");
         }
@@ -40,7 +38,7 @@ public class ArgumentParserImpl implements ArgumentParser {
     }
 
     @SuppressWarnings("unchecked")
-    private void addOptionHandler(OptionBase handler) {
+    private void addOptionHandler(OptionHandler handler) {
         if (handler.getType().isEnum() && !drivers.contains(handler.getType())) {
             drivers.add(new GenericEnumDriver(handler.getType()));
         }
@@ -98,123 +96,45 @@ public class ArgumentParserImpl implements ArgumentParser {
         return driver;
     }
 
-    private void parseLongOption(String option) {
-        final String[] parts = option.split("=", 2);
-        if (parts.length == 1) {
-            // We have no value for it, is it even an option?
-            if (optionHandlerMap.containsKey(parts[0])) {
-                final OptionBase handler = optionHandlerMap.get(option);
-                if (handler.getValuePolicy() == ValuePolicy.MANDATORY) {
-                    // This combination is forbidden
-                    throw new InvalidOptionValue("Parameter " + parts[0] + " must have an associated value.");
-                }
-                else {
-                    final OptionValueBase optionValue = new OptionValueBase(this);
-                    optionValue.setOption(parts[0]);
-                    optionValue.setRawTokens(new String[] {parts[0]});
-                    handler.haveTypedValue(optionValue, null);
-                    return; // We are done
-                }
-            }
-        }
-        else {
-            // We have a value, let's see if this option exists and a value is permitted
-            if (optionHandlerMap.containsKey(parts[0])) {
-                final OptionBase handler = optionHandlerMap.get(parts[0]);
-                if (handler.getValuePolicy() == ValuePolicy.NEVER) {
-                    throw new InvalidOptionValue("Parameter " + parts[0] + " cannot have an associated value.");
-                }
-                else {
-                    final OptionValueBase optionValue = new OptionValueBase(this);
-                    optionValue.setOption(parts[0]);
-                    optionValue.setValue(parts[1]);
-                    optionValue.setRawTokens(new String[] {option});
-                    final Object typedValue = drivers.find(handler.getType()).parse(optionValue);
-                    handler.haveTypedValue(optionValue, typedValue);
-                    return; // Done
-                }
-            }
-        }
-
-        // Everything failed
-        unexpectedParameterHandler.handle(option);
-    }
-
-    private void parseShortOption(String option, String nextOption) {
-        if (optionHandlerMap.containsKey(option)) {
-            final OptionBase handler = optionHandlerMap.get(option);
-            final OptionValueBase optionValue = new OptionValueBase(this);
-            optionValue.setOption(option);
-
-            switch (handler.getValuePolicy()) {
-                case NEVER:
-                    optionValue.setRawTokens(new String[] {option});
-                    handler.haveTypedValue(optionValue, null);
-                    break;
-                case MANDATORY:
-                    if (nextOption == null) {
-                        throw new InvalidOptionValue(
-                                "No option value was specified for option " + optionValue.getOption());
-                    }
-                    optionValue.setValue(nextOption);
-                    optionValue.setRawTokens(new String[] {option, nextOption});
-                    // We consumed the value so we need to advance
-                    ++parseIndex;
-                    final Object typedValue1 = drivers.find(handler.getType()).parse(optionValue);
-                    handler.haveTypedValue(optionValue, typedValue1);
-                    break;
-                case OPTIONAL:
-                    if (nextOption == null || nextOption.startsWith("-")) {
-                        optionValue.setRawTokens(new String[] {option});
-                        handler.haveTypedValue(optionValue, null);
-                    }
-                    else {
-                        optionValue.setValue(nextOption);
-                        optionValue.setRawTokens(new String[] {option, nextOption});
-                        // We consumed the value so we need to advance
-                        ++parseIndex;
-                        final Object typedValue2 = drivers.find(handler.getType()).parse(optionValue);
-                        handler.haveTypedValue(optionValue, typedValue2);
-                    }
-                    break;
-            }
-        }
-        else {
-            unexpectedParameterHandler.handle(option);
-        }
-    }
-
     @Override
     public void parse(String[] args) throws UnhandledArgumentException {
-        // We use parse index because sometimes, we have to advance by 2 (-p value)
-        parseIndex = 0;
-        // Process every argument
-        while (parseIndex < args.length) {
-            final String option = args[parseIndex];
-            final String nextOption = (parseIndex != args.length - 1) ? args[parseIndex + 1] : null;
+        TokenList tokenList = new TokenList(args);
 
-            if (option.equals("--")) {
+        while (tokenList.size() > 0) {
+            final String optionToken = tokenList.remove();
+
+            if (optionToken.equals("--")) {
                 // The delimiter, rest are positional arguments
-                ++parseIndex;
-                while (parseIndex != args.length) {
-                    unexpectedParameterHandler.handle(args[parseIndex]);
+                while (tokenList.size() > 0) {
+                    unexpectedParameterHandler.handle(tokenList.remove());
                 }
             }
-            else if (option.matches("--[a-zA-Z0-9].*")) {
-                parseLongOption(option);
+
+            InternalOptionValue matchedOptionValue = null;
+
+            if (LongOptionValue.matches(optionToken)) {
+                matchedOptionValue = new LongOptionValue(this, optionToken);
             }
-            else if (option.matches("-[a-zA-Z0-9]")) {
-                parseShortOption(option, nextOption);
+            else if (ShortOptionValue.matches(optionToken)) {
+                matchedOptionValue = new ShortOptionValue(this, optionToken);
+            }
+
+            if (matchedOptionValue != null && optionHandlerMap.containsKey(matchedOptionValue.getOption())) {
+                final OptionHandler handler = optionHandlerMap.get(matchedOptionValue.getOption());
+
+                if (tokenList.size() > 0)
+                    matchedOptionValue.completeValue(tokenList, handler.getValuePolicy());
+
+                handler.optionFound(matchedOptionValue, drivers.find(handler.getType()));
             }
             else {
-                unexpectedParameterHandler.handle(option);
+                unexpectedParameterHandler.handle(optionToken);
             }
-            ++parseIndex;
         }
 
         // Finish all the option arrays we were filling
-        for (OptionBase optionBase : optionHandlerList) {
-            optionBase.finish();
+        for (OptionHandler handler : optionHandlerList) {
+            handler.finish();
         }
 
         // Call all @AfterParse methods

@@ -49,16 +49,9 @@ public class HeadOptionsTest {
 
     @Test
     public void testLongIntegerOptions() throws Exception {
-        // FIXME (OR TODO) according to assignment specification, this is not valid, so not sure if we should include it
-        // This could be an issue because inputs similar to "--number -5" are ambiguous (--number is optional)
-        // where in the original assignment, this is definitely --number with no value and -5, if we allow this case
-        // we violate the assignment
-
-        //parser.parse("--lines=42 --bytes 42".split(" "));
         parser.parse("--lines=42".split(" "));
 
         assertEquals("Long option --lines=42 not parsed correctly.", 42, options.lines);
-        //assertEquals("Long option --bytes 42 not parsed correctly.", 42, options.bytes);
     }
 
 }

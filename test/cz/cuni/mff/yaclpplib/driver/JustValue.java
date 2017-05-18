@@ -3,10 +3,10 @@ package cz.cuni.mff.yaclpplib.driver;
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.OptionValue;
 
-class JustOptionValue implements OptionValue {
+class JustValue implements OptionValue {
     private final String input;
 
-    public JustOptionValue(String input) {
+    public JustValue(String input) {
         this.input = input;
     }
 
@@ -28,5 +28,10 @@ class JustOptionValue implements OptionValue {
     @Override
     public String[] getRawTokens() {
         return new String[]{input};
+    }
+
+    @Override
+    public boolean hasValue() {
+        return true;
     }
 }

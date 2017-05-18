@@ -8,7 +8,7 @@ import cz.cuni.mff.yaclpplib.annotation.OptionalValue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class MethodOption extends OptionBase {
+public class MethodOption extends OptionHandler {
 
     final private Class type;
     final boolean optional;

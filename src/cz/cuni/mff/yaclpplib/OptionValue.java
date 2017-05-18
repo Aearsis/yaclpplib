@@ -16,9 +16,13 @@ public interface OptionValue {
     String getOption();
 
     /**
+     * Should return null iff hasValue() returns false.
+     *
      * @return "value", null
      */
     String getValue();
+
+    boolean hasValue();
 
     /**
      * @return {"--long=value"}, {"--long", "value"}, {"-s", "value"}, {"-svalue"}

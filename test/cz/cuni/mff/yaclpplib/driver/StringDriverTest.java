@@ -17,7 +17,7 @@ public class StringDriverTest {
 
     @Test
     public void integration() throws Exception {
-        DriverIntegration.test(instance, new JustOptionValue("0"));
+        DriverIntegration.test(instance, new JustValue("0"));
     }
 
     @Test
@@ -28,13 +28,13 @@ public class StringDriverTest {
 
     private void testFailing(String input) {
         try {
-            instance.parse(new JustOptionValue(input));
+            instance.parse(new JustValue(input));
             fail();
         } catch (InvalidOptionValue expected) {}
     }
 
     private void testParse(String input, String expected) throws InvalidOptionValue {
-        assertEquals(expected, instance.parse(new JustOptionValue(input)));
+        assertEquals(expected, instance.parse(new JustValue(input)));
     }
 
     @Test
