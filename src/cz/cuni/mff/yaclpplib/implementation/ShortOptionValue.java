@@ -5,7 +5,7 @@ import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShortOptionValue extends OptionValueBase {
+public class ShortOptionValue extends OptionValueBase implements InternalOptionValue {
 
     private final String name;
 

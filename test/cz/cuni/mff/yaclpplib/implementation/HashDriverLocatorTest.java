@@ -5,9 +5,10 @@ import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.driver.Driver;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-public class HashDriverStorageTest {
+public class HashDriverLocatorTest {
 
     private interface MyInterfaceA {}
     private interface MyInterfaceB {}
@@ -34,14 +35,19 @@ public class HashDriverStorageTest {
         }
     }
 
+    private HashDriverLocator storage;
+
+    @Before
+    public void setUp() throws Exception {
+        storage = new HashDriverLocator();
+    }
+
     @Test
     public void testMultipleAdd() throws Exception {
-        final DriverStorage storage = new HashDriverStorage();
-
         storage.add(new GenericTypeDriver<>(MyType.class));
         try {
             storage.add(new GenericTypeDriver<>(MyType.class));
-            Assert.fail("DriverStorage should deny adding the same type.");
+            Assert.fail("DriverLocator should deny adding the same type.");
         } catch (DuplicateDriverError expected) { }
 
         storage.add(new GenericTypeDriver<>(MySubtypeA.class));
@@ -49,59 +55,45 @@ public class HashDriverStorageTest {
 
     @Test
     public void testFindSpecific() throws Exception {
-        final DriverStorage storage = new HashDriverStorage();
-
         Driver<MySubtypeA> mySubtypeDriver = new GenericTypeDriver<>(MySubtypeA.class);
         Driver<MyType> myTypeDriver = new GenericTypeDriver<>(MyType.class);
 
         storage.add(mySubtypeDriver);
         storage.add(myTypeDriver);
 
-        Assert.assertEquals(storage.find(MySubtypeA.class), mySubtypeDriver);
-        Assert.assertEquals(storage.find(MyType.class), myTypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MySubtypeA.class), mySubtypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MyType.class), myTypeDriver);
     }
 
     @Test
     public void testUnambiguity() throws Exception {
-        final DriverStorage storage = new HashDriverStorage();
-
         Driver<MySubtypeA> mySubtypeDriver = new GenericTypeDriver<>(MySubtypeA.class);
         storage.add(mySubtypeDriver);
-        Assert.assertEquals(storage.find(MyInterfaceA.class), mySubtypeDriver);
-        Assert.assertEquals(storage.find(MyInterfaceB.class), mySubtypeDriver);
-        Assert.assertEquals(storage.find(MyType.class), mySubtypeDriver);
-        Assert.assertEquals(storage.find(MySubtypeA.class), mySubtypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MyInterfaceA.class), mySubtypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MyInterfaceB.class), mySubtypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MyType.class), mySubtypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MySubtypeA.class), mySubtypeDriver);
 
         Driver<MyType> myTypeDriver = new GenericTypeDriver<>(MyType.class);
         storage.add(myTypeDriver);
-        Assert.assertEquals(storage.find(MyInterfaceA.class), myTypeDriver);
-        Assert.assertEquals(storage.find(MyInterfaceB.class), mySubtypeDriver);
-        Assert.assertEquals(storage.find(MyType.class), myTypeDriver);
-        Assert.assertEquals(storage.find(MySubtypeA.class), mySubtypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MyInterfaceA.class), myTypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MyInterfaceB.class), mySubtypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MyType.class), myTypeDriver);
+        Assert.assertEquals(storage.getDriverFor(MySubtypeA.class), mySubtypeDriver);
     }
 
-    @Test
+    @Test(expected = AmbiguousDriverError.class)
     public void testAmbiguity() throws Exception {
-        final DriverStorage storage = new HashDriverStorage();
-
         storage.add(new GenericTypeDriver<>(MySubtypeA.class));
         storage.add(new GenericTypeDriver<>(MySubtypeB.class));
-        try {
-            storage.find(MyType.class);
-            Assert.fail();
-        } catch (AmbiguousDriverError expected) {}
+        storage.getDriverFor(MyType.class);
     }
 
-    @Test
+    @Test(expected = NoSuchDriverError.class)
     public void testNoSuchDriver() throws Exception {
-        final DriverStorage storage = new HashDriverStorage();
-
         storage.add(new GenericTypeDriver<>(MyInterfaceA.class));
         storage.add(new GenericTypeDriver<>(MyInterfaceB.class));
         storage.add(new GenericTypeDriver<>(MySubtypeA.class));
-        try {
-            storage.find(MySubtypeB.class);
-            Assert.fail();
-        } catch (NoSuchDriverError expected) {}
+        storage.getDriverFor(MySubtypeB.class);
     }
 }

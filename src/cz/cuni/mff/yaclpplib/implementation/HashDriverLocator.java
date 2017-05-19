@@ -2,19 +2,20 @@ package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.driver.Driver;
 import cz.cuni.mff.yaclpplib.DuplicateDriverError;
+import cz.cuni.mff.yaclpplib.driver.GenericEnumDriver;
 
 import java.util.*;
 
 /**
- * Default DriverStorage implementation using a HashMap mapped by return types.
+ * Default DriverLocator and storage implementation using a HashMap mapped by return types.
  */
-public class HashDriverStorage implements DriverStorage {
+public class HashDriverLocator implements DriverLocator, DriverStorage {
 
-    private final Map<Class<?>, Driver<?>> drivers = new HashMap<>();
+    private final Map<Class<?>, Driver> drivers = new HashMap<>();
 
     @Override
-    public <T> void add(Driver<T> driver) throws DuplicateDriverError {
-        final Class<T> returnType = driver.getReturnType();
+    public void add(Driver driver) throws DuplicateDriverError {
+        final Class<?> returnType = driver.getReturnType();
 
         if (drivers.containsKey(returnType))
             throw new DuplicateDriverError(returnType);
@@ -25,18 +26,16 @@ public class HashDriverStorage implements DriverStorage {
     /**
      * Finds the most suitable driver for type. That is the least specific one creating a type assignable to type.
      *
-     * Unchecked cast to Driver&lt;T&gt; is safe, because we know the T at runtime.
-     *
      * @param type a type of option value
      * @return driver that can produce the type
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Driver<T> find(Class<? super T> type) throws AmbiguousDriverError, NoSuchDriverError {
-        final Set<Driver<?>> bestDrivers = new HashSet<>();
+    public Driver getDriverFor(Class<?> type) throws AmbiguousDriverError, NoSuchDriverError {
+        final Set<Driver> bestDrivers = new HashSet<>();
 
         outerLoop:
-        for (Driver<?> currentDriver : drivers.values()) {
+        for (Driver currentDriver : drivers.values()) {
             if (!type.isAssignableFrom(currentDriver.getReturnType()))
                 continue;
 
@@ -46,16 +45,22 @@ public class HashDriverStorage implements DriverStorage {
                     continue outerLoop;
 
             // Remove all more specialized drivers
-            bestDrivers.removeIf((Driver<?> moreSpecific) -> currentDriver.getReturnType().isAssignableFrom(moreSpecific.getReturnType()));
+            bestDrivers.removeIf((Driver moreSpecific) -> currentDriver.getReturnType().isAssignableFrom(moreSpecific.getReturnType()));
 
             bestDrivers.add(currentDriver);
+        }
+
+        if (bestDrivers.isEmpty()) {
+            if (type.isEnum()) {
+                return new GenericEnumDriver(type);
+            }
         }
 
         switch (bestDrivers.size()) {
             case 0:
                 throw new NoSuchDriverError();
             case 1:
-                return (Driver<T>) bestDrivers.toArray(new Driver[1])[0];
+                return bestDrivers.toArray(new Driver[1])[0];
             default:
                 throw new AmbiguousDriverError(type, bestDrivers);
         }
@@ -66,7 +71,7 @@ public class HashDriverStorage implements DriverStorage {
      * @param type desired return type
      * @return true if there exists a driver with such return type
      */
-    public <T> boolean contains(Class <? super T> type) {
+    public boolean contains(Class <?> type) {
         return drivers.containsKey(type);
     }
 

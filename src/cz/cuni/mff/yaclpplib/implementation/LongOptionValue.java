@@ -5,7 +5,7 @@ import cz.cuni.mff.yaclpplib.ArgumentParser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LongOptionValue extends OptionValueBase {
+public class LongOptionValue extends OptionValueBase implements InternalOptionValue {
 
     private final String name;
 

@@ -5,48 +5,33 @@ import cz.cuni.mff.yaclpplib.Options;
 
 import java.lang.reflect.Field;
 
-public class FieldOption extends OptionHandler {
+public class FieldOption extends OptionHandlerBase {
 
     final private Field field;
-    final private ValuePolicy policy;
-    final private Class type;
 
     public FieldOption(Options definitionClass, Field field) {
         super(definitionClass, field);
         this.field = field;
-        this.type = autoBox(field.getType());
-        if(field.getType().equals(Boolean.TYPE)) {
-            policy = ValuePolicy.OPTIONAL;
-        }
-        else {
-            policy = ValuePolicy.MANDATORY;
-        }
-        if (!field.isAccessible()) {
-            field.setAccessible(true);
-        }
+        SecurityUtility.makeAccessible(field);
     }
 
     @Override
-    protected void haveTypedValue(OptionValue optionValue, Object typedValue) {
+    public void haveTypedValue(OptionValue optionValue, Object typedValue) {
         try {
-            if (typedValue == null && field.getType().equals(Boolean.TYPE)) {
-                field.set(definitionClass, true);
-            }
-            else {
-                field.set(definitionClass, typedValue);
-            }
+            field.set(definitionClass, typedValue);
         } catch (IllegalAccessException | IllegalArgumentException e) {
             throw new InternalError();
         }
     }
 
     @Override
-    public Class getType() {
-        return type;
+    public Class getType(){
+        return field.getType();
     }
 
     @Override
     public ValuePolicy getValuePolicy() {
-        return policy;
+        return ValuePolicy.MANDATORY;
     }
+
 }

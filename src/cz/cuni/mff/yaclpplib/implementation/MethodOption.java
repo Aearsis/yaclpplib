@@ -8,10 +8,10 @@ import cz.cuni.mff.yaclpplib.annotation.OptionalValue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class MethodOption extends OptionHandler {
+public class MethodOption extends OptionHandlerBase {
 
     final private Class type;
-    final boolean optional;
+    final boolean annotatedOptional;
 
 
     private interface MethodCall {
@@ -26,7 +26,7 @@ public class MethodOption extends OptionHandler {
             method.setAccessible(true);
         }
 
-        optional = method.getDeclaredAnnotation(OptionalValue.class) != null;
+        annotatedOptional = method.getDeclaredAnnotation(OptionalValue.class) != null;
 
         switch (method.getParameterCount()) {
             case 0:
@@ -39,7 +39,7 @@ public class MethodOption extends OptionHandler {
                     type = Void.class;
                     call = ((value, typedValue) -> method.invoke(definitionClass, value));
                 } else {
-                    type = autoBox(argType);
+                    type = argType;
                     call = ((value, typedValue) -> method.invoke(definitionClass, typedValue));
                 }
                 break;
@@ -47,10 +47,10 @@ public class MethodOption extends OptionHandler {
                 Class<?>[] argTypes = method.getParameterTypes();
                 if (method.getParameterTypes()[0].equals(OptionValue.class)) {
                     call = (value, typedValue) -> method.invoke(definitionClass, value, typedValue);
-                    type = autoBox(argTypes[1]);
+                    type = argTypes[1];
                 } else if (method.getParameterTypes()[1].equals(OptionValue.class)) {
                     call = (value, typedValue) -> method.invoke(definitionClass, typedValue, value);
-                    type = autoBox(argTypes[0]);
+                    type = argTypes[0];
                 } else {
                     throw new InvalidSetupError("@Option method with two arguments must have one of them OptionValue.");
                 }
@@ -59,7 +59,7 @@ public class MethodOption extends OptionHandler {
                 throw new InvalidSetupError("@Option method must have specific arguments - please consult the manual.");
         }
 
-        if (optional) {
+        if (annotatedOptional) {
             if (type.isPrimitive())
                 throw new InvalidSetupError("Methods with primitive types cannot have optional values.");
             if (type.isArray() && type.getComponentType().isPrimitive())
@@ -68,7 +68,7 @@ public class MethodOption extends OptionHandler {
     }
 
     @Override
-    protected void haveTypedValue(OptionValue optionValue, Object typedValue) {
+    public void haveTypedValue(OptionValue optionValue, Object typedValue) {
         try {
             call.call(optionValue, typedValue);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -85,7 +85,7 @@ public class MethodOption extends OptionHandler {
     public ValuePolicy getValuePolicy() {
         if (type == Void.class) {
             return ValuePolicy.NEVER;
-        } else if (optional) {
+        } else if (annotatedOptional) {
             return ValuePolicy.OPTIONAL;
         } else {
             return ValuePolicy.MANDATORY;

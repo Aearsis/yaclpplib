@@ -13,9 +13,9 @@ public class EnumDriverTest {
     }
 
     @Test
-    public void getReturnType() throws Exception {
+    public void integration() throws Exception {
         GenericEnumDriver driver = new GenericEnumDriver(SimpleEnum.class);
-        assertEquals(SimpleEnum.class, driver.getReturnType());
+        DriverIntegration.test(driver, new JustValue("A"));
     }
 
     @Test
@@ -26,6 +26,12 @@ public class EnumDriverTest {
             JustValue a = new JustValue(val.toString());
             assertEquals(val, driver.parse(a));
         }
+    }
+
+    @Test
+    public void testNullEnum() throws Exception {
+        GenericEnumDriver driver = new GenericEnumDriver(SimpleEnum.class);
+        assertEquals(null, driver.parse(new JustValue(null)));
     }
 
     @Test(expected = InvalidOptionValue.class)

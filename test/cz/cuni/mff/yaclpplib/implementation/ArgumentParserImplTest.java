@@ -7,9 +7,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by ohlavaty on 4/24/17.
- */
 public class ArgumentParserImplTest {
 
     @Test

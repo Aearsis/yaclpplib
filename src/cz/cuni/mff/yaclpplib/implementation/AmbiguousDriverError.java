@@ -10,10 +10,10 @@ import java.util.Collection;
  */
 public class AmbiguousDriverError extends InvalidSetupError {
 
-    private final Collection<Driver<?>> availableDrivers;
+    private final Collection<Driver> availableDrivers;
     private final Class<?> forType;
 
-    public AmbiguousDriverError(Class<?> forType, Collection<Driver<?>> availableDrivers) {
+    public AmbiguousDriverError(Class<?> forType, Collection<Driver> availableDrivers) {
         this.forType = forType;
         this.availableDrivers = availableDrivers;
     }

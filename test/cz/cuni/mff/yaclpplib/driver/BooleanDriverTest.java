@@ -6,9 +6,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by ohlavaty on 4/24/17.
- */
 public class BooleanDriverTest {
 
     private BooleanDriver instance;

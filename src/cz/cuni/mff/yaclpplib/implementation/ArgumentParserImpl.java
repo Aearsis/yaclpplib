@@ -1,20 +1,16 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.*;
-import cz.cuni.mff.yaclpplib.annotation.AfterParse;
-import cz.cuni.mff.yaclpplib.annotation.Help;
-import cz.cuni.mff.yaclpplib.annotation.Option;
-import cz.cuni.mff.yaclpplib.driver.Driver;
-import cz.cuni.mff.yaclpplib.driver.GenericEnumDriver;
+import cz.cuni.mff.yaclpplib.annotation.*;
+import cz.cuni.mff.yaclpplib.driver.*;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 
 public class ArgumentParserImpl implements ArgumentParser {
 
     private final List<Options> definitions = new ArrayList<>();
-    private final DriverStorage drivers = new CachedDriverStorage(new HashDriverStorage());
+    private final DriverCache drivers = new DriverCache<>(new HashDriverLocator());
 
     private final Map<String, OptionHandler> optionHandlerMap;
     private final List<OptionHandler> optionHandlerList;
@@ -37,12 +33,11 @@ public class ArgumentParserImpl implements ArgumentParser {
         optionHandlerMap.put(text, handler);
     }
 
-    @SuppressWarnings("unchecked")
-    private void addOptionHandler(OptionHandler handler) {
-        if (handler.getType().isEnum() && !drivers.contains(handler.getType())) {
-            drivers.add(new GenericEnumDriver(handler.getType()));
-        }
+    private void addHandler(OptionHandler rawHandler, AccessibleObject member) {
+        final OptionHandler handler = OptionHandler.wrap(rawHandler);
         optionHandlerList.add(handler);
+        Arrays.stream(member.getDeclaredAnnotationsByType(Option.class))
+                .forEach(option -> mapOption(option.value(), handler));
     }
 
     @Override
@@ -53,10 +48,7 @@ public class ArgumentParserImpl implements ArgumentParser {
         // Process every field with @Option annotation
         for (Field field : instance.getClass().getDeclaredFields()) {
             if (field.getDeclaredAnnotationsByType(Option.class).length > 0) {
-                final FieldOption fieldOption = new FieldOption(instance, field);
-                addOptionHandler(fieldOption);
-                Arrays.stream(field.getDeclaredAnnotationsByType(Option.class))
-                        .forEach(option -> mapOption(option.value(), fieldOption));
+                addHandler(new FieldOption(instance, field), field);
             }
         }
 
@@ -64,30 +56,13 @@ public class ArgumentParserImpl implements ArgumentParser {
         for (Method method : instance.getClass().getDeclaredMethods()) {
             // ... with @Option annotation
             if (method.getDeclaredAnnotationsByType(Option.class).length > 0) {
-                final MethodOption methodOption = new MethodOption(instance, method);
-                addOptionHandler(methodOption);
-                Arrays.stream(method.getDeclaredAnnotationsByType(Option.class))
-                        .forEach(option -> mapOption(option.value(), methodOption));
+                addHandler(new MethodOption(instance, method), method);
             }
             // ... or with @AfterParse annotation
             if (method.getDeclaredAnnotation(AfterParse.class) != null) {
-                if (!method.isAccessible()) {
-                    method.setAccessible(true);
-                }
-                if (method.getParameterCount() != 0) {
-                    throw new InvalidSetupError("An AfterParse method cannot have any parameters.");
-                }
-                if (method.getExceptionTypes().length > 0) {
-                    for (Class exception : method.getExceptionTypes()) {
-                        if (!(RuntimeException.class.isAssignableFrom(exception))) {
-                            throw new InvalidSetupError("An AfterParse method must throw only runtime exceptions.");
-                        }
-                    }
-                }
                 afterParseMethods.add(new AfterParseHandler(method, instance));
             }
         }
-
         return instance;
     }
 
@@ -125,7 +100,8 @@ public class ArgumentParserImpl implements ArgumentParser {
                 if (tokenList.size() > 0)
                     matchedOptionValue.completeValue(tokenList, handler.getValuePolicy());
 
-                handler.optionFound(matchedOptionValue, drivers.find(handler.getType()));
+                final Class<?> type = handler.getType();
+                handler.optionFound(matchedOptionValue, drivers.getDriverFor(type));
             }
             else {
                 unexpectedParameterHandler.handle(optionToken);
@@ -151,16 +127,21 @@ public class ArgumentParserImpl implements ArgumentParser {
     @Override
     public String getHelp() {
         StringBuilder builder = new StringBuilder();
+        final String endl = System.getProperty("line.separator");
 
         for (Options options : definitions) {
             Help annotation = options.getClass().getDeclaredAnnotation(Help.class);
             if (annotation != null) {
-                builder.append("\n").append(annotation.value()).append("\n");
+                builder.append(annotation.value()).append(endl);
             }
 
-            // TODO: We need a list of options for every option definition
-            // for all @Option:
-                // print help line
+            for (OptionHandler handler : optionHandlerList) {
+                if (handler.getDefinitionClass() != options)
+                    continue;
+
+                builder.append(handler.getHelpLine()).append(endl);
+            }
+            builder.append(endl);
         }
         return builder.toString();
     }

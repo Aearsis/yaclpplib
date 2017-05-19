@@ -31,7 +31,7 @@ class JustValue implements OptionValue {
     }
 
     @Override
-    public boolean hasValue() {
-        return true;
+    public boolean hasValue(){
+        return input != null;
     }
 }
