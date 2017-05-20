@@ -1,7 +1,9 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An utility class for working with primitives.
@@ -28,15 +30,15 @@ public class Primitives {
         return mapToBoxed.get(type);
     }
 
-    final static Class<?>[] integralTypes = new Class[] { Long.class, Integer.class, Short.class, Byte.class };
+    private final static Set<Class<?>> integralTypes = new HashSet<Class<?>>() {{
+        add(Long.class);
+        add(Integer.class);
+        add(Short.class);
+        add(Byte.class);
+    }};
 
     public static boolean isIntegral(Class type) {
         final Class<?> boxed = box(type);
-
-        for (Class integral : integralTypes)
-            if (integral.equals(boxed))
-                return true;
-
-        return false;
+        return integralTypes.contains(boxed);
     }
 }
