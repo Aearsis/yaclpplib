@@ -10,7 +10,7 @@ public class IntegerDriver implements Driver<Integer> {
         try {
             return Integer.parseInt(x.getValue());
         } catch (NumberFormatException e) {
-            throw new InvalidOptionValue(e.getMessage());
+            throw new InvalidOptionValue("Option " + x.getOption() + " requires an integer value.");
         }
     }
 

@@ -49,14 +49,14 @@ public class SimulatiorOptionsTest {
 
     @Test
     public void testEmptyDebug() {
-        parser.parse("-i 5 -c --count=1000000 -s --debug EXPLOSION input1".split(" "));
+        parser.parse("-i 5 -c --count=1000000 --debug -s EXPLOSION input1".split(" "));
 
         assertEquals(options.debugLevel, 10);
     }
 
     @Test
     public void testValueDebug() {
-        parser.parse("-i 5 -c --count=1000000 -s --debug=20 EXPLOSION input1".split(" "));
+        parser.parse("-i 5 -c --count=1000000 --debug=20 -s EXPLOSION input1".split(" "));
 
         assertEquals(options.debugLevel, 20);
     }

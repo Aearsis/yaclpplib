@@ -61,7 +61,6 @@ public class SimulatorOptions implements Options {
     public int iterations;
 
     @Option("-p")
-    @Option("-c")
     @Option("--count")
     @Help("amount of simulated particles")
     @Range(minimumValue = 1, maximumValue = 10000)

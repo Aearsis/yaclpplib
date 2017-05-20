@@ -56,8 +56,13 @@ abstract class OptionHandlerBase implements OptionHandler {
             throw new InvalidOptionValue("Parameter " + optionValue.getOption() + " cannot have an associated value.");
         }
 
-        final Object typedValue = driver.parse(optionValue);
-        haveTypedValue(optionValue, typedValue);
+        if (optionValue.hasValue()) {
+            final Object typedValue = driver.parse(optionValue);
+            haveTypedValue(optionValue, typedValue);
+        }
+        else {
+            haveTypedValue(optionValue, null);
+        }
     }
 
     public void finish() { }
