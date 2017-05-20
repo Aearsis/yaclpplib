@@ -12,7 +12,6 @@ public interface OptionHandler {
     Class<?> getType();
     String getAnyOptionName();
     ValuePolicy getValuePolicy();
-    boolean isMandatory();
     Options getDefinitionClass();
 
     String getHelpLine();

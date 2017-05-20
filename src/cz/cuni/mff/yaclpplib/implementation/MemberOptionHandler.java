@@ -20,19 +20,15 @@ abstract class MemberOptionHandler implements OptionHandler {
 
     // Initialized from annotations:
     final private Option[] annotations;
-    final private boolean mandatory;
     final private String help;
-    final private AccessibleObject handledObject;
 
     MemberOptionHandler(ArgumentParser parser, Options definitionClass, AccessibleObject from) {
         this.parser = parser;
         this.definitionClass = definitionClass;
 
-        handledObject = from;
         annotations = from.getDeclaredAnnotationsByType(Option.class);
         assert annotations.length > 0;
 
-        mandatory = from.getDeclaredAnnotation(Mandatory.class) != null;
         Help helpAnnotation = from.getDeclaredAnnotation(Help.class);
 
         /*
@@ -53,11 +49,6 @@ abstract class MemberOptionHandler implements OptionHandler {
                         Arrays.stream(annotations).map((x) -> x.help().equals("") ? x.value() : x.help())
                                 .toArray(String[]::new)),
                 help);
-    }
-
-    @Override
-    public boolean isMandatory() {
-        return mandatory;
     }
 
     @Override

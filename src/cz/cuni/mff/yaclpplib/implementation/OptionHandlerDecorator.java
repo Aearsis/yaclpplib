@@ -32,11 +32,6 @@ abstract public class OptionHandlerDecorator implements OptionHandler {
     }
 
     @Override
-    public boolean isMandatory() {
-        return decorated.isMandatory();
-    }
-
-    @Override
     public ValuePolicy getValuePolicy() {
         return decorated.getValuePolicy();
     }
