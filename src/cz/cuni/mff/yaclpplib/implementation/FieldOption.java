@@ -6,7 +6,7 @@ import cz.cuni.mff.yaclpplib.Options;
 
 import java.lang.reflect.Field;
 
-public class FieldOption extends OptionHandlerBase {
+public class FieldOption extends MemberOptionHandler {
 
     final private Field field;
 

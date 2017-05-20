@@ -13,18 +13,18 @@ import java.util.Arrays;
 /**
  * A class handling one target of an option (field, method, etc.)
  */
-abstract class OptionHandlerBase implements OptionHandler {
+abstract class MemberOptionHandler implements OptionHandler {
 
     final private ArgumentParser parser;
     final private Options definitionClass;
 
     // Initialized from annotations:
-    final Option[] annotations;
-    final boolean mandatory;
+    final private Option[] annotations;
+    final private boolean mandatory;
     final private String help;
     final private AccessibleObject handledObject;
 
-    OptionHandlerBase(ArgumentParser parser, Options definitionClass, AccessibleObject from) {
+    MemberOptionHandler(ArgumentParser parser, Options definitionClass, AccessibleObject from) {
         this.parser = parser;
         this.definitionClass = definitionClass;
 
@@ -34,23 +34,30 @@ abstract class OptionHandlerBase implements OptionHandler {
 
         mandatory = from.getDeclaredAnnotation(Mandatory.class) != null;
         Help helpAnnotation = from.getDeclaredAnnotation(Help.class);
-        help = helpAnnotation != null ? helpAnnotation.value() : "";
+
+        /*
+         * TODO: consider throwing InvalidSetupException.
+         * Pros: always well-documented user programs
+         * Cons: the need to write @Help _everywhere_
+         */
+        help = helpAnnotation != null ? helpAnnotation.value() : "Do some magic";
     }
 
+    /**
+     * TODO: move away to separate help formatter
+     * @return
+     */
     public String getHelpLine() {
-        return String.format("%30s %s",
-                String.join(", ", Arrays.stream(annotations).map((x) -> x.help().equals("") ? x.help() : x.value()).toArray(String[]::new)),
+        return String.format("  %-20s %s",
+                String.join(", ",
+                        Arrays.stream(annotations).map((x) -> x.help().equals("") ? x.value() : x.help())
+                                .toArray(String[]::new)),
                 help);
     }
 
     @Override
     public boolean isMandatory() {
         return mandatory;
-    }
-
-    @Override
-    public AccessibleObject getHandledObject() {
-        return handledObject;
     }
 
     @Override

@@ -47,11 +47,6 @@ abstract public class OptionHandlerDecorator implements OptionHandler {
     }
 
     @Override
-    public AccessibleObject getHandledObject() {
-        return decorated.getHandledObject();
-    }
-
-    @Override
     public Options getDefinitionClass() {
         return decorated.getDefinitionClass();
     }

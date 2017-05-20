@@ -8,8 +8,7 @@ package cz.cuni.mff.yaclpplib.implementation;
 class BooleanOption extends OptionHandlerDecorator {
 
     static boolean isApplicable(OptionHandler handler) {
-        return handler.getValuePolicy() == ValuePolicy.MANDATORY &&
-                (handler.getType().equals(Boolean.class) || handler.getType().equals(boolean.class));
+        return handler.getValuePolicy() == ValuePolicy.MANDATORY && handler.getType().equals(Boolean.class);
     }
 
     BooleanOption(OptionHandler decorated) {
@@ -24,5 +23,13 @@ class BooleanOption extends OptionHandlerDecorator {
     @Override
     public ValuePolicy getValuePolicy() {
         return ValuePolicy.OPTIONAL;
+    }
+
+    public static OptionHandler wrapIfApplicable(OptionHandler handler) {
+        if (BooleanOption.isApplicable(handler)) {
+            return new BooleanOption(handler);
+        } else {
+            return handler;
+        }
     }
 }

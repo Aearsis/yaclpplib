@@ -19,4 +19,13 @@ class BoxedOption extends OptionHandlerDecorator {
     public Class getType() {
         return Primitives.box(super.getType());
     }
+
+    public static OptionHandler wrapIfApplicable(OptionHandler handler) {
+        if (isApplicable(handler)) {
+            return new BoxedOption(handler);
+        }
+        else {
+            return handler;
+        }
+    }
 }

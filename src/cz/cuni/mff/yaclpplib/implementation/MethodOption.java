@@ -8,7 +8,7 @@ import cz.cuni.mff.yaclpplib.annotation.OptionalValue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class MethodOption extends OptionHandlerBase {
+public class MethodOption extends MemberOptionHandler {
 
     final private Class type;
     final boolean annotatedOptional;
@@ -27,12 +27,11 @@ public class MethodOption extends OptionHandlerBase {
 
         switch (method.getParameterCount()) {
             case 0:
-                call = ((typedValue) -> method.invoke(definitionClass));
                 type = Void.class;
+                call = ((typedValue) -> method.invoke(definitionClass));
                 break;
             case 1:
-                Class<?> argType = method.getParameterTypes()[0];
-                type = argType;
+                type = method.getParameterTypes()[0];
                 call = ((typedValue) -> method.invoke(definitionClass, typedValue));
                 break;
             default:

@@ -1,9 +1,6 @@
 package cz.cuni.mff.yaclpplib.parserTests;
 
-import cz.cuni.mff.yaclpplib.ArgumentParser;
-import cz.cuni.mff.yaclpplib.ArgumentParserFactory;
-import cz.cuni.mff.yaclpplib.InvalidOptionValue;
-import cz.cuni.mff.yaclpplib.MissingMandatoryOptionException;
+import cz.cuni.mff.yaclpplib.*;
 import org.junit.Before;
 import org.junit.Test;
 import showcase.SimulatorOptions;
@@ -32,12 +29,12 @@ public class SimulatorOptionsTest {
         parser.parse("-i 5 -c --count=100 -s EXPLOSION".split(" "));
     }
 
-    @Test(expected = InvalidOptionValue.class)
+    @Test(expected = IllegalOptionValue.class)
     public void testOutOfRangeNegative() {
         parser.parse("-i 5 -r --count=-3 -s EXPLOSION input1".split(" "));
     }
 
-    @Test(expected = InvalidOptionValue.class)
+    @Test(expected = IllegalOptionValue.class)
     public void testOutOfRangeHigh() {
         parser.parse("-i 5 -c --count=1000000 -s EXPLOSION input1".split(" "));
     }

@@ -21,6 +21,37 @@ public class ArgumentParserImpl implements ArgumentParser {
         throw new UnhandledArgumentException(value);
     };
 
+    /**
+     * Some combinations have different semantics. Because these generate too much combinations,
+     * we handle them using decorators over the handlers.
+     *
+     * For now, we handle:
+     *      - arrays, by aggregating the component type, yielding the final array at the end
+     *      - boolean options, because --verbose is a shorthand for "--verbose true"
+     *      - primitive types, because they often require special handling
+     *      - range options, we need to check if the value is in the given range
+     *
+     * @param rawHandler a handler to be wrapped
+     * @return handler, wrapped if applicable
+     */
+    public static OptionHandler wrapHandler(OptionHandler rawHandler, AccessibleObject member) {
+        OptionHandler wrappedHandler = rawHandler;
+
+        // One-dimensional arrays of known types
+        wrappedHandler = ArrayOption.wrapIfApplicable(wrappedHandler);
+
+        // Autoboxer for types
+        wrappedHandler = BoxedOption.wrapIfApplicable(wrappedHandler);
+
+        // Allows optional value for booleans
+        wrappedHandler = BooleanOption.wrapIfApplicable(wrappedHandler);
+
+        // Does range checks on integers/longs
+        wrappedHandler = RangeOption.wrapIfApplicable(wrappedHandler, member);
+
+        return wrappedHandler;
+    }
+
     private void mapOption(String text, OptionHandler handler) {
         if (optionHandlerMap.containsKey(text)) {
             throw new InvalidSetupError("One option (" + text + ") can't be used at multiple methods or fields.");
@@ -29,8 +60,8 @@ public class ArgumentParserImpl implements ArgumentParser {
     }
 
     private void addHandler(OptionHandler rawHandler, AccessibleObject member) {
-        final OptionHandler handler = OptionHandler.wrap(rawHandler);
-        mandatoryManager.add(handler);
+        final OptionHandler handler = wrapHandler(rawHandler, member);
+        mandatoryManager.add(handler, member);
         optionHandlerList.add(handler);
         Arrays.stream(member.getDeclaredAnnotationsByType(Option.class))
                 .forEach(option -> mapOption(option.value(), handler));

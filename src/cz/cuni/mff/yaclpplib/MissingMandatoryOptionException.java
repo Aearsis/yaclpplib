@@ -1,19 +1,23 @@
 package cz.cuni.mff.yaclpplib;
 
+import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
+
+import java.util.Arrays;
+
 /**
  * Thrown by the library whenever a @Mandatory option is not present on the command line.
  */
 public class MissingMandatoryOptionException extends RuntimeException {
 
-    final private String[] optionNames;
+    final private OptionHandler[] options;
 
-    public MissingMandatoryOptionException(String[] optionNames) {
-        assert optionNames.length > 0;
-        this.optionNames = optionNames;
+    public MissingMandatoryOptionException(OptionHandler[] options) {
+        assert options.length > 0;
+        this.options = options;
     }
 
-    public String[] getOptionNames() {
-        return optionNames;
+    public String[] getOptionNames(){
+        return Arrays.stream(options).map(OptionHandler::getAnyOptionName).toArray(String[]::new);
     }
 
     /**
@@ -22,7 +26,7 @@ public class MissingMandatoryOptionException extends RuntimeException {
      * @return any name the missing option have
      */
     public String getOptionName() {
-        return optionNames[0];
+        return getOptionNames()[0];
     }
 
 }

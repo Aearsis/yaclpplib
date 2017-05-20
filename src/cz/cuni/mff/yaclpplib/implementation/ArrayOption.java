@@ -35,4 +35,12 @@ public class ArrayOption extends OptionHandlerDecorator {
         return decorated.getType().getComponentType();
     }
 
+    public static OptionHandler wrapIfApplicable(OptionHandler handler) {
+        if (ArrayOption.isApplicable(handler)) {
+            return new ArrayOption(handler);
+        }
+        else {
+            return handler;
+        }
+    }
 }
