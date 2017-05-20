@@ -1,7 +1,7 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
+import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.InvalidSetupError;
-import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.Options;
 import cz.cuni.mff.yaclpplib.annotation.OptionalValue;
 
@@ -13,53 +13,35 @@ public class MethodOption extends OptionHandlerBase {
     final private Class type;
     final boolean annotatedOptional;
 
-
     private interface MethodCall {
-        void call(OptionValue value, Object typedValue) throws IllegalAccessException, InvocationTargetException;
+        void call(Object typedValue) throws IllegalAccessException, InvocationTargetException;
     }
 
     MethodCall call;
 
-    public MethodOption(Options definitionClass, Method method) {
-        super(definitionClass, method);
-        if (!method.isAccessible()) {
-            method.setAccessible(true);
-        }
+    public MethodOption(ArgumentParser parser, Options definitionClass, Method method) {
+        super(parser, definitionClass, method);
+        SecurityUtility.makeAccessible(method);
 
         annotatedOptional = method.getDeclaredAnnotation(OptionalValue.class) != null;
 
         switch (method.getParameterCount()) {
             case 0:
-                call = ((value, typedValue) -> method.invoke(definitionClass));
+                call = ((typedValue) -> method.invoke(definitionClass));
                 type = Void.class;
                 break;
             case 1:
                 Class<?> argType = method.getParameterTypes()[0];
-                if (argType.equals(OptionValue.class)) {
-                    type = Void.class;
-                    call = ((value, typedValue) -> method.invoke(definitionClass, value));
-                } else {
-                    type = argType;
-                    call = ((value, typedValue) -> method.invoke(definitionClass, typedValue));
-                }
-                break;
-            case 2:
-                Class<?>[] argTypes = method.getParameterTypes();
-                if (method.getParameterTypes()[0].equals(OptionValue.class)) {
-                    call = (value, typedValue) -> method.invoke(definitionClass, value, typedValue);
-                    type = argTypes[1];
-                } else if (method.getParameterTypes()[1].equals(OptionValue.class)) {
-                    call = (value, typedValue) -> method.invoke(definitionClass, typedValue, value);
-                    type = argTypes[0];
-                } else {
-                    throw new InvalidSetupError("@Option method with two arguments must have one of them OptionValue.");
-                }
+                type = argType;
+                call = ((typedValue) -> method.invoke(definitionClass, typedValue));
                 break;
             default:
-                throw new InvalidSetupError("@Option method must have specific arguments - please consult the manual.");
+                throw new InvalidSetupError("@Option method must have at most one argument.");
         }
 
         if (annotatedOptional) {
+            if (type.equals(Void.class))
+                throw new InvalidSetupError("Methods without arguments cannot have optional value.");
             if (type.isPrimitive())
                 throw new InvalidSetupError("Methods with primitive types cannot have optional values.");
             if (type.isArray() && type.getComponentType().isPrimitive())
@@ -68,9 +50,9 @@ public class MethodOption extends OptionHandlerBase {
     }
 
     @Override
-    public void haveTypedValue(OptionValue optionValue, Object typedValue) {
+    public void setValue(Object typedValue, String optionName) {
         try {
-            call.call(optionValue, typedValue);
+            call.call(typedValue);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new InternalError();
         }

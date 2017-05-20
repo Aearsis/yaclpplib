@@ -12,17 +12,10 @@ public class ArgumentParserImpl implements ArgumentParser {
     private final List<Options> definitions = new ArrayList<>();
     private final DriverCache drivers = new DriverCache<>(new HashDriverLocator());
 
-    private final Map<String, OptionHandler> optionHandlerMap;
-    private final List<OptionHandler> optionHandlerList;
-    private final List<AfterParseHandler> afterParseMethods;
-    private final MandatoryManager mandatoryManager;
-
-    public ArgumentParserImpl() {
-        optionHandlerMap = new HashMap<>();
-        optionHandlerList = new ArrayList<>();
-        afterParseMethods = new ArrayList<>();
-        mandatoryManager = new MandatoryManager();
-    }
+    private final Map<String, OptionHandler> optionHandlerMap = new HashMap<>();
+    private final List<OptionHandler> optionHandlerList = new ArrayList<>();
+    private final List<AfterParseHandler> afterParseMethods = new ArrayList<>();
+    private final MandatoryManager mandatoryManager = new MandatoryManager();
 
     private UnexpectedParameterHandler unexpectedParameterHandler = value -> {
         throw new UnhandledArgumentException(value);
@@ -51,7 +44,7 @@ public class ArgumentParserImpl implements ArgumentParser {
         // Process every field with @Option annotation
         for (Field field : instance.getClass().getDeclaredFields()) {
             if (field.getDeclaredAnnotationsByType(Option.class).length > 0) {
-                addHandler(new FieldOption(instance, field), field);
+                addHandler(new FieldOption(this, instance, field), field);
             }
         }
 
@@ -59,7 +52,7 @@ public class ArgumentParserImpl implements ArgumentParser {
         for (Method method : instance.getClass().getDeclaredMethods()) {
             // ... with @Option annotation
             if (method.getDeclaredAnnotationsByType(Option.class).length > 0) {
-                addHandler(new MethodOption(instance, method), method);
+                addHandler(new MethodOption(this, instance, method), method);
             }
             // ... or with @AfterParse annotation
             if (method.getDeclaredAnnotation(AfterParse.class) != null) {
@@ -86,30 +79,44 @@ public class ArgumentParserImpl implements ArgumentParser {
                 while (tokenList.size() > 0) {
                     unexpectedParameterHandler.handle(tokenList.remove());
                 }
+                continue;
             }
 
-            InternalOptionValue matchedOptionValue = null;
+            Optional<InternalOptionValue> maybeOptionValue = InternalOptionValueFactory.tryCreate(optionToken);
 
-            if (LongOptionValue.matches(optionToken)) {
-                matchedOptionValue = new LongOptionValue(this, optionToken);
-            }
-            else if (ShortOptionValue.matches(optionToken)) {
-                matchedOptionValue = new ShortOptionValue(this, optionToken);
-            }
-
-            if (matchedOptionValue != null && optionHandlerMap.containsKey(matchedOptionValue.getOption())) {
-                final OptionHandler handler = optionHandlerMap.get(matchedOptionValue.getOption());
-
-                if (tokenList.size() > 0)
-                    matchedOptionValue.completeValue(tokenList, handler.getValuePolicy());
-
-                mandatoryManager.encountered(handler);
-                final Class<?> type = handler.getType();
-                handler.optionFound(matchedOptionValue, drivers.getDriverFor(type));
-            }
-            else {
+            if (!maybeOptionValue.isPresent()) {
                 unexpectedParameterHandler.handle(optionToken);
+                continue;
             }
+
+            if (!optionHandlerMap.containsKey(maybeOptionValue.get().getName())) {
+                // TODO: Consider (configurable?) warning on weird --positionalargument
+                unexpectedParameterHandler.handle(optionToken);
+                continue;
+            }
+
+            final InternalOptionValue optionValue = maybeOptionValue.get();
+            final OptionHandler handler = optionHandlerMap.get(optionValue.getName());
+
+            ValuePolicy valuePolicy = handler.getValuePolicy();
+
+            if (tokenList.size() > 0)
+                optionValue.completeValue(tokenList, valuePolicy);
+
+            mandatoryManager.encountered(handler);
+            final Class<?> type = handler.getType();
+
+            if (valuePolicy == ValuePolicy.MANDATORY && !optionValue.hasValue()) {
+                throw new MissingOptionValue(optionValue);
+            }
+            if (valuePolicy == ValuePolicy.NEVER && optionValue.hasValue()) {
+                throw new InvalidOptionValue("Parameter " + optionValue.getName() + " cannot have an associated value.");
+            }
+
+            final Object typedValue = optionValue.hasValue()
+                                        ? drivers.getDriverFor(type).parse(optionValue)
+                                        : null;
+            handler.setValue(typedValue, optionValue.getName());
         }
 
         // Check if all mandatory were present

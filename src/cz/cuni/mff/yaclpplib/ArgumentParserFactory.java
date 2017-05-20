@@ -46,7 +46,7 @@ public final class ArgumentParserFactory {
      */
     public static ArgumentParser create() throws InvalidSetupError {
         final ArgumentParser parser = createDefaultTypesParser();
-        parser.addOptions(new DefaultHelpOption());
+        parser.addOptions(new DefaultHelpOption(parser));
         return parser;
     }
 }

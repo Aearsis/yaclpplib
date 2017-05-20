@@ -1,6 +1,7 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.OptionValue;
+import cz.cuni.mff.yaclpplib.ArgumentParser;
+import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.Options;
 
 import java.lang.reflect.Field;
@@ -9,18 +10,20 @@ public class FieldOption extends OptionHandlerBase {
 
     final private Field field;
 
-    public FieldOption(Options definitionClass, Field field) {
-        super(definitionClass, field);
+    public FieldOption(ArgumentParser parser, Options definitionClass, Field field) {
+        super(parser, definitionClass, field);
         this.field = field;
         SecurityUtility.makeAccessible(field);
     }
 
     @Override
-    public void haveTypedValue(OptionValue optionValue, Object typedValue) {
+    public void setValue(Object typedValue, String optionName) {
         try {
-            field.set(definitionClass, typedValue);
-        } catch (IllegalAccessException | IllegalArgumentException e) {
+            field.set(getDefinitionClass(), typedValue);
+        } catch (IllegalAccessException e) {
             throw new InternalError();
+        } catch (IllegalArgumentException e) {
+            throw new InvalidOptionValue("A value of " + typedValue + " is invalid for " + optionName + ".");
         }
     }
 

@@ -30,7 +30,6 @@ public class BooleanDriverTest {
         testParse("t", true);
         testParse("y", true);
         testParse("1", true);
-        testParse(null, true);
 
         testParse("disabled", false);
         testParse("disable", false);

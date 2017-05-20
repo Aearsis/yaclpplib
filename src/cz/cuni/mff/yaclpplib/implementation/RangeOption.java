@@ -2,7 +2,6 @@ package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.InvalidSetupError;
-import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.annotation.Range;
 
 /**
@@ -12,6 +11,7 @@ class RangeOption extends OptionHandlerDecorator {
 
     private long minimumValue;
     private long maximumValue;
+    private String firstName;
 
     static boolean isApplicable(OptionHandler handler) {
         return handler.getHandledObject().getDeclaredAnnotation(Range.class) != null;
@@ -30,20 +30,19 @@ class RangeOption extends OptionHandlerDecorator {
     }
 
     @Override
-    public void haveTypedValue(OptionValue optionValue, Object typedValue) {
+    public void setValue(Object typedValue, String optionName) {
         long value;
         if (getType().equals(Integer.class)) {
             value = (Integer) typedValue;
-        }
-        else {
+        } else {
             value = (Long) typedValue;
         }
 
         if (value < minimumValue || value > maximumValue) {
-            throw new InvalidOptionValue("Value of option " + optionValue.getOption()
+            throw new InvalidOptionValue("Value of option " + optionName
                     + " must be between " + minimumValue + " and " + maximumValue + ".");
         }
 
-        super.haveTypedValue(optionValue, typedValue);
+        super.setValue(typedValue, optionName);
     }
 }

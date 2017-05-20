@@ -11,13 +11,8 @@ class JustValue implements OptionValue {
     }
 
     @Override
-    public ArgumentParser getParser() {
-        return null;
-    }
-
-    @Override
-    public String getOption() {
-        return null;
+    public String getName(){
+        return "--testoption";
     }
 
     @Override

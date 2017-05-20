@@ -43,7 +43,6 @@ public class HeadOptionsTest {
         parser.parse("--silent=true --verbose".split(" "));
 
         assertEquals("Long option --silent=true not parsed correctly.", true, options.quiet);
-
         assertEquals("Long option --verbose not parsed correctly.", true, options.verbose);
     }
 

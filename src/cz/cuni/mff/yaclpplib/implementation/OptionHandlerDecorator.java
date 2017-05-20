@@ -1,13 +1,9 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.InvalidOptionValue;
-import cz.cuni.mff.yaclpplib.MissingOptionValue;
-import cz.cuni.mff.yaclpplib.OptionValue;
+import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.Options;
-import cz.cuni.mff.yaclpplib.driver.Driver;
 
 import java.lang.reflect.AccessibleObject;
-import java.util.List;
 
 /**
  * Base class for decorating OptionHandlers.
@@ -21,8 +17,8 @@ abstract public class OptionHandlerDecorator implements OptionHandler {
     }
 
     @Override
-    public void haveTypedValue(OptionValue optionValue, Object typedValue) {
-        decorated.haveTypedValue(optionValue, typedValue);
+    public void setValue(Object typedValue, String optionName) {
+        decorated.setValue(typedValue, optionName);
     }
 
     @Override
@@ -61,8 +57,12 @@ abstract public class OptionHandlerDecorator implements OptionHandler {
     }
 
     @Override
-    public void optionFound(OptionValue optionValue, Driver driver) {
-        final Object typedValue = driver.parse(optionValue);
-        haveTypedValue(optionValue, typedValue);
+    public ArgumentParser getParser() {
+        return decorated.getParser();
+    }
+
+    @Override
+    public String getAnyOptionName() {
+        return decorated.getAnyOptionName();
     }
 }

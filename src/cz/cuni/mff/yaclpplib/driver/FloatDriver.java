@@ -10,7 +10,7 @@ public class FloatDriver implements Driver<Float> {
         try {
             return Float.parseFloat(x.getValue());
         } catch (NumberFormatException e) {
-            throw new InvalidOptionValue("Option " + x.getOption() + " requires a real value.");
+            throw new InvalidOptionValue("Option " + x.getName() + " requires a real value.");
         }
     }
 

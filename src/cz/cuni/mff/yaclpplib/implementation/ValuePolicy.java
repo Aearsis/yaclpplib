@@ -1,11 +1,19 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-enum ValuePolicy {
-    NEVER, OPTIONAL, MANDATORY;
+import java.util.function.Predicate;
 
-    boolean eatsValue(String value) {
-        if (this == OPTIONAL && value.startsWith("-"))
-            return false;
-        return this != NEVER;
+public enum ValuePolicy {
+    NEVER(value -> false),
+    OPTIONAL(value -> !value.startsWith("-")),
+    MANDATORY(value -> true);
+
+    private final Predicate<String> valueAcceptor;
+
+    ValuePolicy(Predicate<String> valueAcceptor) {
+        this.valueAcceptor = valueAcceptor;
+    }
+
+    boolean acceptsValue(String value) {
+        return valueAcceptor.test(value);
     }
 }

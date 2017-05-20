@@ -10,7 +10,7 @@ public class ByteDriver implements Driver<Byte> {
         try {
             return Byte.parseByte(x.getValue());
         } catch (NumberFormatException e) {
-            throw new InvalidOptionValue("Option " + x.getOption() + " requires an integer value between -128 and 127.");
+            throw new InvalidOptionValue("Option " + x.getName() + " requires an integer value between -128 and 127.");
         }
     }
 

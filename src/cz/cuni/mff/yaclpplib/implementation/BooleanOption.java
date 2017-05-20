@@ -1,11 +1,9 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.OptionValue;
-
 /**
  * Boolean options are often used without specifing the value, such as --verbose.
  *
- * This decorator is doing half the trick. The other half is in the BooleanDriver, parsing no value as truthy.
+ * This decorator is doing the trick.
  */
 class BooleanOption extends OptionHandlerDecorator {
 
@@ -16,6 +14,11 @@ class BooleanOption extends OptionHandlerDecorator {
 
     BooleanOption(OptionHandler decorated) {
         super(decorated);
+    }
+
+    @Override
+    public void setValue(Object typedValue, String optionName) {
+        super.setValue(typedValue != null ? typedValue : true, optionName);
     }
 
     @Override

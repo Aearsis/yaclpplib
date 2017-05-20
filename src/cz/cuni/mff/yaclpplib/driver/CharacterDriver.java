@@ -8,7 +8,7 @@ public class CharacterDriver implements Driver<Character> {
     @Override
     public Character parse(OptionValue x) throws InvalidOptionValue {
         if (x.getValue().length() != 1) {
-            throw new InvalidOptionValue("Option " + x.getOption() + " must be a single character.");
+            throw new InvalidOptionValue("Option " + x.getName() + " must be a single character.");
         }
         return x.getValue().charAt(0);
     }

@@ -6,14 +6,9 @@ package cz.cuni.mff.yaclpplib;
 public interface OptionValue {
 
     /**
-     * @return the parser which parsed this option and created this instance
-     */
-    ArgumentParser getParser();
-
-    /**
      * @return -s, --long
      */
-    String getOption();
+    String getName();
 
     /**
      * Should return null iff hasValue() returns false.

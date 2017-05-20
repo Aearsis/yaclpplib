@@ -10,6 +10,6 @@ public class MissingOptionValue extends InvalidOptionValue {
 
     @Override
     public String getMessage() {
-        return "Parameter " + optionValue.getOption() + " must have an associated value.";
+        return "Parameter " + optionValue.getName() + " must have an associated value.";
     }
 }

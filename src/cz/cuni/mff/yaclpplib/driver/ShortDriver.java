@@ -10,7 +10,7 @@ public class ShortDriver implements Driver<Short> {
         try {
             return Short.parseShort(x.getValue());
         } catch (NumberFormatException e) {
-            throw new InvalidOptionValue("Option " + x.getOption() + " requires an integer value between -32768 and 32767.");
+            throw new InvalidOptionValue("Option " + x.getName() + " requires an integer value between -32768 and 32767.");
         }
     }
 

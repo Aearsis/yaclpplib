@@ -1,20 +1,13 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.InvalidOptionValue;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class ShortOptionValue extends OptionValueBase implements InternalOptionValue {
+public class ShortOptionValue implements InternalOptionValue {
 
     private final String name;
 
     private String[] rawTokens;
     private String value;
 
-    public ShortOptionValue(ArgumentParserImpl argumentParser, String primaryToken) {
-        super(argumentParser);
-
+    public ShortOptionValue(String primaryToken) {
         rawTokens = new String[] { primaryToken };
 
         if (primaryToken.length() > 2) {
@@ -32,14 +25,14 @@ public class ShortOptionValue extends OptionValueBase implements InternalOptionV
             return;
 
         final String possibleValue = tokenList.peek();
-        if (policy.eatsValue(possibleValue)) {
+        if (policy.acceptsValue(possibleValue)) {
             value = tokenList.remove();
             rawTokens = new String[] { name, value };
         }
     }
 
     @Override
-    public String getOption(){
+    public String getName(){
         return name;
     }
 

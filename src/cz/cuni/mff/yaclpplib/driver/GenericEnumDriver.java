@@ -34,7 +34,7 @@ public class GenericEnumDriver implements Driver {
             return enumValues.get(value);
         }
         else {
-            throw new InvalidOptionValue("Invalid value for " + x.getOption());
+            throw new InvalidOptionValue("Invalid value for " + x.getName());
         }
     }
 

@@ -10,7 +10,8 @@ import java.util.List;
 public interface ArgumentParser {
 
     /**
-     * Register instance of OptionList class. It will be filled with argument values, when you call parse.
+     * Register instance of Options class. It will be filled with argument values, when you call parse.
+     *
      * @param instance An instance of OptionList interface
      * @param <T> Type of your OptionList class
      * @return your instance (so you can use it as a oneliner)
@@ -18,7 +19,7 @@ public interface ArgumentParser {
     <T extends Options> T addOptions(T instance) throws InvalidSetupError;
 
     /**
-     * Read the arguments, fill all argument classes
+     * Read the arguments, fill all argument classes.
      *
      * TODO: Document how multiple calls to parse behave
      * @param args array of arguments given to main method

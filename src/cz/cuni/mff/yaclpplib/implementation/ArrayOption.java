@@ -1,6 +1,5 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.OptionValue;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +11,14 @@ public class ArrayOption extends OptionHandlerDecorator {
         return handler.getType().isArray();
     }
 
-    List<Object> buffer = new ArrayList<>();
+    private List<Object> buffer = new ArrayList<>();
 
-    public ArrayOption(OptionHandler decorated) {
+    ArrayOption(OptionHandler decorated) {
         super(decorated);
     }
 
     @Override
-    public void haveTypedValue(OptionValue optionValue, Object typedValue) {
+    public void setValue(Object typedValue, String optionName) {
         buffer.add(typedValue);
     }
 
@@ -28,7 +27,7 @@ public class ArrayOption extends OptionHandlerDecorator {
         Object array = Array.newInstance(getType(), buffer.size());
         for (int i = 0; i < buffer.size(); ++i)
             Array.set(array, i, buffer.get(i));
-        decorated.haveTypedValue(null, array);
+        decorated.setValue(array, getAnyOptionName());
     }
 
     @Override

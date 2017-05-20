@@ -10,7 +10,7 @@ public class DoubleDriver implements Driver<Double> {
         try {
             return Double.parseDouble(x.getValue());
         } catch (NumberFormatException e) {
-            throw new InvalidOptionValue("Option " + x.getOption() + " requires a real value.");
+            throw new InvalidOptionValue("Option " + x.getName() + " requires a real value.");
         }
     }
 

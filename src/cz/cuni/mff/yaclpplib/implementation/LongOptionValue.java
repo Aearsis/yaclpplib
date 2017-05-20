@@ -5,7 +5,7 @@ import cz.cuni.mff.yaclpplib.ArgumentParser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LongOptionValue extends OptionValueBase implements InternalOptionValue {
+public class LongOptionValue implements InternalOptionValue {
 
     private final String name;
 
@@ -16,9 +16,7 @@ public class LongOptionValue extends OptionValueBase implements InternalOptionVa
         return optionToken.matches("--[a-zA-Z0-9].*");
     }
 
-    LongOptionValue(ArgumentParser parser, String primaryToken) {
-        super(parser);
-
+    LongOptionValue(String primaryToken) {
         final String[] split = primaryToken.split("=", 2);
 
         name = split[0];
@@ -39,7 +37,7 @@ public class LongOptionValue extends OptionValueBase implements InternalOptionVa
     }
 
     @Override
-    public String getOption() {
+    public String getName() {
         return name;
     }
 

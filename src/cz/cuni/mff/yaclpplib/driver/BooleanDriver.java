@@ -10,7 +10,7 @@ import java.util.Set;
 public class BooleanDriver implements Driver<Boolean> {
 
     private static Set<String> truthyValues = new HashSet<>(Arrays.asList(
-            "true", "t", "1", "yes", "y", "on", "enable", "enabled", null
+            "true", "t", "1", "yes", "y", "on", "enable", "enabled"
     ));
 
     private static Set<String> falsyValues = new HashSet<>(Arrays.asList(
@@ -25,7 +25,7 @@ public class BooleanDriver implements Driver<Boolean> {
         } else if (falsyValues.contains(value)) {
             return false;
         } else {
-            throw new InvalidOptionValue("The value of " + x.getOption() + " can be either 'true' or 'false'.");
+            throw new InvalidOptionValue("The value of " + x.getName() + " can be either 'true' or 'false'.");
         }
     }
 
