@@ -15,11 +15,13 @@ public class ArgumentParserImpl implements ArgumentParser {
     private final Map<String, OptionHandler> optionHandlerMap;
     private final List<OptionHandler> optionHandlerList;
     private final List<AfterParseHandler> afterParseMethods;
+    private final MandatoryManager mandatoryManager;
 
     public ArgumentParserImpl() {
         optionHandlerMap = new HashMap<>();
         optionHandlerList = new ArrayList<>();
         afterParseMethods = new ArrayList<>();
+        mandatoryManager = new MandatoryManager();
     }
 
     private UnexpectedParameterHandler unexpectedParameterHandler = value -> {
@@ -35,6 +37,7 @@ public class ArgumentParserImpl implements ArgumentParser {
 
     private void addHandler(OptionHandler rawHandler, AccessibleObject member) {
         final OptionHandler handler = OptionHandler.wrap(rawHandler);
+        mandatoryManager.add(handler);
         optionHandlerList.add(handler);
         Arrays.stream(member.getDeclaredAnnotationsByType(Option.class))
                 .forEach(option -> mapOption(option.value(), handler));
@@ -100,6 +103,7 @@ public class ArgumentParserImpl implements ArgumentParser {
                 if (tokenList.size() > 0)
                     matchedOptionValue.completeValue(tokenList, handler.getValuePolicy());
 
+                mandatoryManager.encountered(handler);
                 final Class<?> type = handler.getType();
                 handler.optionFound(matchedOptionValue, drivers.getDriverFor(type));
             }
@@ -108,19 +112,12 @@ public class ArgumentParserImpl implements ArgumentParser {
             }
         }
 
+        // Check if all mandatory were present
+        mandatoryManager.check();
+
         // Finish all the option arrays we were filling
-        List<String> missingOptions = new ArrayList<>();
         for (OptionHandler handler : optionHandlerList) {
-            try {
-                handler.finish();
-            }
-            catch (MissingMandatoryOptionException e) {
-                missingOptions.add(e.getOptionNames()[0]);
-            }
-        }
-        if (missingOptions.size() > 0) {
-            throw new MissingMandatoryOptionException(
-                    missingOptions.toArray(new String[missingOptions.size()]));
+            handler.finish();
         }
 
         // Call all @AfterParse methods

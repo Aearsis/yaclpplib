@@ -50,11 +50,6 @@ public interface OptionHandler {
             wrappedHandler = new BooleanOption(wrappedHandler);
         }
 
-        // Checks for mandatory
-        if (MandatoryOption.isApplicable(wrappedHandler)) {
-            wrappedHandler = new MandatoryOption(wrappedHandler);
-        }
-
         // Does range checks on integers/longs
         if (RangeOption.isApplicable(wrappedHandler)) {
             wrappedHandler = new RangeOption(wrappedHandler);
