@@ -15,6 +15,13 @@ import cz.cuni.mff.yaclpplib.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Range {
+    /**
+     * Minimal allowed value.
+     */
     long minimumValue();
+
+    /**
+     * Maximal allowed value.
+     */
     long maximumValue();
 }

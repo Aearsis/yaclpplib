@@ -1,6 +1,7 @@
 package cz.cuni.mff.yaclpplib.annotation;
 
 import java.lang.annotation.*;
+import cz.cuni.mff.yaclpplib.IllegalOptionValue;
 
 /**
  * Sets a short or long option text to go with this attribute
@@ -11,8 +12,8 @@ import java.lang.annotation.*;
  * You can annotate fields and methods.
  * Fields can be either of simple types (int, String, bool etc.), enums or arrays of these.
  *
- * Methods can have all from above and Optional&lt;T&gt;, with T being any field available type.
- * These method can validate the argument and reject it with IllegalOptionValue exception.
+ * Methods can have all from above.
+ * These methods can validate the argument and reject it with {@link IllegalOptionValue} exception.
  *
  * The order of setting fields / calling methods is not defined.
  */
@@ -21,6 +22,14 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Option {
+    /**
+     * The option name, such as -o or --option.
+     */
     String value();
+
+    /**
+     * The name of the option that appears in help.
+     * It can be different from the actual option if needed.
+     */
     String help() default "";
 }

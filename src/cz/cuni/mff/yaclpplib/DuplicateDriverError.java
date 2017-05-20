@@ -5,7 +5,7 @@ package cz.cuni.mff.yaclpplib;
  */
 public class DuplicateDriverError extends InvalidSetupError {
 
-    final Class<?> collidingClass;
+    private final Class<?> collidingClass;
 
     public DuplicateDriverError(Class<?> collidingClass) {
         this.collidingClass = collidingClass;
@@ -14,5 +14,13 @@ public class DuplicateDriverError extends InvalidSetupError {
     @Override
     public String getMessage() {
         return "A driver for " + collidingClass.getTypeName() + " already exists.";
+    }
+
+    /**
+     * Return the Class instance of the colliding class which cause this exception.
+     * @return the Class instance of colliding class
+     */
+    public Class<?> getCollidingClass() {
+        return collidingClass;
     }
 }
