@@ -1,4 +1,4 @@
-package cz.cuni.mff.yaclpplib.parserTests;
+package parserTests;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.ArgumentParserFactory;

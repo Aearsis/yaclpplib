@@ -2,6 +2,9 @@ package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.ArgumentParserFactory;
+import cz.cuni.mff.yaclpplib.InvalidSetupError;
+import cz.cuni.mff.yaclpplib.Options;
+import cz.cuni.mff.yaclpplib.annotation.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,4 +53,16 @@ public class ArgumentParserImplTest {
         assertEquals("Help text should contain '--help'.", true, help.contains("--help"));
         assertEquals("Help text should contain 'Print a usage'.", true, help.contains("Print a usage"));
     }
+
+    @Test(expected = InvalidSetupError.class)
+    public void testMultipleOptions() throws Exception {
+        parser.addOptions(new Options() {
+            @Option("--verbose")
+            boolean verbose;
+
+            @Option("--verbose")
+            void method() {}
+        });
+    }
+
 }

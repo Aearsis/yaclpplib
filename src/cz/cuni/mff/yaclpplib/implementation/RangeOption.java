@@ -27,8 +27,8 @@ class RangeOption extends OptionHandlerDecorator {
     RangeOption(OptionHandler decorated, Range range) {
         super(decorated);
 
-        if (!(getType().equals(Integer.class) || getType().equals(Long.class))) {
-            throw new InvalidSetupError("The Range annotation can be used only with long or int types.");
+        if (!(Primitives.isIntegral(getType()))) {
+            throw new InvalidSetupError("The Range annotation can be used only with integral types.");
         }
 
         minimumValue = range.minimumValue();
@@ -37,12 +37,7 @@ class RangeOption extends OptionHandlerDecorator {
 
     @Override
     public void setValue(Object typedValue, String optionName) {
-        long value;
-        if (getType().equals(Integer.class)) {
-            value = (Integer) typedValue;
-        } else {
-            value = (Long) typedValue;
-        }
+        final long value = ((Number) typedValue).longValue();
 
         if (value < minimumValue || value > maximumValue) {
             throw new IllegalOptionValue("Value of option " + optionName
