@@ -7,6 +7,9 @@ public class StringDriver implements Driver<String> {
 
     @Override
     public String parse(OptionValue x) throws InvalidOptionValue {
+        if (x.getValue() == null)
+            throw new InvalidOptionValue("String option must have a value.");
+
         return x.getValue();
     }
 

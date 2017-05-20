@@ -44,26 +44,26 @@ public class SimulatorOptionsTest {
 
     @Test(expected = MissingMandatoryOptionException.class)
     public void testMissingMandatory() {
-        parser.parse("-c --count=1000000 -s EXPLOSION input1".split(" "));
+        parser.parse("-c --count=10000 -s EXPLOSION input1".split(" "));
     }
 
     @Test
     public void testEmptyDebug() {
-        parser.parse("-i 5 -c --count=1000000 --debug -s EXPLOSION input1".split(" "));
+        parser.parse("-i 5 -c --count=1000 --debug -s EXPLOSION input1".split(" "));
 
         assertEquals(options.debugLevel, 10);
     }
 
     @Test
     public void testValueDebug() {
-        parser.parse("-i 5 -c --count=1000000 --debug=20 -s EXPLOSION input1".split(" "));
+        parser.parse("-i 5 -c --count=1000 --debug=20 -s explosion input1".split(" "));
 
         assertEquals(options.debugLevel, 20);
     }
 
     @Test
     public void testValidInput() {
-        parser.parse(("-i 10 -c -r --count=50 -s DIRECTIONAL -s EXPLOSION -m 2.50 -d 0.1 " +
+        parser.parse(("-i 10 -c -r --count=50 -s directional -s EXPLOSION -m 2.50 -d 0.1 " +
                 "--output=logfile input1 input2 input3").split(" "));
 
         assertEquals(options.iterations, 10);

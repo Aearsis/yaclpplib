@@ -9,7 +9,7 @@ public class ArrayOption extends OptionHandlerDecorator {
 
     static boolean isApplicable(OptionHandler handler) {
         // Disable having two or more layers of aggregating options
-        return !(handler instanceof ArrayOption) && handler.getType().isArray();
+        return !(handler.getDecorators().contains(ArrayOption.class)) && handler.getType().isArray();
     }
 
     List<Object> buffer = new ArrayList<>();

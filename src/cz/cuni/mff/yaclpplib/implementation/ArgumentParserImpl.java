@@ -109,8 +109,18 @@ public class ArgumentParserImpl implements ArgumentParser {
         }
 
         // Finish all the option arrays we were filling
+        List<String> missingOptions = new ArrayList<>();
         for (OptionHandler handler : optionHandlerList) {
-            handler.finish();
+            try {
+                handler.finish();
+            }
+            catch (MissingMandatoryOptionException e) {
+                missingOptions.add(e.getOptionNames()[0]);
+            }
+        }
+        if (missingOptions.size() > 0) {
+            throw new MissingMandatoryOptionException(
+                    missingOptions.toArray(new String[missingOptions.size()]));
         }
 
         // Call all @AfterParse methods

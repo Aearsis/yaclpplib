@@ -12,7 +12,9 @@ import cz.cuni.mff.yaclpplib.driver.Driver;
 
 import java.lang.*;
 import java.lang.reflect.AccessibleObject;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A class handling one target of an option (field, method, etc.)
@@ -25,12 +27,14 @@ abstract class OptionHandlerBase implements OptionHandler {
     final Option[] annotations;
     final boolean mandatory;
     final private String help;
+    final private AccessibleObject handledObject;
 
     boolean found = false;
 
     OptionHandlerBase(Options definitionClass, AccessibleObject from) {
         this.definitionClass = definitionClass;
 
+        handledObject = from;
         annotations = from.getDeclaredAnnotationsByType(Option.class);
         mandatory = from.getDeclaredAnnotation(Mandatory.class) != null;
         Help helpAnnotation = from.getDeclaredAnnotation(Help.class);
@@ -41,6 +45,21 @@ abstract class OptionHandlerBase implements OptionHandler {
         return String.format("%30s %s",
                 String.join(", ", Arrays.stream(annotations).map((x) -> x.help().equals("") ? x.help() : x.value()).toArray(String[]::new)),
                 help);
+    }
+
+    @Override
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    @Override
+    public AccessibleObject getHandledObject() {
+        return handledObject;
+    }
+
+    @Override
+    public List<Class> getDecorators() {
+        return new ArrayList<>();
     }
 
     @Override
