@@ -15,12 +15,9 @@ import java.util.List;
 abstract public class OptionHandlerDecorator implements OptionHandler {
 
     protected final OptionHandler decorated;
-    protected final List<Class> decorators;
 
     public OptionHandlerDecorator(OptionHandler decorated) {
         this.decorated = decorated;
-        this.decorators = decorated.getDecorators();
-        this.decorators.add(getClass());
     }
 
     @Override
@@ -56,11 +53,6 @@ abstract public class OptionHandlerDecorator implements OptionHandler {
     @Override
     public AccessibleObject getHandledObject() {
         return decorated.getHandledObject();
-    }
-
-    @Override
-    public List<Class> getDecorators() {
-        return decorators;
     }
 
     @Override

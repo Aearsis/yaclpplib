@@ -5,7 +5,6 @@ import cz.cuni.mff.yaclpplib.Options;
 import cz.cuni.mff.yaclpplib.driver.Driver;
 
 import java.lang.reflect.AccessibleObject;
-import java.util.List;
 
 public interface OptionHandler {
     Class<?> getType();
@@ -14,7 +13,6 @@ public interface OptionHandler {
     boolean isMandatory();
     AccessibleObject getHandledObject();
     Options getDefinitionClass();
-    List<Class> getDecorators();
 
     void optionFound(OptionValue optionValue, Driver driver);
     void haveTypedValue(OptionValue optionValue, Object typedValue);
@@ -32,30 +30,36 @@ public interface OptionHandler {
      *      - range options, we need to check if the value is in the given range
      *
      * @param rawHandler a handler to be wrapped
-     * @return handler, wraBoxingOptionpped if applicable
+     * @return handler, wrapped if applicable
      */
     static OptionHandler wrap(OptionHandler rawHandler) {
+        OptionHandler wrappedHandler = rawHandler;
+
         // One-dimensional arrays of known types
-        if (ArrayOption.isApplicable(rawHandler)) {
-            return wrap(new ArrayOption(rawHandler));
+        if (ArrayOption.isApplicable(wrappedHandler)) {
+            wrappedHandler = new ArrayOption(wrappedHandler);
         }
 
-        if (BoxedOption.isApplicable(rawHandler)) {
-            return wrap(new BoxedOption(rawHandler));
+        // Autoboxer for types
+        if (BoxedOption.isApplicable(wrappedHandler)) {
+            wrappedHandler = new BoxedOption(wrappedHandler);
         }
 
-        if (BooleanOption.isApplicable(rawHandler)) {
-            return wrap(new BooleanOption(rawHandler));
+        // Allows optional value for booleans
+        if (BooleanOption.isApplicable(wrappedHandler)) {
+            wrappedHandler = new BooleanOption(wrappedHandler);
         }
 
-        if (MandatoryOption.isApplicable(rawHandler)) {
-            return wrap(new MandatoryOption(rawHandler));
+        // Checks for mandatory
+        if (MandatoryOption.isApplicable(wrappedHandler)) {
+            wrappedHandler = new MandatoryOption(wrappedHandler);
         }
 
-        if (RangeOption.isApplicable(rawHandler)) {
-            return wrap(new RangeOption(rawHandler));
+        // Does range checks on integers/longs
+        if (RangeOption.isApplicable(wrappedHandler)) {
+            wrappedHandler = new RangeOption(wrappedHandler);
         }
 
-        return rawHandler;
+        return wrappedHandler;
     }
 }

@@ -29,8 +29,6 @@ abstract class OptionHandlerBase implements OptionHandler {
     final private String help;
     final private AccessibleObject handledObject;
 
-    boolean found = false;
-
     OptionHandlerBase(Options definitionClass, AccessibleObject from) {
         this.definitionClass = definitionClass;
 
@@ -55,11 +53,6 @@ abstract class OptionHandlerBase implements OptionHandler {
     @Override
     public AccessibleObject getHandledObject() {
         return handledObject;
-    }
-
-    @Override
-    public List<Class> getDecorators() {
-        return new ArrayList<>();
     }
 
     @Override

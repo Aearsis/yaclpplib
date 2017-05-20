@@ -14,8 +14,7 @@ class RangeOption extends OptionHandlerDecorator {
     private long maximumValue;
 
     static boolean isApplicable(OptionHandler handler) {
-        return !(handler.getDecorators().contains(RangeOption.class))
-                && handler.getHandledObject().getDeclaredAnnotation(Range.class) != null;
+        return handler.getHandledObject().getDeclaredAnnotation(Range.class) != null;
     }
 
     RangeOption(OptionHandler decorated) {

@@ -12,7 +12,7 @@ class MandatoryOption extends OptionHandlerDecorator {
     private boolean encountered = false;
 
     static boolean isApplicable(OptionHandler handler) {
-        return !(handler.getDecorators().contains(MandatoryOption.class)) && handler.isMandatory();
+        return handler.isMandatory();
     }
 
     MandatoryOption(OptionHandler decorated) {
