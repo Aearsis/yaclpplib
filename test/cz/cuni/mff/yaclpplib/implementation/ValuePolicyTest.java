@@ -1,6 +1,5 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,7 +1,6 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.IllegalOptionValue;
-import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.InvalidSetupError;
 import cz.cuni.mff.yaclpplib.annotation.Range;
 

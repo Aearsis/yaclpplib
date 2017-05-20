@@ -3,7 +3,6 @@ package showcase;
 import cz.cuni.mff.yaclpplib.annotation.*;
 import cz.cuni.mff.yaclpplib.*;
 
-import java.io.IOException;
 import java.util.List;
 
 public class HeadOptions implements Options {

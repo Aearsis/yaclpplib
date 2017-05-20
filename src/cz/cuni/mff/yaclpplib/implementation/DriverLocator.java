@@ -1,6 +1,5 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.DuplicateDriverError;
 import cz.cuni.mff.yaclpplib.driver.Driver;
 
 /**

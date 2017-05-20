@@ -3,7 +3,6 @@ package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.*;
 import cz.cuni.mff.yaclpplib.annotation.Help;
-import cz.cuni.mff.yaclpplib.annotation.Mandatory;
 import cz.cuni.mff.yaclpplib.annotation.Option;
 
 import java.lang.*;

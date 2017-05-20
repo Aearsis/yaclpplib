@@ -1,7 +1,6 @@
 package cz.cuni.mff.yaclpplib.annotation;
 
 import java.lang.annotation.*;
-import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 
 /**
  * Marks the method as a generic argument validator.

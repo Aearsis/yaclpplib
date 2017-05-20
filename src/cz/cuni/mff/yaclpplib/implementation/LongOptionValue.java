@@ -1,10 +1,5 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.ArgumentParser;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class LongOptionValue implements InternalOptionValue {
 
     private final String name;

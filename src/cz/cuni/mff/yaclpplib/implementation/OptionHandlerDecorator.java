@@ -3,8 +3,6 @@ package cz.cuni.mff.yaclpplib.implementation;
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.Options;
 
-import java.lang.reflect.AccessibleObject;
-
 /**
  * Base class for decorating OptionHandlers.
  */

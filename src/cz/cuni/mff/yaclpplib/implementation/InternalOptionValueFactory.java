@@ -1,7 +1,5 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.OptionValue;
-
 import java.util.Optional;
 
 final class InternalOptionValueFactory {

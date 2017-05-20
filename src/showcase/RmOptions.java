@@ -4,7 +4,6 @@ import cz.cuni.mff.yaclpplib.annotation.*;
 import cz.cuni.mff.yaclpplib.*;
 
 import java.util.List;
-import java.util.Optional;
 
 public class RmOptions implements Options {
 
@@ -14,7 +13,7 @@ public class RmOptions implements Options {
     public boolean force = false;
 
     public enum Prompt {
-        ALWAYS, ONCE, NEVER;
+        ALWAYS, ONCE, NEVER
     }
 
     public Prompt prompt = null;

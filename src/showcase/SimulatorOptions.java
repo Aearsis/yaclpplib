@@ -1,6 +1,5 @@
 package showcase;
 
-import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.Options;
 import cz.cuni.mff.yaclpplib.annotation.*;
 
