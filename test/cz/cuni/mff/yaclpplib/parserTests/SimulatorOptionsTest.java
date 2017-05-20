@@ -10,7 +10,7 @@ import showcase.SimulatorOptions;
 
 import static org.junit.Assert.*;
 
-public class SimulatiorOptionsTest {
+public class SimulatorOptionsTest {
     private ArgumentParser parser;
     private SimulatorOptions options;
 
@@ -70,10 +70,10 @@ public class SimulatiorOptionsTest {
         assertEquals(options.compulsiveForce, true);
         assertEquals(options.repulsiveForce, true);
         assertEquals(options.particles, 50);
-        assertEquals(options.simulations.length, 1);
+        assertEquals(options.simulations.length, 2);
         assertEquals(options.outputFile, "logfile");
         assertEquals(options.particleMass, 2.5, 0.0000001);
-        assertEquals(options.particleMass, 0.1, 0.0000001);
+        assertEquals(options.decay, 0.1, 0.0000001);
         assertEquals(options.simulations[0], SimulatorOptions.SimulationType.DIRECTIONAL);
         assertEquals(options.simulations[1], SimulatorOptions.SimulationType.EXPLOSION);
         assertEquals(options.inputs.get(0), "input1");
