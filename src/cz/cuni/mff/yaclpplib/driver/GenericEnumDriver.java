@@ -11,8 +11,6 @@ import java.util.Map;
 /**
  * Driver for enum subclasses, that are annotated by {@link CaseSensitive} annotation.
  * It is to be created dynamically for every enum subtype encountered in users' Options. <br/>
- *
- * This is a bit hacky because how hacky enums are in Java.
  */
 @SuppressWarnings("unchecked")
 public class GenericEnumDriver implements Driver {
