@@ -4,12 +4,12 @@ import java.lang.annotation.*;
 import cz.cuni.mff.yaclpplib.*;
 
 /**
- * Annotation used at integral options. <br/>
+ * <p>Annotation used at integral options. </p>
  *
- * This is a subject for different library, field validator. It is here only to satisfy the assignment requirements. <br/>
+ * <p>This is a subject for different library, field validator. It is here only to satisfy the assignment requirements. </p>
  *
- * When parsing the annotated option, if the value doesn't fit in the given range,
- * {@link ArgumentParser} will throw {@link InvalidOptionValue} exception.
+ * <p>When parsing the annotated option, if the value doesn't fit in the given range,
+ * {@link ArgumentParser} will throw {@link InvalidOptionValue} exception.</p>
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

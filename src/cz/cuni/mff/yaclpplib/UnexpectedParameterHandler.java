@@ -1,8 +1,8 @@
 package cz.cuni.mff.yaclpplib;
 
 /**
- * Defines an interface for handlers called when an unexpected parameter appears.<br/>
- * Allows overriding the default behaviour of parser when such parameter is encountered.
+ * <p>Defines an interface for handlers called when an unexpected parameter appears.</p>
+ * <p>Allows overriding the default behaviour of parser when such parameter is encountered.</p>
  */
 public interface UnexpectedParameterHandler {
     /**

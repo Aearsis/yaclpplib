@@ -19,9 +19,9 @@ public interface ArgumentParser {
     <T extends Options> T addOptions(T instance) throws InvalidSetupError;
 
     /**
-     * Read the arguments, fill all argument classes. <br/>
+     * <p>Read the arguments, fill all argument classes. </p>
      *
-     * It is generally possible to call this method multiple times, but with certain limitations:
+     * <p>It is generally possible to call this method multiple times, but with certain limitations:</p>
      * <ul>
      *     <li>The set of arguments given in the first call must be valid on its own.</li>
      *     <li>Method options taking arrays will be called multiple times, with partial arrays.</li>
@@ -54,18 +54,18 @@ public interface ArgumentParser {
     }
 
     /**
-     * Changes the way parser handles unknown arguments. <br/>
-     * Do not use in conjunction with {@link ArgumentParser#requestPositionalArguments},
-     * because then all parameters are expected.
+     * <p>Changes the way parser handles unknown arguments. </p>
+     * <p>Do not use in conjunction with {@link ArgumentParser#requestPositionalArguments},
+     * because then all parameters are expected.</p>
      *
      * @param handler new handler that would be called on unexpected argument
      */
     void setUnexpectedParameterHandler(UnexpectedParameterHandler handler);
 
     /**
-     * Creates a list, which will be filled with positional arguments when the argument list is parsed. <br/>
-     * Do not use in conjunction with {@link ArgumentParser#setUnexpectedParameterHandler},
-     * because then all parameters are expected.
+     * <p>Creates a list, which will be filled with positional arguments when the argument list is parsed. </p>
+     * <p>Do not use in conjunction with {@link ArgumentParser#setUnexpectedParameterHandler},
+     * because then all parameters are expected.</p>
      *
      * @return reference to a list which will later be filled with positional arguments
      */

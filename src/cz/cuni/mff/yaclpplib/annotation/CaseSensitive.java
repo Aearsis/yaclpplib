@@ -3,9 +3,9 @@ package cz.cuni.mff.yaclpplib.annotation;
 import java.lang.annotation.*;
 
 /**
- * Makes the enum values case-sensitive during parsing. <br/>
+ * <p>Makes the enum values case-sensitive during parsing. </p>
  *
- * This annotation has a meaning only at enums, it is ignored everywhere else.
+ * <p>This annotation has a meaning only at enums, it is ignored everywhere else.</p>
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

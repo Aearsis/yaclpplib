@@ -4,23 +4,23 @@ import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
 import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 
 /**
- * Boolean options are often used without specifying the value, such as --verbose.<br/>
+ * <p>Boolean options are often used without specifying the value, such as --verbose.</p>
  *
- * This decorator is doing the trick. <br/>
+ * <p>This decorator is doing the trick. </p>
  *
- * Valid, behaving-as-expected variants: <br/>
+ * <p>Valid, behaving-as-expected variants: </p>
  * <ul>
  * <li>--verbose</li>
  * <li>-q</li>
  * <li>--verbose=true</li>
  * <li>-qfalse</li>
  * </ul>
- * Valid, but not doing what would you expect:
+ * <p>Valid, but not doing what would you expect:</p>
  * <ul>
  * <li>--verbose true</li>
  * <li>-q false</li>
  * </ul>
- * These take the second argument as a positional argument instead.
+ * <p>These take the second argument as a positional argument instead.</p>
  */
 public class BooleanOption extends OptionHandlerDecorator {
 

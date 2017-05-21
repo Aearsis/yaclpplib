@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * Driver for enum subclasses, that are not annotated by {@link CaseSensitive} annotation.
- * It is to be created dynamically for every enum subtype encountered in users' Options. <br/>
+ * It is to be created dynamically for every enum subtype encountered in users' Options.
  */
 @SuppressWarnings("unchecked")
 public class GenericCaseInsensitiveEnumDriver implements Driver {

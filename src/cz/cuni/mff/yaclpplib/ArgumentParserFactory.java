@@ -14,8 +14,8 @@ import cz.cuni.mff.yaclpplib.implementation.drivers.StringConstructableDriverFac
 public final class ArgumentParserFactory {
 
     /**
-     * Creates an empty parser with no drivers attached. <br/>
-     * The programmer is expected to create his own drivers and fill the parser himself.
+     * <p>Creates an empty parser with no drivers attached. </p>
+     * <p>The programmer is expected to create his own drivers and fill the parser himself.</p>
      * @return an empty parser
      */
     public static ArgumentParser createPlainParser() {

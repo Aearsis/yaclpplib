@@ -9,9 +9,9 @@ import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 public interface Driver<T extends Object> {
 
     /**
-     * Tries to parse a value read from command line.
+     * <p>Tries to parse a value read from command line.</p>
      *
-     * You can assert that x.hasValue() is true, and x.getValue is nonnull.
+     * <p>You can assert that x.hasValue() is true, and x.getValue is nonnull.</p>
      *
      * @param x an OptionValue instance with the metadata about arguments read
      * @return parsed value

@@ -1,7 +1,7 @@
 /**
- * Implementations of the parsing driver related classes. <br/>
+ * <p>Implementations of the parsing driver related classes. </p>
  *
- * This package contains classes for driver locators and driver factories.
+ * <p>This package contains classes for driver locators and driver factories.</p>
  *
  * @since 0.0.1
  */

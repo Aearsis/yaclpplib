@@ -8,9 +8,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Automagic driver for everything that has a constructor with a single parameter, a String. <br/>
+ * <p>Automagic driver for everything that has a constructor with a single parameter, a String.</p>
  *
- * This is used (among others) for numeric types.
+ * <p>This is used (among others) for numeric types.</p>
  */
 public class GenericStringConstructableDriver implements Driver {
 

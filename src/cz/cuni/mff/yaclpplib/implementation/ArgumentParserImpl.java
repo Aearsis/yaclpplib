@@ -10,14 +10,14 @@ import java.lang.reflect.*;
 import java.util.*;
 
 /**
- * Main implementation of ArgumentParser. <br/>
+ * <p>Main implementation of ArgumentParser. </p>
  *
- * It takes care of creating all needed internal classes,
+ * <p>It takes care of creating all needed internal classes,
  * calling methods, adding option handlers, forwarding option
- * tokens, calling after parse methods, etc. <br/>
+ * tokens, calling after parse methods, etc. </p>
  *
- * Visit {@link ArgumentParser} for public API, or feel free
- * to dig into the code to check the actual implementation.
+ * <p>Visit {@link ArgumentParser} for public API, or feel free
+ * to dig into the code to check the actual implementation.</p>
  */
 public class ArgumentParserImpl implements ArgumentParser {
 
@@ -138,17 +138,17 @@ public class ArgumentParserImpl implements ArgumentParser {
     }
 
     /**
-     * Some options have different semantics. Because these generate too much combinations,
-     * we handle them using decorators over the handlers. <br/>
+     * <p>Some options have different semantics. Because these generate too much combinations,
+     * we handle them using decorators over the handlers. </p>
      *
-     * For now, we handle: <br/>
+     * <p>For now, we handle: </p>
      * <ul>
      *     <li> arrays, by aggregating the component type, yielding the final array at the end</li>
      *     <li> primitive types, because they often require special handling</li>
      *     <li> boolean options, because --verbose is a shorthand for "--verbose true"</li>
      *     <li> range options, we need to check if the value is in the given range</li>
      * </ul>
-     * Please note that the <b>order is important</b> here, as it defines the final semantics.
+     * <p>Please note that the <b>order is important</b> here, as it defines the final semantics.</p>
      *
      * @param rawHandler a handler to be wrapped
      * @return handler, wrapped if applicable

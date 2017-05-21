@@ -11,11 +11,11 @@ import java.lang.reflect.*;
 public class SecurityUtility {
 
     /**
-     * Make a Method or Field accessible through reflection,
-     * even though it is private, protected or package-protected.<br/>
+     * <p>Make a Method or Field accessible through reflection,
+     * even though it is private, protected or package-protected.</p>
      *
-     * This can be blocked by the SecurityManager, but when the library cannot access the member object,
-     * it cannot fulfill its duty.
+     * <p>This can be blocked by the SecurityManager, but when the library cannot access the member object,
+     * it cannot fulfill its duty.</p>
      *
      * @param object a Field or Method to make accessible
      * @throws InvalidSetupError When this member cannot be accessed.

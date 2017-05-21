@@ -1,7 +1,7 @@
 /**
- * Implementations of the basic interfaces. <br/>
+ * <p>Implementations of the basic interfaces. </p>
  *
- * This package contains classes responsible for implementing the library functionality.
+ * <p>This package contains classes responsible for implementing the library functionality.</p>
  *
  * @since 0.0.1
  */
