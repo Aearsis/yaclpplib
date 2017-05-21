@@ -19,14 +19,21 @@ public interface ArgumentParser {
     <T extends Options> T addOptions(T instance) throws InvalidSetupError;
 
     /**
-     * Read the arguments, fill all argument classes.
+     * Read the arguments, fill all argument classes. <br/>
      *
-     * TODO: Document how multiple calls to parse behave
+     * It is generally possible to call this method multiple times, but with certain limitations:
+     * <ul>
+     *     <li>The set of arguments given in the first call must be valid on its own.</li>
+     *     <li>Method options taking arrays will be called multiple times, with partial arrays.</li>
+     * </ul>
+     *
      * @param args array of arguments given to main method
      * @throws UnhandledArgumentException When you don't request positional arguments and they are present
      * @throws InvalidOptionValue When a value cannot be parsed into the type of option
+     * @throws MissingOptionValue When an option is unexpectedly missing a value
      * @throws IllegalOptionValue When a value is rejected by a method option or @Range validator
      * @throws MissingMandatoryOptionException When a @Mandatory option is missing
+     * @throws RuntimeException from your own {@link cz.cuni.mff.yaclpplib.annotation.AfterParse} methods
      */
     void parse(String[] args) throws UnhandledArgumentException;
 
