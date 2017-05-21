@@ -1,17 +1,20 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
+
+import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
+import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 
 /**
- * Boolean options are often used without specifing the value, such as --verbose.
+ * Boolean options are often used without specifying the value, such as --verbose.
  *
  * This decorator is doing the trick.
  */
-class BooleanOption extends OptionHandlerDecorator {
+public class BooleanOption extends OptionHandlerDecorator {
 
-    static boolean isApplicable(OptionHandler handler) {
+    public static boolean isApplicable(OptionHandler handler) {
         return handler.getValuePolicy() == ValuePolicy.MANDATORY && handler.getType().equals(Boolean.class);
     }
 
-    BooleanOption(OptionHandler decorated) {
+    public BooleanOption(OptionHandler decorated) {
         super(decorated);
     }
 

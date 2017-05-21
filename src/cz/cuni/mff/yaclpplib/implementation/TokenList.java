@@ -6,7 +6,7 @@ import java.util.Deque;
 
 public class TokenList {
 
-    private Deque<String> tokens;
+    private final Deque<String> tokens;
 
     public TokenList(String[] args) {
         tokens = new ArrayDeque<>(Arrays.asList(args));

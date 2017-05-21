@@ -1,9 +1,11 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.IllegalOptionValue;
 import cz.cuni.mff.yaclpplib.Options;
 import cz.cuni.mff.yaclpplib.annotation.Range;
+import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
+import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 import org.junit.Before;
 import org.junit.Test;
 

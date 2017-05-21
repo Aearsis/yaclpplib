@@ -1,9 +1,13 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.InvalidSetupError;
 import cz.cuni.mff.yaclpplib.Options;
 import cz.cuni.mff.yaclpplib.annotation.OptionalValue;
+import cz.cuni.mff.yaclpplib.implementation.InternalError;
+import cz.cuni.mff.yaclpplib.implementation.SecurityUtility;
+import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
+import cz.cuni.mff.yaclpplib.implementation.options.MemberOptionHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,13 +15,13 @@ import java.lang.reflect.Method;
 public class MethodOption extends MemberOptionHandler {
 
     final private Class type;
-    final boolean annotatedOptional;
+    private final boolean annotatedOptional;
 
     private interface MethodCall {
         void call(Object typedValue) throws IllegalAccessException, InvocationTargetException;
     }
 
-    MethodCall call;
+    private MethodCall call;
 
     public MethodOption(ArgumentParser parser, Options definitionClass, Method method) {
         super(parser, definitionClass, method);

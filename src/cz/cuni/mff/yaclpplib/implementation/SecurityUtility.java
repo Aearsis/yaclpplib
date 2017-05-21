@@ -4,7 +4,7 @@ import cz.cuni.mff.yaclpplib.InvalidSetupError;
 
 import java.lang.reflect.*;
 
-class SecurityUtility {
+public class SecurityUtility {
 
     /**
      * Make a Method or Field accessible through reflection,
@@ -15,9 +15,8 @@ class SecurityUtility {
      * @param object a Field or Method to make accessible
      * @throws InvalidSetupError When this member cannot be accessed.
      */
-    static <T extends AccessibleObject & Member> void makeAccessible(T object) throws InvalidSetupError {
-        int modifiers = object.getModifiers();
-        if (Modifier.isPublic(modifiers))
+    public static <T extends AccessibleObject & Member> void makeAccessible(T object) throws InvalidSetupError {
+        if (object.isAccessible())
             return;
 
         try {

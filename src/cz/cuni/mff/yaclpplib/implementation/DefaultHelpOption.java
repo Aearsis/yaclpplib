@@ -13,7 +13,7 @@ public final class DefaultHelpOption implements cz.cuni.mff.yaclpplib.Options {
     }
 
     @Option("--help")
-    @Help("Print a usage on standard output and exit succesfully.")
+    @Help("Print a usage on standard output and exit successfully.")
     public void help() {
         parser.printHelp();
         System.exit(0);

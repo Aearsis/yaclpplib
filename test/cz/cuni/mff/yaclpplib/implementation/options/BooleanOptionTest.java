@@ -1,7 +1,9 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.Options;
+import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
+import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

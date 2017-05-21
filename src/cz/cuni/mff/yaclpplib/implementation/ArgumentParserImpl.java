@@ -2,6 +2,8 @@ package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.*;
 import cz.cuni.mff.yaclpplib.annotation.*;
+import cz.cuni.mff.yaclpplib.implementation.drivers.DriverCache;
+import cz.cuni.mff.yaclpplib.implementation.options.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -120,7 +122,7 @@ public class ArgumentParserImpl implements ArgumentParser {
      * @param rawHandler a handler to be wrapped
      * @return handler, wrapped if applicable
      */
-    public static OptionHandler wrapHandler(OptionHandler rawHandler, AccessibleObject member) {
+    private static OptionHandler wrapHandler(OptionHandler rawHandler, AccessibleObject member) {
         OptionHandler wrappedHandler = rawHandler;
 
         // One-dimensional arrays of known types

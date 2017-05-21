@@ -1,9 +1,11 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.drivers;
 
 import cz.cuni.mff.yaclpplib.DuplicateDriverError;
 import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.driver.Driver;
+import cz.cuni.mff.yaclpplib.implementation.AmbiguousDriverError;
+import cz.cuni.mff.yaclpplib.NoSuchDriverError;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

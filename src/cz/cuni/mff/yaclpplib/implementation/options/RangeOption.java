@@ -1,20 +1,22 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
 
 import cz.cuni.mff.yaclpplib.IllegalOptionValue;
 import cz.cuni.mff.yaclpplib.InvalidSetupError;
 import cz.cuni.mff.yaclpplib.annotation.Range;
+import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
+import cz.cuni.mff.yaclpplib.implementation.Primitives;
 
 import java.lang.reflect.AccessibleObject;
 
 /**
  * Handles checking if a mandatory option was encountered.
  */
-class RangeOption extends OptionHandlerDecorator {
+public class RangeOption extends OptionHandlerDecorator {
 
     private long minimumValue;
     private long maximumValue;
 
-    static OptionHandler wrapIfApplicable(OptionHandler handler, AccessibleObject member) {
+    public static OptionHandler wrapIfApplicable(OptionHandler handler, AccessibleObject member) {
         if (member.getDeclaredAnnotation(Range.class) != null) {
             return new RangeOption(handler, member.getDeclaredAnnotation(Range.class));
         }

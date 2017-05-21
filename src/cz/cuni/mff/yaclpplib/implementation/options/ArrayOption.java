@@ -1,4 +1,6 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
+
+import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -6,12 +8,7 @@ import java.util.List;
 
 public class ArrayOption extends OptionHandlerDecorator {
 
-    static boolean isApplicable(OptionHandler handler) {
-        // Disable having two or more layers of aggregating options
-        return handler.getType().isArray();
-    }
-
-    private List<Object> buffer = new ArrayList<>();
+    private final List<Object> buffer = new ArrayList<>();
 
     ArrayOption(OptionHandler decorated) {
         super(decorated);
@@ -36,7 +33,7 @@ public class ArrayOption extends OptionHandlerDecorator {
     }
 
     public static OptionHandler wrapIfApplicable(OptionHandler handler) {
-        if (ArrayOption.isApplicable(handler)) {
+        if (handler.getType().isArray()) {
             return new ArrayOption(handler);
         }
         else {

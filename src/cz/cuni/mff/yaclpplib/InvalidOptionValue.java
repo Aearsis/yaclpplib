@@ -5,7 +5,7 @@ package cz.cuni.mff.yaclpplib;
  */
 public class InvalidOptionValue extends RuntimeException {
 
-    public InvalidOptionValue() {
+    InvalidOptionValue() {
     }
 
     public InvalidOptionValue(String message) {

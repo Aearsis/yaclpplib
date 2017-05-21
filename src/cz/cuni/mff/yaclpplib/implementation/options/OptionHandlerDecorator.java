@@ -1,16 +1,18 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.Options;
+import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
+import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 
 /**
  * Base class for decorating OptionHandlers.
  */
 abstract public class OptionHandlerDecorator implements OptionHandler {
 
-    protected final OptionHandler decorated;
+    final OptionHandler decorated;
 
-    public OptionHandlerDecorator(OptionHandler decorated) {
+    OptionHandlerDecorator(OptionHandler decorated) {
         this.decorated = decorated;
     }
 

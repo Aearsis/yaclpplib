@@ -1,8 +1,8 @@
 package cz.cuni.mff.yaclpplib.driver;
 
 import cz.cuni.mff.yaclpplib.implementation.AmbiguousDriverError;
-import cz.cuni.mff.yaclpplib.implementation.DriverLocator;
-import cz.cuni.mff.yaclpplib.implementation.NoSuchDriverError;
+import cz.cuni.mff.yaclpplib.implementation.drivers.DriverLocator;
+import cz.cuni.mff.yaclpplib.NoSuchDriverError;
 
 /**
  * Creates {@link GenericEnumDriver} for enums.

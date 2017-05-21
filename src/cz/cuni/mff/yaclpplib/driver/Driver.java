@@ -10,7 +10,7 @@ public interface Driver<T extends Object> {
 
     /**
      * Tries to parse a value read from command line.
-     * @param x an OptionValue instance with the metadata about argumets read
+     * @param x an OptionValue instance with the metadata about arguments read
      * @return parsed value
      * @throws InvalidOptionValue when the value isn't a valid type
      */

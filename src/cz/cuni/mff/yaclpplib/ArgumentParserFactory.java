@@ -3,8 +3,8 @@ package cz.cuni.mff.yaclpplib;
 import cz.cuni.mff.yaclpplib.driver.*;
 import cz.cuni.mff.yaclpplib.implementation.ArgumentParserImpl;
 import cz.cuni.mff.yaclpplib.implementation.DefaultHelpOption;
-import cz.cuni.mff.yaclpplib.implementation.DriverCache;
-import cz.cuni.mff.yaclpplib.implementation.HashDriverLocator;
+import cz.cuni.mff.yaclpplib.implementation.drivers.DriverCache;
+import cz.cuni.mff.yaclpplib.implementation.drivers.HashDriverLocator;
 
 /**
  * A factory for creating ArgumentParser instances.

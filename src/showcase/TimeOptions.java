@@ -39,7 +39,7 @@ public class TimeOptions implements Options {
     @AfterParse
     public void validateAppendArgument() {
         if (append && outputStream == System.out)
-             throw new IllegalOptionValue("Append can be used only in conjuction with -o.");
+             throw new IllegalOptionValue("Append can be used only in conjunction with -o.");
     }
 
     @Option("-v")

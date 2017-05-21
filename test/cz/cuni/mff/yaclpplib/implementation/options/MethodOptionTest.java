@@ -1,15 +1,11 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
 
-import cz.cuni.mff.yaclpplib.ArgumentParser;
-import cz.cuni.mff.yaclpplib.ArgumentParserFactory;
 import cz.cuni.mff.yaclpplib.InvalidSetupError;
 import cz.cuni.mff.yaclpplib.Options;
 import cz.cuni.mff.yaclpplib.annotation.Option;
 import cz.cuni.mff.yaclpplib.annotation.OptionalValue;
-import org.junit.Before;
+import cz.cuni.mff.yaclpplib.implementation.options.MethodOption;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class MethodOptionTest {
 

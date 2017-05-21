@@ -3,11 +3,10 @@ package cz.cuni.mff.yaclpplib.implementation;
 import cz.cuni.mff.yaclpplib.MissingMandatoryOptionException;
 import cz.cuni.mff.yaclpplib.annotation.Mandatory;
 import cz.cuni.mff.yaclpplib.annotation.Option;
+import cz.cuni.mff.yaclpplib.implementation.options.FieldOption;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
-
-import static org.junit.Assert.*;
 
 public class MandatoryManagerTest {
 

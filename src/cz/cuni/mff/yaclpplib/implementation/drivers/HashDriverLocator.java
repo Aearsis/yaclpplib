@@ -1,10 +1,9 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.drivers;
 
-import cz.cuni.mff.yaclpplib.annotation.Option;
 import cz.cuni.mff.yaclpplib.driver.Driver;
 import cz.cuni.mff.yaclpplib.DuplicateDriverError;
-import cz.cuni.mff.yaclpplib.driver.GenericEnumDriver;
-import cz.cuni.mff.yaclpplib.driver.GenericStringConstructableDriver;
+import cz.cuni.mff.yaclpplib.implementation.AmbiguousDriverError;
+import cz.cuni.mff.yaclpplib.NoSuchDriverError;
 
 import java.util.*;
 

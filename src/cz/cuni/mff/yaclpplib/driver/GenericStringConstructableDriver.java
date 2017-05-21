@@ -1,7 +1,6 @@
 package cz.cuni.mff.yaclpplib.driver;
 
 import cz.cuni.mff.yaclpplib.InvalidOptionValue;
-import cz.cuni.mff.yaclpplib.InvalidSetupError;
 import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.implementation.InternalError;
 

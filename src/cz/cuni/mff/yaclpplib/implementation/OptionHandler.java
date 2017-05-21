@@ -19,8 +19,8 @@ public interface OptionHandler {
      * to be the actual option name used on the command line - e.g. when there are more
      * of them aggregated into an array.
      *
-     * @param typedValue
-     * @param optionName
+     * @param typedValue a value of option, in the type the option wants
+     * @param optionName any name of the option (for error messages)
      */
     void setValue(Object typedValue, String optionName);
 

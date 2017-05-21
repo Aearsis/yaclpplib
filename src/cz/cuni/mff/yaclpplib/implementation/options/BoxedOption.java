@@ -1,11 +1,14 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
+
+import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
+import cz.cuni.mff.yaclpplib.implementation.Primitives;
 
 /**
  * Primitive types mess up the type system, so lets box them.
  * Fortunately, reflection boxes and unboxes automatically,
  * so this is effectively a noop-handler.
  */
-class BoxedOption extends OptionHandlerDecorator {
+public class BoxedOption extends OptionHandlerDecorator {
 
     static boolean isApplicable(OptionHandler handler) {
         return handler.getType().isPrimitive();

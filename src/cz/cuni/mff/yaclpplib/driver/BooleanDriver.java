@@ -9,11 +9,11 @@ import java.util.Set;
 
 public class BooleanDriver implements Driver<Boolean> {
 
-    private static Set<String> truthyValues = new HashSet<>(Arrays.asList(
+    private static final Set<String> truthyValues = new HashSet<>(Arrays.asList(
             "true", "t", "1", "yes", "y", "on", "enable", "enabled"
     ));
 
-    private static Set<String> falsyValues = new HashSet<>(Arrays.asList(
+    private static final Set<String> falsyValues = new HashSet<>(Arrays.asList(
             "false", "f", "0", "no", "n", "off", "disable", "disabled"
     ));
 

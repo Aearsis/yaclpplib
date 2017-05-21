@@ -1,9 +1,10 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
 
 
 import cz.cuni.mff.yaclpplib.*;
 import cz.cuni.mff.yaclpplib.annotation.Help;
 import cz.cuni.mff.yaclpplib.annotation.Option;
+import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
 
 import java.lang.*;
 import java.lang.reflect.AccessibleObject;

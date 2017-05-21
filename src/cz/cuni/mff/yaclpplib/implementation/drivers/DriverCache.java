@@ -1,6 +1,8 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.drivers;
 
 import cz.cuni.mff.yaclpplib.driver.Driver;
+import cz.cuni.mff.yaclpplib.implementation.AmbiguousDriverError;
+import cz.cuni.mff.yaclpplib.NoSuchDriverError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,8 +14,8 @@ import java.util.Map;
  */
 public class DriverCache implements DriverLocator {
 
-    final Map<Class<?>, Driver> cache = new HashMap<>();
-    final List<DriverLocator> locators = new ArrayList<>();
+    private final Map<Class<?>, Driver> cache = new HashMap<>();
+    private final List<DriverLocator> locators = new ArrayList<>();
 
     public void addDriverLocator(DriverLocator locator) {
         locators.add(locator);

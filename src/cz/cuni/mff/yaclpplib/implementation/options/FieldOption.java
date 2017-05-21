@@ -1,8 +1,11 @@
-package cz.cuni.mff.yaclpplib.implementation;
+package cz.cuni.mff.yaclpplib.implementation.options;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.Options;
+import cz.cuni.mff.yaclpplib.implementation.InternalError;
+import cz.cuni.mff.yaclpplib.implementation.SecurityUtility;
+import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 
 import java.lang.reflect.Field;
 

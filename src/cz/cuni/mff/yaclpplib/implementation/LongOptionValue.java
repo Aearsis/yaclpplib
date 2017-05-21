@@ -4,8 +4,8 @@ public class LongOptionValue implements InternalOptionValue {
 
     private final String name;
 
-    private String value;
-    private String[] rawTokens;
+    private final String value;
+    private final String[] rawTokens;
 
     public static boolean matches(String optionToken) {
         return optionToken.matches("--[a-zA-Z0-9].*");
@@ -19,6 +19,9 @@ public class LongOptionValue implements InternalOptionValue {
 
         if (split.length > 1) {
             value = split[1];
+        }
+        else {
+            value = null;
         }
     }
 
