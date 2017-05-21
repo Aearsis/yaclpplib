@@ -6,99 +6,157 @@
 	</head>
 <body>
 
-<p><strong>Yaclpplib</strong> je knihovna v jazyce Java verze 8 a novější pro pohodlné parsování argumentů předaných při spouštění programu. Knihovna využívá reflexe jazyka Java a anotací. Uživatel knihovny nadefinuje třídu implementující rozhraní <code>Options</code> a anotuje jednotlivé atributy a knihovna za něj sama nastaví hodnoty atributů na hodnoty předané v argumentech.
-</p><p>
-Základní použití knihovny ukážeme na příkladu, který demonstruje základní možnosti knihovny. Další příklady je možné nalézt v balíčku showcase.
+<p><strong>Yaclpplib</strong> is a library written in Java 8 for parsing arguments
+    given during startup of your programs. The library is built upon Java reflection and annotations.
+    The user of this library is meant to define a class implementing interface <code>Options</code>
+    and annotate those class' fields and methods. The library will then parse the arguments and set values
+    of annotated fields and call annotated methods.
 </p>
-<pre>
-public class MyOptions implements Options {
-
-    \@Option("-s")
-    \@Option("--size")
-    \@Mandatory
-    \@Range(minimumValue=1024, maximumValue=1048576)
-    \@Help("Sets up the size of created file (1kB-1MB)")
-    public int bytes = 4096;
-    
-    \@Option("-q")
-    \@Option("--quiet")
-    \@Option("--silent")
-    \@Help("Don't print anything to stdout")
-    public boolean quiet = false;
-
-    \@Option("--text")
-    \@Help("Custom text message.")
-    public String text = "Hello";
-
-    enum Frequency {
-        Always, Auto, Once, Never;
-    }
-
-    \@Option("-f")
-    \@Option("--frequency")
-    \@Help("Sets polling frequency")
-    public Frequency freq = Frequency.Auto;
-
-    public int endTime;
-	
-    \@Option("-d")
-    \@Option("--duration")
-    \@Help("Sets the duration of the test");	
-    \@Mandatory
-    public void setDuration(long duration) {
-        endTime = System.currentTimeMillis() + duration * 1000;
-    }	
-
-    \@Option("--version")
-    \@Help("output version information and exit")
-    public void displayVersion() {
-        System.out.println("Version 1.0");
-        System.exit(0);
-    }
-
-    \@Validator
-    public void validateFileSize() throws InvalidOptionValue {
-        if(bytes &lt; text.length() * 512) {
-            throw new InvalidOptionValue("The file size must be bigger.");
-        }
-    }
-
-    public static void main(String[] args) {
-        ArgumentParser parser = ArgumentParserFactory.create();
-        MyOptions opts = parser.addOptions(new MyOptions());
-
-        List<String> files = parser.requestPositionalArguments();
-        parser.parse(args);
-
-        for(String file : files) {
-            System.out.println(file);
-        }
-
-        // work with options using opts.endTime, etc.
-    }
-}
-</pre>
 <p>
-Rozebereme ukázkový kód. Programátor definuje třídu implementující rozhraní <code>Options</code>, tím říká, že tato třída se bude využívat pro parsování optionů a bude obsahovat anotace. Dále už popisuje jednotlivé optiony. 
-</p><p>
-
-První option je <code>-s</code>, popřípadě <code>--size</code>. Chceme, aby hodnota tohoto argumentu byla celé číslo, takže jeho typ bude <code>int</code>. Anotací <code>Help</code> dále řekneme, jaký text se má zobrazit v nápovědě k tomuto optionu. Anotací <code>Mandatory</code> zajistíme, že argument je povinný a anotací <code>Range</code> nastavíme rozsah povolených hodnot.
-</p><p>
-Druhý option je hodnota typu boolean. Ta má dokonce tři varianty, <code>-q</code>, <code>--quiet</code> a <code>--silent</code>". To, že je typ boolean už značí, že nepotřebuje mít žádnou hodnotu.
-</p><p>
-Třetí option je textová zpráva, kterou bude program vypisovat. 
-</p><p>
-Další option je frekvence. Tady chceme dát uživateli na výběr z několika hodnot, vytvoříme tedy enum a nastavíme typ atributu frequency na Enum. Knihovna se postará o čtení možných hodnot.
-</p><p>
-Náš program by chtěl běžet do nějakého času, který si uživatel zvolí. To udělá pomocí optionu <code>--duration</code>. Ten nebudeme parsovat jako prosté číslo, ale proženeme ho metodou, která spočítá koncový čas. Knihovna za nás automaticky zavolá metodu díky anotacím.
-</p><p>
-Poslední option je <code>--version</code>, ten uživateli zobrazí verzi programu a ukončí program. To, že metoda nebere parametr implikuje, že argument version nemá dovolenou žádnou hodnotu.
-</p><p>
-V třídě vytvoříme ještě validační metodu pomocí anotace <code>Validator</code>, který spáruje hodnoty optionů <code>--size</code> a <code>--text</code>. Pokud validace selže, selže celé parsování argumentů.
-</p><p>
-Po deklaraci třídy už stačí vytvořit parser a předat mu instanci této třídy. Využijeme nějakou dostupnou tovární metodu na parser a předáme parseru instanci implementující interface <code>Options</code> pomocí metody <code>addOptions()</code>. Jelikož máme zájem i o poziční argumenty, požádáme si o ně metodou <code>requestPositionalArguments()</code>. Ta nám vrátí list, který bude při parsování naplněn těmito argumenty. 
-</p><p>
-Poslední, co zbývá, je zavolat metodu <code>parse()</code> a předat ji načtené argumenty. To za nás naplní naši instanci. K hodnotám argumentů pak přistoupíme jednoduše přečtením atributu naší instance.
+    This page describes the architecture of the library and the functions of various packages and interfaces.
+    For basic usage guide and a quick overview of provided classes and annotations, see README.
+</p>
+<h1>
+    Annotations
+</h1>
+<p>
+    This library uses annotations, which users use to annotate their class members. These annotations are predefined
+    and adding your own shouldn't be needed unless you need something similar to the <code>Range</code> annotation.
+    Each annotation is processed in a different part of the library implementation,
+    so we will go over them as we need them.
+</p>
+<h1>
+    OptionValue
+</h1>
+<p>
+    An <code>OptionValue</code> is abstracting the pair of an option and its argument.
+    The classes implementing this interface are supposed to take a string (or two, if it's in "option value" format)
+    and split it into "option" and "value".
+    Currently, the library offers implementations for two different type of option formats.
+</p>
+<p>
+    The first supported format is described by <code>ShortOptionValue</code>. It handles options, which start with
+    a dash ("-") and a single letter or number. It supports two different type of values,
+    either a value separated by a space, or without it. In other words, both "-pvalue" and "-p value" are supported.
+</p>
+<p>
+    The second supported format is described by <code>LongOptionValue</code>. It handles options starting with two
+    dashes ("--") and at least one letter or number. The values of these options are separated by an equals sign ("=").
+    Some examples of handled options are "--o", "--all", "--type=something", "--size=5".
+</p>
+<p>
+    The instances of these classes are created by <code>InternalOptionValueFactory</code>. If you wish to support
+    a new type, create a new class implementing <code>InternalOptionValue</code> interface and modify the
+    <code>InternalOptionValueFactory#tryCreate()</code> method.
+</p>
+<h1>
+    Drivers
+</h1>
+<p>
+    The parsing itself is handled by drivers, which are short classes implementing <code>Driver</code> interface.
+    The main function is in the <code>parse(OptionValue value)</code> method, which takes an OptionValue instance
+    and tries to convert the value into desired type.
+    We will shortly go over our drivers, since some of them handle multiple types at once. All of these drivers
+    are found in the <code>yaclpplib.drivers</code> package.
+</p>
+<ul>
+<li><code>BooleanDriver</code> - parses all usual
+    representations of truthy and falsy values into true or false</li>
+<li><code>CharacterDriver</code> - converts a String into char</li>
+<li><code>GenericEnumDriver</code> and <code>GenericCaseInsensitiveEnumDriver</code>
+    - convert a String constant into a matching enum value depending on CaseSensitive annotation</li>
+<li><code>StringDriver</code> - a special driver which can convert string into anything,
+    that has a String constructor. This driver also works for all numeric types.</li>
+<li><code>VoidDriver</code> - a special driver used for options, that never take value</li>
+</ul>
+<p>
+    These drivers are provided by classes implementing <code>DriverLocator</code> interface. The purpose of
+    a <code>DriverLocator</code> is to determine, whether it has a driver for a given Java <code>Class</code>
+    and if so, provide a driver which can parse string into instances of those classes.
+</p>
+<p>
+    Our library currently implements 4 driver locators. These and their interfaces are found in
+    <code>yaclpplib.implementation.drivers</code> package.
+</p>
+<ul>
+    <li><code>EnumDriverFactory</code> - locator creating instances of enum drivers for a concrete enum class</li>
+    <li><code>StringConstructableDriverFactory</code> - locator providing a driver instance for classes,
+        that have a constructor taking a String</li>
+    <li><code>HashDriverLocator</code> - which stores all miscellaneous drivers</li>
+    <li><code>DriverCache</code> - which abstracts all other locators and tries to use each of them</li>
+</ul>
+<p>
+    The main argument parser implementation then checks, what type the parsed option has and asks a driver cache
+    for a matching driver. If the driver is found, it uses it to parse the argument and create a value and if not,
+    the argument is treated as a plain argument if possible, otherwise an exception is thrown.
+</p>
+<h1>
+    OptionHandlers
+</h1>
+<p>
+    <code>OptionHandlers</code> are classes responsible for accessing and modifying annotated fields.
+    All the relevant classes are in the <code>yaclpplib.implementation.options</code> package.
+    These are the classes that set values of fields annotated with <code>Option</code> or call methods with the same
+    annotations. The methods are described by <code>OptionHandler</code> interface and common implementation
+    is provided by <code>MemberOptionHandler</code> abstract class.
+</p>
+<p>
+    The two main implementations of <code>OptionHandler</code> are <code>FieldOptionHandler</code>,
+    which is used when user annotates a class field and sets the field to the parsed value,
+    and <code>MethodOptionHandler</code>, which calls an annotated method with the parsed value.
+    These <code>OptionHandlers</code> are created by <code>ArgumentParser</code> itself in <code>addOptions()</code>
+    method.
+    If you wish to implement a handler for a different entity,
+    you might need to create a new <code>OptionHandler</code>.
+</p>
+<p>
+    The library also provides decorators, which are wrapper classes providing special functionality.
+    These are needed to provide some of the required functions and are wrapped around <code>FieldOptionHandler</code>
+    or <code>MethodOptionHandler</code>. If you are looking to implement a simple functionality or a quirk for some
+    special case, creating a new decorator may solve your problem.
+</p>
+<p>
+    <b>Warning: the order of wrapping decorators matters as some of them consume or change the value.</b>
+</p>
+<h1>
+    ArgumentParser
+</h1>
+<p>
+    Next few paragraphs will describe the function of argument parser itself,
+    especially the library implementation, <code>ArgumentParserImpl</code>.
+</p>
+<p>
+    Argument parser works in two stages. The first stage in configuration, which sets up the parser and creates
+    required objects. One part of the configuration doesn't usually have to be altered by the library user.
+    That includes initializing internal structures and more importantly, adding the driver locators.
+    When the driver locators are added, users can call <code>addOptions()</code> method. This method analyses the given
+    instance's class, finds all fields and methods annotated with <code>Option</code> and methods annotated with
+    <code>AfterParse</code> annotation, creates handlers for them and creates a mapping from option to handler.
+    If any of these steps fail, the library throws an <code>InvalidSetupError</code> as all of these are a result
+    of mistakes in the code, not values found in runtime.
+</p>
+<p>
+    The second stage is parsing itself. This is done by calling <code>parse()</code> method. This method can throw
+    <code>RuntimeException</code>, which is done to allow user calling the library without surrounding the code
+    with try-catch block, as some users may want to let the exception end the program.
+</p>
+<p>
+    The <code>parse()</code> methods goes through the list of string tokens given in the argument (which should
+    be command line arguments). For each token, it tries to create a valid <code>OptionValue</code>.
+    If an <code>OptionValue</code> is created, an <code>OptionHandler</code> is looked up.
+    If either of these fails, the token is considered a plain argument and the handler is called.
+    Then, since the type is known by the handler, the driver locator is called and the driver used to parse the token.
+    The parsed token is then given to the handler so it can set up the value.
+</p>
+<p>
+    After the token list is processed, every field or method with <code>Mandatory</code> annotation is checked,
+    whether it was really encountered. Then, every method annotated with <code>AfterParse</code> is called and
+    all RuntimeExceptions are forwarded to user. This end the parsing.
+</p>
+<p>
+    Most of the parts are separated into methods or even special classes (for example <code>MandatoryManager</code>).
+    Therefore should you want to change the behavior of parsing, you should be able to do so without
+    large scale changes to the code.
 </p>
 </body>
 </html>
