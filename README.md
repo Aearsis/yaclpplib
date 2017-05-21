@@ -438,3 +438,27 @@ Default options
 My program options
   --value              Set the value this program uses
 ```
+
+# How to handle the code
+
+The code is equipped with Ant's `build.xml`. So, there are following ant targets:
+
+```bash
+$ ant build         # Builds the classes
+$ ant doc           # Build javadoc
+$ ant test          # Run all the tests
+$ ant               # Do everything above
+```
+
+After running `ant`, the build directory should contain:
+```
+yaclpplib
+├── build           Built classes
+├── doc             Javadoc documentation
+├── src             Source files
+├── test            Test source files
+└── testbuild       Built tests
+```
+
+We use JUnit4 as the testing framework, tests are split into Unit tests
+and feature tests, though invoked in a single command.
