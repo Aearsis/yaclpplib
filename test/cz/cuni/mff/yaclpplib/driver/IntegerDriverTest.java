@@ -7,11 +7,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class IntegerDriverTest {
-    private IntegerDriver instance;
+    private Driver instance;
 
     @Before
     public void setUp() throws Exception {
-        instance = new IntegerDriver();
+        instance = new GenericStringConstructableDriver(Integer.class);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class IntegerDriverTest {
     }
 
     private void testParse(String input, int expected) throws InvalidOptionValue {
-        assertEquals(expected, instance.parse(new JustValue(input)).intValue());
+        assertEquals(expected, instance.parse(new JustValue(input)));
     }
 
     @Test

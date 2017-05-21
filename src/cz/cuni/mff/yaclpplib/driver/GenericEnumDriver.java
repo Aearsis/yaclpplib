@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Driver for enum subclasses. It is to be added dynamically for every enum subtype encountered in users' Options.
+ * Driver for enum subclasses. It is to be created dynamically for every
+ * enum subtype encountered in users' Options.
  *
  * This is a bit hacky because how hacky enums are in Java.
  */

@@ -24,16 +24,9 @@ public final class ArgumentParserFactory {
      */
     public static ArgumentParser createDefaultTypesParser() {
         final ArgumentParserImpl parser = (ArgumentParserImpl) createPlainParser();
-        // Add primitive drivers
         parser.addDriver(new VoidDriver());
         parser.addDriver(new StringDriver());
         parser.addDriver(new CharacterDriver());
-        parser.addDriver(new ByteDriver());
-        parser.addDriver(new ShortDriver());
-        parser.addDriver(new IntegerDriver());
-        parser.addDriver(new LongDriver());
-        parser.addDriver(new FloatDriver());
-        parser.addDriver(new DoubleDriver());
         parser.addDriver(new BooleanDriver());
         return parser;
     }

@@ -3,6 +3,7 @@ package cz.cuni.mff.yaclpplib.implementation;
 import cz.cuni.mff.yaclpplib.driver.Driver;
 import cz.cuni.mff.yaclpplib.DuplicateDriverError;
 import cz.cuni.mff.yaclpplib.driver.GenericEnumDriver;
+import cz.cuni.mff.yaclpplib.driver.GenericStringConstructableDriver;
 
 import java.util.*;
 
@@ -53,6 +54,10 @@ public class HashDriverLocator implements DriverLocator, DriverStorage {
         if (bestDrivers.isEmpty()) {
             if (type.isEnum()) {
                 return new GenericEnumDriver(type);
+            }
+
+            if (GenericStringConstructableDriver.hasStringConstructor(type)) {
+                return new GenericStringConstructableDriver(type);
             }
         }
 
