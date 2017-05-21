@@ -36,7 +36,7 @@
 
     <target name="doc" depends="clean">
         <mkdir dir="${docdir}"/>
-        <javadoc destdir="${docdir}" Overview="overview.html" charset="utf8">
+        <javadoc destdir="${docdir}" access="private" Overview="overview.html" charset="utf8">
             <fileset dir="${basedir}/src" defaultexcludes="yes">
                 <include name="**/*.java"/>
             </fileset>

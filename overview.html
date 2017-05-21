@@ -22,7 +22,8 @@
 <p>
     This library uses annotations,
     which users use to annotate their class members. These annotations are predefined
-    and adding your own shouldn't be needed unless you need something similar to the <code>Range</code> annotation.
+    and adding your own shouldn't be needed unless you need something similar to the
+    <a href="cz/cuni/mff/yaclpplib/annotation/Range.html"><code>Range</code></a> annotation.
     Each annotation is processed in a different part of the library implementation,
     so we will go over them as we need them.
 </p>
@@ -30,7 +31,8 @@
     <a href="cz/cuni/mff/yaclpplib/OptionValue.html">OptionValue</a>
 </h1>
 <p>
-    An <code>OptionValue</code> is abstracting the pair of an option and its value.
+    An <a href="cz/cuni/mff/yaclpplib/OptionValue.html"><code>OptionValue</code></a>
+    is abstracting the pair of an option and its value.
     The classes implementing this interface are supposed to take a string (or two, if it's in "-o value" format)
     and split it into "option" and "value".
     Currently, the library offers implementations for two different type of option formats.
@@ -50,9 +52,12 @@
     Some examples of handled options are "--o", "--all", "--type=something", "--size=5".
 </p>
 <p>
-    The instances of these classes are created by <code>InternalOptionValueFactory</code>.
-    If you wish to support a new type, create a new class implementing <code>InternalOptionValue</code>
-    interface and modify the <code>InternalOptionValueFactory#tryCreate()</code>method.
+    The instances of these classes are created by
+    <a href="cz/cuni/mff/yaclpplib/implementation/InternalOptionValueFactory.html"><code>InternalOptionValueFactory</code></a>.
+    If you wish to support a new type, create a new class implementing
+    <a href="cz/cuni/mff/yaclpplib/implementation/InternalOptionValue.html"><code>InternalOptionValue</code></a>
+    interface and modify the
+    <a href="cz/cuni/mff/yaclpplib/implementation/InternalOptionValueFactory.html#tryCreate-java.lang.String-"><code>InternalOptionValueFactory#tryCreate()</code></a> method.
 </p>
 <p>
     If you want, you can replace it completely. Just replace the InternalOptionValueFactory with your implementation.
@@ -68,7 +73,7 @@
         <code>parse(OptionValue value)</code></a> method, which takes an OptionValue instance
     and tries to convert the value into desired type.
     We will shortly go over our drivers, since some of them handle multiple types at once. All of these drivers
-    are found in the <code>yaclpplib.drivers</code> package.
+    are found in the <a href="cz/cuni/mff/yaclpplib/driver/package-summary.html"><code>yaclpplib.driver</code></a> package.
 </p>
 <ul>
     <li><a href="cz/cuni/mff/yaclpplib/driver/BooleanDriver.html"><code>BooleanDriver</code></a> - parses all usual
@@ -88,12 +93,13 @@
     These drivers are provided by classes implementing
     <a href="cz/cuni/mff/yaclpplib/implementation/drivers/DriverLocator.html"><code>DriverLocator</code></a>
     interface. The purpose of
-    a <code>DriverLocator</code> is to determine, whether it has a driver for a given Java <code>Class</code>
+    a <a href="cz/cuni/mff/yaclpplib/implementation/drivers/DriverLocator.html"><code>DriverLocator</code></a>
+    is to determine, whether it has a driver for a given Java <code>Class</code>
     and if so, provide a driver which can parse string into instances of those classes.
 </p>
 <p>
     Our library currently implements 4 driver locators. These and their interfaces are found in
-    <code>yaclpplib.implementation.drivers</code> package.
+    <a href="cz/cuni/mff/yaclpplib/implementation/drivers/package-summary.html"><code>yaclpplib.implementation.drivers</code></a> package.
 </p>
 <ul>
     <li><a href="cz/cuni/mff/yaclpplib/implementation/drivers/EnumDriverFactory.html"><code>EnumDriverFactory</code></a> - locator creating instances of enum drivers for a concrete enum class</li>
@@ -114,37 +120,58 @@
     <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html">OptionHandlers</a>
 </h1>
 <p>
-    <code>OptionHandlers</code> are classes responsible for accessing and modifying annotated fields and methods,
+    <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html"><code>OptionHandlers</code></a>
+    are classes responsible for accessing and modifying annotated fields and methods,
     and also covers certain "behaviours" of options.
-    All the relevant classes are in the <code>yaclpplib.implementation.options</code> package.
-    These are the classes that set values of fields annotated with <code>Option</code> or call methods with the same
-    annotations. The methods are described by <code>OptionHandler</code> interface and common implementation
+    All the relevant classes are in the <a href="cz/cuni/mff/yaclpplib/implementation/options/package-summary.html">
+    <code>yaclpplib.implementation.options</code></a> package.
+    These are the classes that set values of fields annotated with
+    <a href="cz/cuni/mff/yaclpplib/annotation/Option.html"><code>Option</code></a> or call methods with the same
+    annotations. The methods are described by <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html">
+    <code>OptionHandlers</code></a> interface and common implementation
     is provided by <code>MemberOptionHandler</code> abstract class.
 </p>
 <p>
-    The two main implementations of <code>OptionHandler</code> are <code>FieldOptionHandler</code>,
+    The two main implementations of <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html">
+    <code>OptionHandler</code></a> are <a href="cz/cuni/mff/yaclpplib/implementation/options/FieldOption.html">
+    <code>FieldOption</code></a>,
     which is used when user annotates a class field and sets the field to the parsed value,
-    and <code>MethodOptionHandler</code>, which calls an annotated method with the parsed value.
-    These <code>OptionHandlers</code> are created by <code>ArgumentParser</code> itself in <code>addOptions()</code>
+    and <a href="cz/cuni/mff/yaclpplib/implementation/options/MethodOption.html">
+    <code>MethodOption</code></a>, which calls an annotated method with the parsed value.
+    These <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html">
+    <code>OptionHandlers</code></a> are created by <a href="cz/cuni/mff/yaclpplib/ArgumentParser.html">
+    <code>ArgumentParser</code></a> itself in
+    <a href="cz/cuni/mff/yaclpplib/ArgumentParser.html#addOptions-T-"><code>addOptions()</code></a>
     method.
     If you wish to implement a handler for a different entity,
-    you might need to create a new <code>OptionHandler</code>.
+    you might need to create a new <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html">
+    <code>OptionHandler</code></a>.
 </p>
 <p>
     The library also provides decorators, which are wrapper classes providing special functionality.
-    These are needed to provide some of the required functions and are wrapped around <code>FieldOptionHandler</code>
-    or <code>MethodOptionHandler</code>. If you are looking to implement a simple functionality or a quirk for some
+    These are needed to provide some of the required functions and are wrapped around
+    <a href="cz/cuni/mff/yaclpplib/implementation/options/FieldOption.html"><code>FieldOption</code></a>
+    or <a href="cz/cuni/mff/yaclpplib/implementation/options/MethodOption.html"><code>MethodOption</code></a>.
+    If you are looking to implement a simple functionality or a quirk for some
     special case, creating a new decorator may solve your problem.
 </p>
 <p>
     For example, multiple option occurrences for an option of array type is implemented using decorators. The underlying
-    (decorated) handler takes e.g. a <code>String[]</code> array, the decorator, <code>ArrayOption</code> behaves like a <code>String</code> option.
-    It aggregates the values given and an the end (in the <code>finish()</code>) method, it passes the array to the decorated handler.
+    (decorated) handler takes e.g. a <code>String[]</code> array, the decorator,
+    <a href="cz/cuni/mff/yaclpplib/implementation/options/ArrayOption.html"><code>ArrayOption</code></a>
+    behaves like a <code>String</code> option.
+    It aggregates the values given and an the end (in the
+    <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html#finish--"><code>finish()</code></a>)
+    method, it passes the array to the decorated handler.
     The ArrayOption is therefore the only place we need to take care about arrays.
 </p>
-<p>Similarly, the RangeOption takes care of the range checking, BooleanOption does the trick with boolean fields
+<p>Similarly, the <a href="cz/cuni/mff/yaclpplib/implementation/options/RangeOption.html"><code>RangeOption</code></a>
+    takes care of the range checking, <a href="cz/cuni/mff/yaclpplib/implementation/options/BooleanOption.html">
+    <code>BooleanOption</code></a> does the trick with boolean fields
     (like "--verbose") not requiring value (otherwise we would have to pass "--verbose=true", because fields always
-    have to get a value). BoxedOption wraps primitive types, so we need to check only boxed types elsewhere.</p>
+    have to get a value).
+    <a href="cz/cuni/mff/yaclpplib/implementation/options/BoxedOption.html"><code>BoxedOption</code></a>
+    wraps primitive types, so we need to check only boxed types elsewhere.</p>
 <p>
     <b>Warning: the order of wrapping decorators matters as some of them consume or change the value, and the order defines semantics of handling different combinations.</b>
 </p>
@@ -155,17 +182,23 @@
 </h1>
 <p>
     Next few paragraphs will describe the function of argument parser itself,
-    especially the library implementation, <code>ArgumentParserImpl</code>.
+    especially the library implementation,
+    <a href="cz/cuni/mff/yaclpplib/implementation/ArgumentParserImpl.html"><code>ArgumentParserImpl</code></a>.
 </p>
 <p>
     Argument parser works in two stages. The first stage in configuration, which sets up the parser and creates
     required objects. One part of the configuration doesn't usually have to be altered by the library user.
     That includes initializing internal structures and more importantly, adding the driver locators.
-    When the driver locators are added, users can call <code>addOptions()</code> method. This method analyses the given
-    instance's class, finds all fields and methods annotated with <code>Option</code> and methods annotated with
-    <code>AfterParse</code> annotation, creates handlers for them and creates a mapping from option to handler.
-    If any of these steps fail, the library throws an <code>InvalidSetupError</code> as all of these are a result
-    of mistakes in the code, not values found in runtime.
+    When the driver locators are added, users can call
+    <a href="cz/cuni/mff/yaclpplib/ArgumentParser.html#addOptions-T-"><code>addOptions()</code></a> method.
+    This method analyses the given
+    instance's class, finds all fields and methods annotated with
+    <a href="cz/cuni/mff/yaclpplib/annotation/Option.html"><code>Option</code></a> and methods annotated with
+    <a href="cz/cuni/mff/yaclpplib/annotation/AfterParse.html"><code>AfterParse</code></a>
+    annotation, creates handlers for them and creates a mapping from option to handler.
+    If any of these steps fail, the library throws an
+    <a href="cz/cuni/mff/yaclpplib/InvalidSetupError.html"><code>InvalidSetupError</code></a>
+    as all of these are a result of mistakes in the code, not values found in runtime.
 </p>
 <p>
     As a part of the configuration stage, user can request a positional arguments, which gives him a list, which will
@@ -175,28 +208,38 @@
     we can throw exceptions eagerly), but also requires user to call only one API call to make everything work.
 </p>
 <p>
-    The second stage is parsing itself. This is done by calling <code>parse()</code> method. This method can throw
+    The second stage is parsing itself. This is done by calling
+    <a href="cz/cuni/mff/yaclpplib/ArgumentParser.html#parse-java.lang.String:A-"><code>parse()</code></a>
+    method. This method can throw
     <code>RuntimeException</code>, which is done to allow user calling the library without surrounding the code
     with try-catch block, as some users may want to let the exception end the program. Also, a great part of the
-    exceptions happen only when users use (or do not use) a specific feature - MissingMandatoryOptionException,
-    IllegalOptionValue, UnhandledArgumentException) etc., so it would result in many collapsed catch blocks with
-    a comment "cannot happen". Remember InterruptedException?
+    exceptions happen only when users use (or do not use) a specific feature -
+    <a href="cz/cuni/mff/yaclpplib/MissingMandatoryOptionException.html"><code>MissingMandatoryOptionException</code></a>,
+    <a href="cz/cuni/mff/yaclpplib/IllegalOptionValue.html"><code>IllegalOptionValue</code></a>,
+    <a href="cz/cuni/mff/yaclpplib/UnhandledArgumentException.html"><code>UnhandledArgumentException</code></a>) etc.,
+    so it would result in many collapsed catch blocks with a comment "cannot happen". Remember InterruptedException?
 </p>
 <p>
-    The <code>parse()</code> methods goes through the list of string tokens given in the argument (which should
-    be command line arguments). For each token, it tries to create a valid <code>OptionValue</code>.
-    If an <code>OptionValue</code> is created, an <code>OptionHandler</code> is looked up.
+    The <a href="cz/cuni/mff/yaclpplib/ArgumentParser.html#parse-java.lang.String:A-"><code>parse()</code></a>
+    methods goes through the list of string tokens given in the argument (which should
+    be command line arguments). For each token, it tries to create a valid
+    <a href="cz/cuni/mff/yaclpplib/OptionValue.html"><code>OptionValue</code></a>.
+    If an <a href="cz/cuni/mff/yaclpplib/OptionValue.html"><code>OptionValue</code></a> is created,
+    an <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html"><code>OptionHandler</code></a> is looked up.
     If either of these fails, the token is considered a plain argument and the handler is called.
     Then, since the type is known by the handler, the driver locator is called and the driver used to parse the token.
     The parsed token is then given to the handler so it can set up the value.
 </p>
 <p>This method may look complex, but it is an inherent complexity. You need to parse the option to have its name, only
     then you can look if it takes a value (optionally or always). But only after then you know, how you should have
-    parsed it before&hellip; So we introduced another parsing step, <code>OptionValue#completeValue</code>, which can
-    take another token as an value, if it wishes to do so.</p>
+    parsed it before&hellip; So we introduced another parsing step,
+    <a href="cz/cuni/mff/yaclpplib/implementation/InternalOptionValue.html#completeValue-cz.cuni.mff.yaclpplib.implementation.TokenList-cz.cuni.mff.yaclpplib.implementation.ValuePolicy-"><code>InternalOptionValue#completeValue</code></a>,
+    which can take another token as an value, if it wishes to do so.</p>
 <p>
-    After the token list is processed, every field or method with <code>Mandatory</code> annotation is checked,
-    whether it was really encountered. Then, every method annotated with <code>AfterParse</code> is called and
+    After the token list is processed, every field or method with
+    <a href="cz/cuni/mff/yaclpplib/annotation/Mandatory.html"><code>Mandatory</code></a> annotation is checked,
+    whether it was really encountered. Then, every method annotated with
+    <a href="cz/cuni/mff/yaclpplib/annotation/AfterParse.html"><code>AfterParse</code></a> is called and
     all RuntimeExceptions are forwarded to user. This ends the parsing.
 </p>
 <p>
