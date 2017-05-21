@@ -1,31 +1,36 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.DuplicateDriverError;
 import cz.cuni.mff.yaclpplib.driver.Driver;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * A driver storage that caches query results.
  */
-public class DriverCache<T extends DriverStorage & DriverLocator> implements DriverLocator, DriverStorage {
+public class DriverCache implements DriverLocator {
 
     final Map<Class<?>, Driver> cache = new HashMap<>();
-    final T decoratedStorage;
+    final List<DriverLocator> locators = new ArrayList<>();
 
-    public DriverCache(T decoratedStorage) {
-        this.decoratedStorage = decoratedStorage;
+    public void addDriverLocator(DriverLocator locator) {
+        locators.add(locator);
     }
 
     @Override
-    public void add(Driver driver) throws DuplicateDriverError {
-        decoratedStorage.add(driver);
-        cache.clear();
+    public boolean hasDriverFor(Class<?> type) {
+        return locators.stream().anyMatch((l) -> l.hasDriverFor(type));
     }
 
     @Override
     public Driver getDriverFor(Class<?> type) throws AmbiguousDriverError, NoSuchDriverError {
-        return cache.computeIfAbsent(type, (x) -> decoratedStorage.getDriverFor(type));
+        return cache
+                .computeIfAbsent(type, (x) -> locators.stream()
+                    .filter((l) -> l.hasDriverFor(type))
+                    .findFirst()
+                    .map((l) -> l.getDriverFor(type))
+                    .orElseThrow(NoSuchDriverError::new));
     }
 }

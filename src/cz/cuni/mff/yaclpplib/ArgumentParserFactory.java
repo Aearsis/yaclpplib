@@ -3,6 +3,8 @@ package cz.cuni.mff.yaclpplib;
 import cz.cuni.mff.yaclpplib.driver.*;
 import cz.cuni.mff.yaclpplib.implementation.ArgumentParserImpl;
 import cz.cuni.mff.yaclpplib.implementation.DefaultHelpOption;
+import cz.cuni.mff.yaclpplib.implementation.DriverCache;
+import cz.cuni.mff.yaclpplib.implementation.HashDriverLocator;
 
 /**
  * A factory for creating ArgumentParser instances.
@@ -24,10 +26,19 @@ public final class ArgumentParserFactory {
      */
     public static ArgumentParser createDefaultTypesParser() {
         final ArgumentParserImpl parser = (ArgumentParserImpl) createPlainParser();
-        parser.addDriver(new VoidDriver());
-        parser.addDriver(new StringDriver());
-        parser.addDriver(new CharacterDriver());
-        parser.addDriver(new BooleanDriver());
+
+        final HashDriverLocator driverLocator = new HashDriverLocator();
+        driverLocator.add(new VoidDriver());
+        driverLocator.add(new StringDriver());
+        driverLocator.add(new CharacterDriver());
+        driverLocator.add(new BooleanDriver());
+
+        final DriverCache driverCache = new DriverCache();
+        driverCache.addDriverLocator(driverLocator);
+        driverCache.addDriverLocator(new EnumDriverFactory());
+        driverCache.addDriverLocator(new StringConstructableDriverFactory());
+
+        parser.setDriverLocator(driverCache);
         return parser;
     }
 

@@ -10,12 +10,14 @@ import java.util.*;
 public class ArgumentParserImpl implements ArgumentParser {
 
     private final List<Options> definitions = new ArrayList<>();
-    private final DriverCache drivers = new DriverCache<>(new HashDriverLocator());
+
+    private final MandatoryManager mandatoryManager = new MandatoryManager();
 
     private final Map<String, OptionHandler> optionHandlerMap = new HashMap<>();
     private final List<OptionHandler> optionHandlerList = new ArrayList<>();
     private final List<AfterParseHandler> afterParseMethods = new ArrayList<>();
-    private final MandatoryManager mandatoryManager = new MandatoryManager();
+
+    private DriverCache driverLocator;
 
     private UnexpectedParameterHandler unexpectedParameterHandler = value -> {
         throw new UnhandledArgumentException(value);
@@ -93,9 +95,12 @@ public class ArgumentParserImpl implements ArgumentParser {
         return instance;
     }
 
-    public <T> Driver<T> addDriver(Driver<T> driver) throws DuplicateDriverError {
-        drivers.add(driver);
-        return driver;
+    public DriverCache getDriverLocator() {
+        return driverLocator;
+    }
+
+    public void setDriverLocator(DriverCache driverLocator) {
+        this.driverLocator = driverLocator;
     }
 
     @Override
@@ -145,7 +150,7 @@ public class ArgumentParserImpl implements ArgumentParser {
             }
 
             final Object typedValue = optionValue.hasValue()
-                                        ? drivers.getDriverFor(type).parse(optionValue)
+                                        ? driverLocator.getDriverFor(type).parse(optionValue)
                                         : null;
             handler.setValue(typedValue, optionValue.getName());
         }
@@ -197,5 +202,4 @@ public class ArgumentParserImpl implements ArgumentParser {
         setUnexpectedParameterHandler(positionalArgumentsList::add);
         return positionalArgumentsList;
     }
-
 }
