@@ -1,17 +1,45 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
+import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.Options;
 
 public interface OptionHandler {
 
+    /**
+     * Returns an instance of the parser, which created this handler.
+     * @return creator of the handler
+     */
     ArgumentParser getParser();
 
+    /**
+     * Returns the type of handled field or the type of the argument of handled method.
+     * @return type of handled member
+     */
     Class<?> getType();
+
+    /**
+     * Returns one of the option names given to this field or method.
+     * @return one of the option names
+     */
     String getAnyOptionName();
+
+    /**
+     * Returns the value policy of the field or method.
+     * @return value policy
+     */
     ValuePolicy getValuePolicy();
+
+    /**
+     * Gets the instance of an {@link Options} class, where was the represented field or method defined.
+     * @return instance of {@link Options} with this member
+     */
     Options getDefinitionClass();
 
+    /**
+     * Gets a formatted help line for the given option, with all the synonyms includes.
+     * @return help line for the option
+     */
     String getHelpLine();
 
     /**

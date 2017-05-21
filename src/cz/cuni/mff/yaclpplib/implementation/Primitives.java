@@ -7,8 +7,9 @@ import java.util.Set;
 
 /**
  * An utility class for working with primitives.
+ * Its goal is to map primitive types to their wrapper types
+ * in order to box them.
  */
-
 public class Primitives {
 
     private final static Map<Class<?>, Class<?>> mapToBoxed = new HashMap<Class<?>, Class<?>>() {{
@@ -23,9 +24,15 @@ public class Primitives {
             put(void.class, Void.class);
     }};
 
+    /**
+     * Boxes a primitive type. If the type given is not primitive, it does nothing.
+     * @param type type being boxed
+     * @return boxed type, or original type if not primitive
+     */
     public static Class<?> box(Class<?> type) {
-        if (!type.isPrimitive())
+        if (!type.isPrimitive()) {
             return type;
+        }
 
         return mapToBoxed.get(type);
     }
@@ -37,6 +44,11 @@ public class Primitives {
         add(Byte.class);
     }};
 
+    /**
+     * Checks if the given type is an integral type.
+     * @param type checked type
+     * @return true if type is integral
+     */
     public static boolean isIntegral(Class type) {
         final Class<?> boxed = box(type);
         return integralTypes.contains(boxed);

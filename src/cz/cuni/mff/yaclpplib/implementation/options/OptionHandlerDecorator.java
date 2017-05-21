@@ -6,7 +6,7 @@ import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
 import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 
 /**
- * Base class for decorating OptionHandlers.
+ * Abstract base class for decorating OptionHandlers.
  */
 abstract public class OptionHandlerDecorator implements OptionHandler {
 

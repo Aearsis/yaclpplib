@@ -22,6 +22,12 @@ abstract class MemberOptionHandler implements OptionHandler {
     final private Option[] annotations;
     final private String help;
 
+    /**
+     * Constructs a new instance of the class for one specific member of {@link Options} instance.
+     * @param parser parser requesting this handler
+     * @param definitionClass instance of {@link Options} definins this member
+     * @param from the field handled
+     */
     MemberOptionHandler(ArgumentParser parser, Options definitionClass, AccessibleObject from) {
         this.parser = parser;
         this.definitionClass = definitionClass;
@@ -32,17 +38,16 @@ abstract class MemberOptionHandler implements OptionHandler {
         Help helpAnnotation = from.getDeclaredAnnotation(Help.class);
 
         /*
-         * TODO: consider throwing InvalidSetupException.
-         * Pros: always well-documented user programs
-         * Cons: the need to write @Help _everywhere_
+         * The appropriate behavior here depends on the use-case.
+         * We considered forcing users to write help to every option,
+         * but that'd make the library annoying to use in small personal projects.
+         * In case the option is missing, we set a reasonable default,
+         * which should be something visible and noticeable.
          */
-        help = helpAnnotation != null ? helpAnnotation.value() : "Do some magic";
+        help = helpAnnotation != null ? helpAnnotation.value() : "do some magic";
     }
 
-    /**
-     * TODO: move away to separate help formatter
-     * @return
-     */
+    @Override
     public String getHelpLine() {
         return String.format("  %-20s %s",
                 String.join(", ",
@@ -61,7 +66,10 @@ abstract class MemberOptionHandler implements OptionHandler {
         return parser;
     }
 
-    public void finish() { }
+    @Override
+    public void finish() {
+
+    }
 
     @Override
     public String getAnyOptionName() {

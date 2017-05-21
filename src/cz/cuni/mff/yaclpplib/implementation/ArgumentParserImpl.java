@@ -8,18 +8,50 @@ import cz.cuni.mff.yaclpplib.implementation.options.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+/**
+ * Main implementation of ArgumentParser. <br/>
+ *
+ * It takes care of creating all needed internal classes,
+ * calling methods, adding option handlers, forwarding option
+ * tokens, calling after parse methods, etc. <br/>
+ *
+ * Visit {@link ArgumentParser} for public API, or feel free
+ * to dig into the code to check the actual implementation.
+ */
 public class ArgumentParserImpl implements ArgumentParser {
 
+    /**
+     * List of all options instances added with {@link ArgumentParser#addOptions(Options)} method.
+     */
     private final List<Options> definitions = new ArrayList<>();
 
+    /**
+     * A manager taking care of {@link Mandatory} annotated fields.
+     */
     private final MandatoryManager mandatoryManager = new MandatoryManager();
 
+    /**
+     * Maps the options (such as "-s") to their handlers.
+     */
     private final Map<String, OptionHandler> optionHandlerMap = new HashMap<>();
+    /**
+     * A list of handlers. The issue with {@code optionHandlerMap} is that it can
+     * contain every handler multiple times.
+     */
     private final List<OptionHandler> optionHandlerList = new ArrayList<>();
+    /**
+     * A list of {@link AfterParse} annotated methods.
+     */
     private final List<AfterParseHandler> afterParseMethods = new ArrayList<>();
 
+    /**
+     * A locator which provides drivers for parsing different types of arguments.
+     */
     private DriverCache driverLocator;
 
+    /**
+     * Default handler for unexpected (positional) arguments.
+     */
     private UnexpectedParameterHandler unexpectedParameterHandler = value -> {
         throw new UnhandledArgumentException(value);
     };
@@ -35,7 +67,6 @@ public class ArgumentParserImpl implements ArgumentParser {
 
     /**
      * Process all fields annotated with {@link Option}, and add their handlers.
-     *
      * @param options the options class being processed
      */
     private <T extends Options> void addFieldOptions(T options) {
@@ -48,12 +79,10 @@ public class ArgumentParserImpl implements ArgumentParser {
 
     /**
      * Process all methods annotated with {@link Option}, and add their handlers.
-     *
      * @param options the options class being processed
      */
     private <T extends Options> void addMethodOptions(T options) {
         for (Method method : options.getClass().getDeclaredMethods()) {
-            // ... with @Option annotation
             if (method.getDeclaredAnnotationsByType(Option.class).length > 0) {
                 addHandler(new MethodOption(this, options, method), method);
             }
@@ -62,7 +91,6 @@ public class ArgumentParserImpl implements ArgumentParser {
 
     /**
      * Process all methods annotated with {@link AfterParse}, and add them to the afterParseMethods list.
-     *
      * @param options the options class being processed
      */
     private <T extends Options> void addAfterParseMethods(T options) {
@@ -75,7 +103,6 @@ public class ArgumentParserImpl implements ArgumentParser {
 
     /**
      * Add new option - a field or method.
-     *
      * @param rawHandler a "plain" handler of field or method
      * @param member the field or method in question
      */
@@ -86,6 +113,7 @@ public class ArgumentParserImpl implements ArgumentParser {
         // Register this option for mandatory checking
         mandatoryManager.add(handler, member);
 
+        // Add it to the list of all handlers
         optionHandlerList.add(handler);
 
         // Add all @Option synonyms to the map
@@ -95,7 +123,6 @@ public class ArgumentParserImpl implements ArgumentParser {
 
     /**
      * Add one @Option - concrete alias.
-     *
      * @param alias "-s" or "--long" alias
      * @param handler the handler for this alias
      */
@@ -106,18 +133,18 @@ public class ArgumentParserImpl implements ArgumentParser {
         optionHandlerMap.put(alias, handler);
     }
 
-
     /**
      * Some options have different semantics. Because these generate too much combinations,
-     * we handle them using decorators over the handlers.
+     * we handle them using decorators over the handlers. <br/>
      *
-     * For now, we handle:
-     *      - arrays, by aggregating the component type, yielding the final array at the end
-     *      - primitive types, because they often require special handling
-     *      - boolean options, because --verbose is a shorthand for "--verbose true"
-     *      - range options, we need to check if the value is in the given range
-     *
-     * Please note that the order is important here, as it defines the final semantics.
+     * For now, we handle: <br/>
+     * <ul>
+     *     <li> arrays, by aggregating the component type, yielding the final array at the end</li>
+     *     <li> primitive types, because they often require special handling</li>
+     *     <li> boolean options, because --verbose is a shorthand for "--verbose true"</li>
+     *     <li> range options, we need to check if the value is in the given range</li>
+     * </ul>
+     * Please note that the <b>order is important</b> here, as it defines the final semantics.
      *
      * @param rawHandler a handler to be wrapped
      * @return handler, wrapped if applicable
@@ -140,17 +167,26 @@ public class ArgumentParserImpl implements ArgumentParser {
         return wrappedHandler;
     }
 
+    /**
+     * Returns the driver locator parser currently uses.
+     * @return used driver locator
+     */
     public DriverCache getDriverLocator() {
         return driverLocator;
     }
 
+    /**
+     * Sets the driver locator to given locator
+     * @param driverLocator new driver locator
+     */
     public void setDriverLocator(DriverCache driverLocator) {
         this.driverLocator = driverLocator;
     }
 
     @Override
     public void parse(String[] args) throws UnhandledArgumentException {
-        TokenList tokenList = new TokenList(args);
+        // Create a queue from the tokens
+        final TokenList tokenList = new TokenList(args);
 
         while (tokenList.size() > 0) {
             final String optionToken = tokenList.remove();
@@ -160,11 +196,14 @@ public class ArgumentParserImpl implements ArgumentParser {
                 while (tokenList.size() > 0) {
                     unexpectedParameterHandler.handle(tokenList.remove());
                 }
-                continue;
+                break;
             }
 
-            Optional<InternalOptionValue> maybeOptionValue = InternalOptionValueFactory.tryCreate(optionToken);
+            // Try to create an option value from the token
+            final Optional<InternalOptionValue> maybeOptionValue =
+                    InternalOptionValueFactory.tryCreate(optionToken);
 
+            // We didn't find a match, therefore it's a plain argument possibly
             if (!maybeOptionValue.isPresent()) {
                 unexpectedParameterHandler.handle(optionToken);
                 continue;
@@ -176,17 +215,23 @@ public class ArgumentParserImpl implements ArgumentParser {
                 continue;
             }
 
+            // We have an option value now, complete the instances
             final InternalOptionValue optionValue = maybeOptionValue.get();
             final OptionHandler handler = optionHandlerMap.get(optionValue.getName());
 
-            ValuePolicy valuePolicy = handler.getValuePolicy();
+            final ValuePolicy valuePolicy = handler.getValuePolicy();
 
-            if (tokenList.size() > 0)
+            // It can have a second part, add it if needed
+            if (tokenList.size() > 0) {
                 optionValue.completeValue(tokenList, valuePolicy);
+            }
 
             mandatoryManager.encountered(handler);
+
+            // Let's try to find a driver to parse it
             final Class<?> type = handler.getType();
 
+            // Invalid cases
             if (valuePolicy == ValuePolicy.MANDATORY && !optionValue.hasValue()) {
                 throw new MissingOptionValue(optionValue);
             }
@@ -194,6 +239,7 @@ public class ArgumentParserImpl implements ArgumentParser {
                 throw new InvalidOptionValue("Parameter " + optionValue.getName() + " cannot have an associated value.");
             }
 
+            // Do the parsing
             final Object typedValue = optionValue.hasValue()
                                         ? driverLocator.getDriverFor(type).parse(optionValue)
                                         : null;
@@ -225,14 +271,17 @@ public class ArgumentParserImpl implements ArgumentParser {
         final String endl = System.getProperty("line.separator");
 
         for (Options options : definitions) {
+            // Summary for the help classes
             Help annotation = options.getClass().getDeclaredAnnotation(Help.class);
             if (annotation != null) {
                 builder.append(annotation.value()).append(endl);
             }
 
+            // Now deal with every @Option encountered
             for (OptionHandler handler : optionHandlerList) {
-                if (handler.getDefinitionClass() != options)
+                if (handler.getDefinitionClass() != options) {
                     continue;
+                }
 
                 builder.append(handler.getHelpLine()).append(endl);
             }

@@ -22,6 +22,7 @@ public class AmbiguousDriverError extends InvalidSetupError {
     public String getMessage() {
         return String.format("Cannot choose a driver for %s - more uncomparable drivers exists: %s",
                 forType.getTypeName(),
-                String.join(",", availableDrivers.parallelStream().map((driver) -> driver.getClass().getTypeName()).toArray(String[]::new)));
+                String.join(",", availableDrivers.parallelStream().map((driver)
+                        -> driver.getClass().getTypeName()).toArray(String[]::new)));
     }
 }

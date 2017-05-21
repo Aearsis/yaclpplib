@@ -17,6 +17,10 @@ public class DriverCache implements DriverLocator {
     private final Map<Class<?>, Driver> cache = new HashMap<>();
     private final List<DriverLocator> locators = new ArrayList<>();
 
+    /**
+     * Adds a new locator to the cache
+     * @param locator
+     */
     public void addDriverLocator(DriverLocator locator) {
         locators.add(locator);
     }

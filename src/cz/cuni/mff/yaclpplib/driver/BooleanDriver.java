@@ -22,9 +22,11 @@ public class BooleanDriver implements Driver<Boolean> {
         final String value = x.getValue();
         if (truthyValues.contains(value)) {
             return true;
-        } else if (falsyValues.contains(value)) {
+        }
+        else if (falsyValues.contains(value)) {
             return false;
-        } else {
+        }
+        else {
             throw new InvalidOptionValue("The value of " + x.getName() + " can be either 'true' or 'false'.");
         }
     }

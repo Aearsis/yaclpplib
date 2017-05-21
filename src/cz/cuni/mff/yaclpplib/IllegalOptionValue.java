@@ -1,8 +1,11 @@
 package cz.cuni.mff.yaclpplib;
 
+import cz.cuni.mff.yaclpplib.annotation.Range;
+import cz.cuni.mff.yaclpplib.annotation.Option;
+
 /**
- * Thrown when user constraint on an option failed. It is thrown by the @Range validator
- * and you may throw it from your @Option annotated methods.
+ * Thrown when user constraint on an option failed. It is thrown by the {@link Range} validator
+ * and you may throw it from your {@link Option} annotated methods.
  */
 public class IllegalOptionValue extends RuntimeException {
 

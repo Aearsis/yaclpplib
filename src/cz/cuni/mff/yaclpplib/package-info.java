@@ -1,6 +1,6 @@
 /**
- * Base classes of the library needed for general usage.
- * <p>
+ * Base classes of the library needed for general usage. <br/>
+ *
  * Contains the important classes and interfaces for the library.
  * Importing this and all annotations should be sufficient for
  * basic usage of this library.

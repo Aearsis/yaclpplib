@@ -47,7 +47,7 @@ public interface ArgumentParser {
     }
 
     /**
-     * Changes the way parser handles unknown arguments.
+     * Changes the way parser handles unknown arguments. <br/>
      * Do not use in conjunction with {@link ArgumentParser#requestPositionalArguments},
      * because then all parameters are expected.
      *
@@ -56,7 +56,7 @@ public interface ArgumentParser {
     void setUnexpectedParameterHandler(UnexpectedParameterHandler handler);
 
     /**
-     * Creates a list, which will be filled with positional arguments when the argument list is parsed.
+     * Creates a list, which will be filled with positional arguments when the argument list is parsed. <br/>
      * Do not use in conjunction with {@link ArgumentParser#setUnexpectedParameterHandler},
      * because then all parameters are expected.
      *

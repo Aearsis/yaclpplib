@@ -3,7 +3,7 @@ package cz.cuni.mff.yaclpplib.annotation;
 import java.lang.annotation.*;
 
 /**
- * Sets the help message of the option.
+ * Sets the help message of the option. <br/>
  *
  * This message is used for creating an aggregated help message.
  */

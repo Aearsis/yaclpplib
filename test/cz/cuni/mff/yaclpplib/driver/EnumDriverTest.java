@@ -28,12 +28,6 @@ public class EnumDriverTest {
         }
     }
 
-    @Test
-    public void testNullEnum() throws Exception {
-        GenericEnumDriver driver = new GenericEnumDriver(SimpleEnum.class);
-        assertEquals(null, driver.parse(new JustValue(null)));
-    }
-
     @Test(expected = InvalidOptionValue.class)
     public void testInvalid() throws Exception {
         GenericEnumDriver driver = new GenericEnumDriver(SimpleEnum.class);

@@ -1,5 +1,7 @@
-package cz.cuni.mff.yaclpplib.driver;
+package cz.cuni.mff.yaclpplib.implementation.drivers;
 
+import cz.cuni.mff.yaclpplib.driver.Driver;
+import cz.cuni.mff.yaclpplib.driver.GenericStringConstructableDriver;
 import cz.cuni.mff.yaclpplib.implementation.AmbiguousDriverError;
 import cz.cuni.mff.yaclpplib.implementation.drivers.DriverLocator;
 import cz.cuni.mff.yaclpplib.NoSuchDriverError;

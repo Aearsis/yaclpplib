@@ -2,13 +2,15 @@ package cz.cuni.mff.yaclpplib.driver;
 
 import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.OptionValue;
+import cz.cuni.mff.yaclpplib.annotation.CaseSensitive;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Driver for enum subclasses. It is to be created dynamically for every
- * enum subtype encountered in users' Options.
+ * Driver for enum subclasses, that are annotated by {@link CaseSensitive} annotation.
+ * It is to be created dynamically for every enum subtype encountered in users' Options. <br/>
  *
  * This is a bit hacky because how hacky enums are in Java.
  */
@@ -16,27 +18,20 @@ import java.util.Map;
 public class GenericEnumDriver implements Driver {
 
     final private Class enumType;
-    final private Map<String, Object> enumValues;
+    final private Map<String, Object> enumValues = new HashMap<>();
 
     public GenericEnumDriver(Class enumType) {
         this.enumType = enumType;
-        this.enumValues = new HashMap<>();
-        for (Object constant : enumType.getEnumConstants()) {
-            enumValues.put(constant.toString().toLowerCase(), constant);
-        }
+        Arrays.stream(enumType.getEnumConstants()).forEach((c) -> enumValues.put(c.toString(), c));
     }
 
     @Override
-    public Object parse(OptionValue x) throws InvalidOptionValue {
-        if (!x.hasValue())
-            return null;
-        String value = x.getValue().toLowerCase();
-        if (enumValues.containsKey(value)) {
-            return enumValues.get(value);
+    public Object parse(OptionValue optionValue) throws InvalidOptionValue {
+        if (!enumValues.containsKey(optionValue.getValue())) {
+            throw new InvalidOptionValue("Invalid value for " + optionValue.getName());
         }
-        else {
-            throw new InvalidOptionValue("Invalid value for " + x.getName());
-        }
+
+        return enumValues.get(optionValue.getValue());
     }
 
     @Override

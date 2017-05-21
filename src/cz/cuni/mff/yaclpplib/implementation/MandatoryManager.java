@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class MandatoryManager {
 
-    final private Set<OptionHandler> missingOptions = new HashSet<>();
+    private final Set<OptionHandler> missingOptions = new HashSet<>();
 
     /**
      * Called when a new option is being registered. Starts tracking the given option.

@@ -13,17 +13,8 @@ import java.lang.reflect.AccessibleObject;
  */
 public class RangeOption extends OptionHandlerDecorator {
 
-    private long minimumValue;
-    private long maximumValue;
-
-    public static OptionHandler wrapIfApplicable(OptionHandler handler, AccessibleObject member) {
-        if (member.getDeclaredAnnotation(Range.class) != null) {
-            return new RangeOption(handler, member.getDeclaredAnnotation(Range.class));
-        }
-        else {
-            return handler;
-        }
-    }
+    private final long minimumValue;
+    private final long maximumValue;
 
     RangeOption(OptionHandler decorated, Range range) {
         super(decorated);
@@ -46,5 +37,19 @@ public class RangeOption extends OptionHandlerDecorator {
         }
 
         super.setValue(typedValue, optionName);
+    }
+
+    /**
+     * Wraps the handler into {@link RangeOption} if needed
+     * @param handler handler to wrap
+     * @return wrapped handler, if needed, otherwise the original one
+     */
+    public static OptionHandler wrapIfApplicable(OptionHandler handler, AccessibleObject member) {
+        if (member.getDeclaredAnnotation(Range.class) != null) {
+            return new RangeOption(handler, member.getDeclaredAnnotation(Range.class));
+        }
+        else {
+            return handler;
+        }
     }
 }

@@ -4,7 +4,9 @@ import cz.cuni.mff.yaclpplib.driver.*;
 import cz.cuni.mff.yaclpplib.implementation.ArgumentParserImpl;
 import cz.cuni.mff.yaclpplib.implementation.DefaultHelpOption;
 import cz.cuni.mff.yaclpplib.implementation.drivers.DriverCache;
+import cz.cuni.mff.yaclpplib.implementation.drivers.EnumDriverFactory;
 import cz.cuni.mff.yaclpplib.implementation.drivers.HashDriverLocator;
+import cz.cuni.mff.yaclpplib.implementation.drivers.StringConstructableDriverFactory;
 
 /**
  * A factory for creating ArgumentParser instances.
@@ -12,7 +14,7 @@ import cz.cuni.mff.yaclpplib.implementation.drivers.HashDriverLocator;
 public final class ArgumentParserFactory {
 
     /**
-     * Creates an empty parser with no drivers attached.
+     * Creates an empty parser with no drivers attached. <br/>
      * The programmer is expected to create his own drivers and fill the parser himself.
      * @return an empty parser
      */

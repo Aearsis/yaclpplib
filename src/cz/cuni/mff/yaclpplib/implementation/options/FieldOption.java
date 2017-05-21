@@ -9,6 +9,9 @@ import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 
 import java.lang.reflect.Field;
 
+/**
+ * Represents a single field in an {@link Options} instance.
+ */
 public class FieldOption extends MemberOptionHandler {
 
     final private Field field;

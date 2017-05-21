@@ -12,16 +12,19 @@ import cz.cuni.mff.yaclpplib.implementation.options.MemberOptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * Represents a single method in an {@link Options} instance.
+ */
 public class MethodOption extends MemberOptionHandler {
 
-    final private Class type;
+    private final Class type;
     private final boolean annotatedOptional;
 
     private interface MethodCall {
         void call(Object typedValue) throws IllegalAccessException, InvocationTargetException;
     }
 
-    private MethodCall call;
+    private final MethodCall call;
 
     public MethodOption(ArgumentParser parser, Options definitionClass, Method method) {
         super(parser, definitionClass, method);
@@ -43,12 +46,15 @@ public class MethodOption extends MemberOptionHandler {
         }
 
         if (annotatedOptional) {
-            if (type.equals(Void.class))
+            if (type.equals(Void.class)) {
                 throw new InvalidSetupError("Methods without arguments cannot have optional value.");
-            if (type.isPrimitive())
+            }
+            if (type.isPrimitive()) {
                 throw new InvalidSetupError("Methods with primitive types cannot have optional values.");
-            if (type.isArray() && type.getComponentType().isPrimitive())
+            }
+            if (type.isArray() && type.getComponentType().isPrimitive()) {
                 throw new InvalidSetupError("Methods with arrays of primitive type cannot have optional values.");
+            }
         }
     }
 
@@ -70,9 +76,11 @@ public class MethodOption extends MemberOptionHandler {
     public ValuePolicy getValuePolicy() {
         if (type == Void.class) {
             return ValuePolicy.NEVER;
-        } else if (annotatedOptional) {
+        }
+        else if (annotatedOptional) {
             return ValuePolicy.OPTIONAL;
-        } else {
+        }
+        else {
             return ValuePolicy.MANDATORY;
         }
     }

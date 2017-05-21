@@ -10,10 +10,6 @@ import cz.cuni.mff.yaclpplib.implementation.Primitives;
  */
 public class BoxedOption extends OptionHandlerDecorator {
 
-    static boolean isApplicable(OptionHandler handler) {
-        return handler.getType().isPrimitive();
-    }
-
     BoxedOption(OptionHandler decorated) {
         super(decorated);
     }
@@ -23,6 +19,15 @@ public class BoxedOption extends OptionHandlerDecorator {
         return Primitives.box(super.getType());
     }
 
+    private static boolean isApplicable(OptionHandler handler) {
+        return handler.getType().isPrimitive();
+    }
+
+    /**
+     * Wraps the handler into {@link BoxedOption} if needed
+     * @param handler handler to wrap
+     * @return wrapped handler, if needed, otherwise the original one
+     */
     public static OptionHandler wrapIfApplicable(OptionHandler handler) {
         if (isApplicable(handler)) {
             return new BoxedOption(handler);

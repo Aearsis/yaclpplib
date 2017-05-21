@@ -1,5 +1,9 @@
 package cz.cuni.mff.yaclpplib;
 
+/**
+ * Exception thrown by the library when an option requiring a value doesn't have
+ * a value in the given argument list.
+ */
 public class MissingOptionValue extends InvalidOptionValue {
 
     private final OptionValue optionValue;

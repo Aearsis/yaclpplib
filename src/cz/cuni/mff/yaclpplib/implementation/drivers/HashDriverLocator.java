@@ -18,15 +18,15 @@ public class HashDriverLocator implements DriverLocator, DriverStorage {
     public void add(Driver driver) throws DuplicateDriverError {
         final Class<?> returnType = driver.getReturnType();
 
-        if (drivers.containsKey(returnType))
+        if (drivers.containsKey(returnType)) {
             throw new DuplicateDriverError(returnType);
+        }
 
         drivers.put(returnType, driver);
     }
 
     /**
      * Finds the most suitable driver for type. That is the least specific one creating a type assignable to type.
-     *
      * @param type a type of option value
      * @return driver that can produce the type
      */
@@ -37,16 +37,20 @@ public class HashDriverLocator implements DriverLocator, DriverStorage {
 
         outerLoop:
         for (Driver currentDriver : drivers.values()) {
-            if (!type.isAssignableFrom(currentDriver.getReturnType()))
+            if (!type.isAssignableFrom(currentDriver.getReturnType())) {
                 continue;
+            }
 
             // Skip current if there is a less specialized driver
-            for (Driver<?> lessSpecific : bestDrivers)
-                if (lessSpecific.getReturnType().isAssignableFrom(currentDriver.getReturnType()))
+            for (Driver<?> lessSpecific : bestDrivers) {
+                if (lessSpecific.getReturnType().isAssignableFrom(currentDriver.getReturnType())) {
                     continue outerLoop;
+                }
+            }
 
             // Remove all more specialized drivers
-            bestDrivers.removeIf((Driver moreSpecific) -> currentDriver.getReturnType().isAssignableFrom(moreSpecific.getReturnType()));
+            bestDrivers.removeIf((Driver moreSpecific)
+                    -> currentDriver.getReturnType().isAssignableFrom(moreSpecific.getReturnType()));
 
             bestDrivers.add(currentDriver);
         }
