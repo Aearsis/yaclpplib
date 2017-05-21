@@ -17,16 +17,17 @@
     For basic usage guide and a quick overview of provided classes and annotations, see README.
 </p>
 <h1>
-    Annotations
+    <a href="cz/cuni/mff/yaclpplib/annotation/package-summary.html">Annotations</a>
 </h1>
 <p>
-    This library uses annotations, which users use to annotate their class members. These annotations are predefined
+    This library uses annotations,
+    which users use to annotate their class members. These annotations are predefined
     and adding your own shouldn't be needed unless you need something similar to the <code>Range</code> annotation.
     Each annotation is processed in a different part of the library implementation,
     so we will go over them as we need them.
 </p>
 <h1>
-    OptionValue
+    <a href="cz/cuni/mff/yaclpplib/OptionValue.html">OptionValue</a>
 </h1>
 <p>
     An <code>OptionValue</code> is abstracting the pair of an option and its argument.
@@ -35,42 +36,54 @@
     Currently, the library offers implementations for two different type of option formats.
 </p>
 <p>
-    The first supported format is described by <code>ShortOptionValue</code>. It handles options, which start with
+    The first supported format is described by
+    <a href="cz/cuni/mff/yaclpplib/implementation/ShortOptionValue.html"><code>ShortOptionValue</code></a>.
+    It handles options, which start with
     a dash ("-") and a single letter or number. It supports two different type of values,
     either a value separated by a space, or without it. In other words, both "-pvalue" and "-p value" are supported.
 </p>
 <p>
-    The second supported format is described by <code>LongOptionValue</code>. It handles options starting with two
+    The second supported format is described by
+    <a href="cz/cuni/mff/yaclpplib/implementation/LongOptionValue.html"><code>LongOptionValue</code></a>.
+    It handles options starting with two
     dashes ("--") and at least one letter or number. The values of these options are separated by an equals sign ("=").
     Some examples of handled options are "--o", "--all", "--type=something", "--size=5".
 </p>
 <p>
-    The instances of these classes are created by <code>InternalOptionValueFactory</code>. If you wish to support
-    a new type, create a new class implementing <code>InternalOptionValue</code> interface and modify the
-    <code>InternalOptionValueFactory#tryCreate()</code> method.
+    The instances of these classes are created by <code>InternalOptionValueFactory</code>.
+    If you wish to support a new type, create a new class implementing <code>InternalOptionValue</code>
+    interface and modify the <code>InternalOptionValueFactory#tryCreate()</code>method.
 </p>
 <h1>
-    Drivers
+    <a href="cz/cuni/mff/yaclpplib/driver/Driver.html">Drivers</a>
 </h1>
 <p>
     The parsing itself is handled by drivers, which are short classes implementing <code>Driver</code> interface.
-    The main function is in the <code>parse(OptionValue value)</code> method, which takes an OptionValue instance
+    The main function is in the
+    <a href="cz/cuni/mff/yaclpplib/driver/Driver.html#parse-cz.cuni.mff.yaclpplib.OptionValue-">
+        <code>parse(OptionValue value)</code></a> method, which takes an OptionValue instance
     and tries to convert the value into desired type.
     We will shortly go over our drivers, since some of them handle multiple types at once. All of these drivers
     are found in the <code>yaclpplib.drivers</code> package.
 </p>
 <ul>
-<li><code>BooleanDriver</code> - parses all usual
-    representations of truthy and falsy values into true or false</li>
-<li><code>CharacterDriver</code> - converts a String into char</li>
-<li><code>GenericEnumDriver</code> and <code>GenericCaseInsensitiveEnumDriver</code>
-    - convert a String constant into a matching enum value depending on CaseSensitive annotation</li>
-<li><code>StringDriver</code> - a special driver which can convert string into anything,
-    that has a String constructor. This driver also works for all numeric types.</li>
-<li><code>VoidDriver</code> - a special driver used for options, that never take value</li>
+    <li><a href="cz/cuni/mff/yaclpplib/driver/BooleanDriver.html"><code>BooleanDriver</code></a> - parses all usual
+        representations of truthy and falsy values into true or false</li>
+    <li><a href="cz/cuni/mff/yaclpplib/driver/CharacterDriver.html"><code>CharacterDriver</code></a>
+        - converts a String into char</li>
+    <li><a href="cz/cuni/mff/yaclpplib/driver/GenericEnumDriver.html"><code>GenericEnumDriver</code></a>
+        and <a href="cz/cuni/mff/yaclpplib/driver/GenericCaseInsensitiveEnumDriver.html"><code>GenericCaseInsensitiveEnumDriver</code></a>
+        - convert a String constant into a matching enum value depending on CaseSensitive annotation</li>
+    <li><a href="cz/cuni/mff/yaclpplib/driver/StringDriver.html"><code>StringDriver</code></a>
+        - a special driver which can convert string into anything,
+        that has a String constructor. This driver also works for all numeric types.</li>
+    <li><a href="cz/cuni/mff/yaclpplib/driver/VoidDriver.html"><code>VoidDriver</code></a>
+        - a special driver used for options, that never take value</li>
 </ul>
 <p>
-    These drivers are provided by classes implementing <code>DriverLocator</code> interface. The purpose of
+    These drivers are provided by classes implementing
+    <a href="cz/cuni/mff/yaclpplib/implementation/drivers/DriverLocator.html"><code>DriverLocator</code></a>
+    interface. The purpose of
     a <code>DriverLocator</code> is to determine, whether it has a driver for a given Java <code>Class</code>
     and if so, provide a driver which can parse string into instances of those classes.
 </p>
@@ -79,11 +92,14 @@
     <code>yaclpplib.implementation.drivers</code> package.
 </p>
 <ul>
-    <li><code>EnumDriverFactory</code> - locator creating instances of enum drivers for a concrete enum class</li>
-    <li><code>StringConstructableDriverFactory</code> - locator providing a driver instance for classes,
+    <li><a href="cz/cuni/mff/yaclpplib/implementation/drivers/EnumDriverFactory.html"><code>EnumDriverFactory</code></a> - locator creating instances of enum drivers for a concrete enum class</li>
+    <li><a href="cz/cuni/mff/yaclpplib/implementation/drivers/StringConstructableDriverFactory.html">
+        <code>StringConstructableDriverFactory</code></a> - locator providing a driver instance for classes,
         that have a constructor taking a String</li>
-    <li><code>HashDriverLocator</code> - which stores all miscellaneous drivers</li>
-    <li><code>DriverCache</code> - which abstracts all other locators and tries to use each of them</li>
+    <li><a href="cz/cuni/mff/yaclpplib/implementation/drivers/HashDriverLocator.html"><code>HashDriverLocator</code></a>
+        - which stores all miscellaneous drivers</li>
+    <li><a href="cz/cuni/mff/yaclpplib/implementation/drivers/DriverCache.html"><code>DriverCache</code></a>
+        - which abstracts all other locators and tries to use each of them</li>
 </ul>
 <p>
     The main argument parser implementation then checks, what type the parsed option has and asks a driver cache
@@ -91,7 +107,7 @@
     the argument is treated as a plain argument if possible, otherwise an exception is thrown.
 </p>
 <h1>
-    OptionHandlers
+    <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html">OptionHandlers</a>
 </h1>
 <p>
     <code>OptionHandlers</code> are classes responsible for accessing and modifying annotated fields.
@@ -119,7 +135,7 @@
     <b>Warning: the order of wrapping decorators matters as some of them consume or change the value.</b>
 </p>
 <h1>
-    ArgumentParser
+    <a href="cz/cuni/mff/yaclpplib/ArgumentParser.html">ArgumentParser</a>
 </h1>
 <p>
     Next few paragraphs will describe the function of argument parser itself,
@@ -154,7 +170,8 @@
     all RuntimeExceptions are forwarded to user. This end the parsing.
 </p>
 <p>
-    Most of the parts are separated into methods or even special classes (for example <code>MandatoryManager</code>).
+    Most of the parts are separated into methods or even special classes
+    (for example <a href="cz/cuni/mff/yaclpplib/implementation/MandatoryManager.html"><code>MandatoryManager</code></a>).
     Therefore should you want to change the behavior of parsing, you should be able to do so without
     large scale changes to the code.
 </p>
