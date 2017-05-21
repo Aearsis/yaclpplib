@@ -2,7 +2,6 @@ package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.*;
 import cz.cuni.mff.yaclpplib.annotation.*;
-import cz.cuni.mff.yaclpplib.driver.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -23,15 +22,100 @@ public class ArgumentParserImpl implements ArgumentParser {
         throw new UnhandledArgumentException(value);
     };
 
+    @Override
+    public <T extends Options> T addOptions(T instance) {
+        definitions.add(instance);
+        addFieldOptions(instance);
+        addMethodOptions(instance);
+        addAfterParseMethods(instance);
+        return instance;
+    }
+
     /**
-     * Some combinations have different semantics. Because these generate too much combinations,
+     * Process all fields annotated with {@link Option}, and add their handlers.
+     *
+     * @param options the options class being processed
+     */
+    private <T extends Options> void addFieldOptions(T options) {
+        for (Field field : options.getClass().getDeclaredFields()) {
+            if (field.getDeclaredAnnotationsByType(Option.class).length > 0) {
+                addHandler(new FieldOption(this, options, field), field);
+            }
+        }
+    }
+
+    /**
+     * Process all methods annotated with {@link Option}, and add their handlers.
+     *
+     * @param options the options class being processed
+     */
+    private <T extends Options> void addMethodOptions(T options) {
+        for (Method method : options.getClass().getDeclaredMethods()) {
+            // ... with @Option annotation
+            if (method.getDeclaredAnnotationsByType(Option.class).length > 0) {
+                addHandler(new MethodOption(this, options, method), method);
+            }
+        }
+    }
+
+    /**
+     * Process all methods annotated with {@link AfterParse}, and add them to the afterParseMethods list.
+     *
+     * @param options the options class being processed
+     */
+    private <T extends Options> void addAfterParseMethods(T options) {
+        for (Method method : options.getClass().getDeclaredMethods()) {
+            if (method.getDeclaredAnnotation(AfterParse.class) != null) {
+                afterParseMethods.add(new AfterParseHandler(method, options));
+            }
+        }
+    }
+
+    /**
+     * Add new option - a field or method.
+     *
+     * @param rawHandler a "plain" handler of field or method
+     * @param member the field or method in question
+     */
+    private void addHandler(OptionHandler rawHandler, AccessibleObject member) {
+        // Handle all the semantic quirks
+        final OptionHandler handler = wrapHandler(rawHandler, member);
+
+        // Register this option for mandatory checking
+        mandatoryManager.add(handler, member);
+
+        optionHandlerList.add(handler);
+
+        // Add all @Option synonyms to the map
+        Arrays.stream(member.getDeclaredAnnotationsByType(Option.class))
+                .forEach(option -> mapOption(option.value(), handler));
+    }
+
+    /**
+     * Add one @Option - concrete alias.
+     *
+     * @param alias "-s" or "--long" alias
+     * @param handler the handler for this alias
+     */
+    private void mapOption(String alias, OptionHandler handler) {
+        if (optionHandlerMap.containsKey(alias)) {
+            throw new InvalidSetupError("One option (" + alias + ") can't be used at multiple methods or fields.");
+        }
+        optionHandlerMap.put(alias, handler);
+    }
+
+
+    /**
+     * Some options have different semantics. Because these generate too much combinations,
      * we handle them using decorators over the handlers.
      *
      * For now, we handle:
      *      - arrays, by aggregating the component type, yielding the final array at the end
-     *      - boolean options, because --verbose is a shorthand for "--verbose true"
      *      - primitive types, because they often require special handling
+     *      - boolean options, because --verbose is a shorthand for "--verbose true"
      *      - range options, we need to check if the value is in the given range
+     *
+     * Please note that the order is important here, as it defines the final semantics.
      *
      * @param rawHandler a handler to be wrapped
      * @return handler, wrapped if applicable
@@ -52,47 +136,6 @@ public class ArgumentParserImpl implements ArgumentParser {
         wrappedHandler = RangeOption.wrapIfApplicable(wrappedHandler, member);
 
         return wrappedHandler;
-    }
-
-    private void mapOption(String text, OptionHandler handler) {
-        if (optionHandlerMap.containsKey(text)) {
-            throw new InvalidSetupError("One option (" + text + ") can't be used at multiple methods or fields.");
-        }
-        optionHandlerMap.put(text, handler);
-    }
-
-    private void addHandler(OptionHandler rawHandler, AccessibleObject member) {
-        final OptionHandler handler = wrapHandler(rawHandler, member);
-        mandatoryManager.add(handler, member);
-        optionHandlerList.add(handler);
-        Arrays.stream(member.getDeclaredAnnotationsByType(Option.class))
-                .forEach(option -> mapOption(option.value(), handler));
-    }
-
-    @Override
-    public <T extends Options> T addOptions(T instance) {
-        // Add the instance the options instances list
-        definitions.add(instance);
-
-        // Process every field with @Option annotation
-        for (Field field : instance.getClass().getDeclaredFields()) {
-            if (field.getDeclaredAnnotationsByType(Option.class).length > 0) {
-                addHandler(new FieldOption(this, instance, field), field);
-            }
-        }
-
-        // Process every method
-        for (Method method : instance.getClass().getDeclaredMethods()) {
-            // ... with @Option annotation
-            if (method.getDeclaredAnnotationsByType(Option.class).length > 0) {
-                addHandler(new MethodOption(this, instance, method), method);
-            }
-            // ... or with @AfterParse annotation
-            if (method.getDeclaredAnnotation(AfterParse.class) != null) {
-                afterParseMethods.add(new AfterParseHandler(method, instance));
-            }
-        }
-        return instance;
     }
 
     public DriverCache getDriverLocator() {
@@ -155,13 +198,13 @@ public class ArgumentParserImpl implements ArgumentParser {
             handler.setValue(typedValue, optionValue.getName());
         }
 
-        // Check if all mandatory were present
-        mandatoryManager.check();
-
         // Finish all the option arrays we were filling
         for (OptionHandler handler : optionHandlerList) {
             handler.finish();
         }
+
+        // Check if all mandatory options were present
+        mandatoryManager.check();
 
         // Call all @AfterParse methods
         for (AfterParseHandler afterParse : afterParseMethods) {
