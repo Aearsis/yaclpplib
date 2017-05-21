@@ -61,6 +61,6 @@ public class BooleanOptionTest {
         TestHandler testHandler = new TestHandler();
         BooleanOption booleanOption = new BooleanOption(testHandler);
 
-        assertEquals(booleanOption.getValuePolicy(), ValuePolicy.OPTIONAL);
+        assertEquals(booleanOption.getValuePolicy(), ValuePolicy.IFNEEDBE);
     }
 }

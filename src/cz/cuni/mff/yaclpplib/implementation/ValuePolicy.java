@@ -11,6 +11,10 @@ public enum ValuePolicy {
      */
     NEVER(value -> false),
     /**
+     * The member is a boolean option, which can have a value (--verbose=false), but do not accept it as another token.
+     */
+    IFNEEDBE(value -> false),
+    /**
      * The member may have a value, we need to decide depending on the input
      */
     OPTIONAL(value -> !value.startsWith("-")),

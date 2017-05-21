@@ -7,6 +7,17 @@ import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
  * Boolean options are often used without specifying the value, such as --verbose.<br/>
  *
  * This decorator is doing the trick.
+ *
+ * Valid, behaving-as-expected variants:
+ *  --verbose
+ *  -q
+ *  --verbose=true
+ *  -qfalse
+ *
+ * Valid, but not doing what would you expect:
+ *   --verbose true
+ *   -q false
+ * These take the second argument as a positional argument instead.
  */
 public class BooleanOption extends OptionHandlerDecorator {
 
@@ -20,8 +31,8 @@ public class BooleanOption extends OptionHandlerDecorator {
     }
 
     @Override
-    public ValuePolicy getValuePolicy() {
-        return ValuePolicy.OPTIONAL;
+    public ValuePolicy getValuePolicy(){
+        return ValuePolicy.IFNEEDBE;
     }
 
     private static boolean isApplicable(OptionHandler handler) {

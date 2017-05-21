@@ -35,7 +35,8 @@ public class ArrayTest {
     }
 
     private static class FieldArray implements Options {
-        @Option("-a")
+        @Option("-s")
+        @Option("--long")
         boolean[] fieldArray;
     }
 
@@ -44,7 +45,7 @@ public class ArrayTest {
         FieldArray fieldArray = new FieldArray();
         parser.addOptions(fieldArray);
 
-        parser.parse("-a true -a false -a 0 -a 1".split(" "));
+        parser.parse("-strue -sfalse --long=0 --long=1".split(" "));
 
         assertEquals(4, fieldArray.fieldArray.length);
         assertEquals(true, fieldArray.fieldArray[0]);

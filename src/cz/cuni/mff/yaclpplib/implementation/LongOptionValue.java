@@ -7,8 +7,8 @@ public class LongOptionValue implements InternalOptionValue {
 
     private final String name;
 
-    private final String value;
-    private final String[] rawTokens;
+    private String value;
+    private String[] rawTokens;
 
     LongOptionValue(String primaryToken) {
         final String[] split = primaryToken.split("=", 2);
@@ -19,18 +19,19 @@ public class LongOptionValue implements InternalOptionValue {
         if (split.length > 1) {
             value = split[1];
         }
-        else {
-            value = null;
-        }
     }
 
     @Override
     public void completeValue(TokenList tokenList, ValuePolicy policy) {
-        /*
-         * It would be nice, if we could parse also --option with_value, but that is too ambiguous.
-         * If you really want, and accept that --verbose file results in "file is not true/false",
-         * you can implement it here.
-         */
+        if (hasValue()) {
+            return;
+        }
+
+        final String possibleValue = tokenList.peek();
+        if (policy.acceptsValue(possibleValue)) {
+            value = tokenList.remove();
+            rawTokens = new String[] { name, value };
+        }
     }
 
     @Override
