@@ -1,6 +1,7 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
+import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.Options;
 
 public interface OptionHandler {

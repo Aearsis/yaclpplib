@@ -1,5 +1,6 @@
 package cz.cuni.mff.yaclpplib.driver;
 
+import cz.cuni.mff.yaclpplib.annotation.CaseSensitive;
 import cz.cuni.mff.yaclpplib.implementation.AmbiguousDriverError;
 import cz.cuni.mff.yaclpplib.implementation.drivers.DriverLocator;
 import cz.cuni.mff.yaclpplib.NoSuchDriverError;
@@ -15,6 +16,11 @@ public class EnumDriverFactory implements DriverLocator {
 
     @Override
     public Driver getDriverFor(Class<?> type) throws AmbiguousDriverError, NoSuchDriverError {
-        return new GenericEnumDriver(type);
+        if (type.getDeclaredAnnotation(CaseSensitive.class) == null) {
+            return new GenericCaseInsensitiveEnumDriver(type);
+        }
+        else {
+            return new GenericEnumDriver(type);
+        }
     }
 }
