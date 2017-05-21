@@ -8,8 +8,6 @@ import java.lang.reflect.Method;
 
 /**
  * Wrapper for @AfterParse methods to bind them with the Options instances.
- *
- * TODO: do we want this class public?
  */
 class AfterParseHandler {
 
