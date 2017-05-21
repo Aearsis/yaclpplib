@@ -1,7 +1,15 @@
 # yaclpplib
 [![Build Status](https://travis-ci.org/Aearsis/yaclpplib.svg?branch=master)](https://travis-ci.org/Aearsis/yaclpplib)
 
-Yet another command-line parameters parser library. Originally a school assignment, currently WIP, including this readme. Stay tuned.
+Yet another command-line parameters parser library.
+
+# What's that?
+
+A library for parsing command line options and parameters. The main goals are ease of use and flexibility.
+
+There are no dependencies, you can use it with any project using Java&trade; 8.
+
+Originally a school assignment, currently WIP, including this readme. Stay tuned.
 
 # Quick start
 ```java
@@ -81,6 +89,27 @@ These two types of options behave as in this example, similarly to GNU getopt:
 ```bash
 $ ./exec -s 42 -DKey=Value
 ```
+
+## Positional arguments
+
+Of course, options are not everything what makes a command line arguments. Working with positional arguments is very simple:
+
+```java
+class Main {
+    public static void main(String[] args) {
+        ArgumentParser parser = ArgumentParserFactory.create();
+        List<String> positional = parser.requestPositionalArguments();
+        
+        parser.parse(args);
+        
+        for (String arg : positional) {
+            // do something
+        }
+    }
+}
+```
+
+Positional arguments can of course be used together with options. The library will do its best with matching options with their values, and returning the rest.
 
 ## Aliases
 
@@ -262,12 +291,24 @@ class MyOptions implements Options {
 }
 ```
 
-First, you have to use methods, because fields just have to hold a value.
+First, you have to use methods, because fields just have to hold a value.<sup>1</sup>
 You annotate your method with @OptionalValue.
 Then, a `null` is passed with the semantics of no value given.
 Unless you use this annotation, you will never receive `null` in the argument.
 
 Naturally, you cannot use primitive types, because there is no such thing as `null` there.
+
+## The boolean shorthand
+
+Whenever you have a boolean option, no value is needed. Therefore, your users don't have to specify:
+
+```java
+$ ./exec --verbose=true
+```
+
+Instead, all boolean options have an optional value by default, where "no value" means "true". But you can still pass `--verbose=false`.
+
+<sup>1</sup>) This is the only case when field option have an optional value.
 
 ## Mandatory options
 

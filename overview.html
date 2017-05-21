@@ -30,8 +30,8 @@
     <a href="cz/cuni/mff/yaclpplib/OptionValue.html">OptionValue</a>
 </h1>
 <p>
-    An <code>OptionValue</code> is abstracting the pair of an option and its argument.
-    The classes implementing this interface are supposed to take a string (or two, if it's in "option value" format)
+    An <code>OptionValue</code> is abstracting the pair of an option and its value.
+    The classes implementing this interface are supposed to take a string (or two, if it's in "-o value" format)
     and split it into "option" and "value".
     Currently, the library offers implementations for two different type of option formats.
 </p>
@@ -54,11 +54,15 @@
     If you wish to support a new type, create a new class implementing <code>InternalOptionValue</code>
     interface and modify the <code>InternalOptionValueFactory#tryCreate()</code>method.
 </p>
+<p>
+    If you want, you can replace it completely. Just replace the InternalOptionValueFactory with your implementation.
+    There were plans to make this configurable, but it would clutter the API.
+</p>
 <h1>
     <a href="cz/cuni/mff/yaclpplib/driver/Driver.html">Drivers</a>
 </h1>
 <p>
-    The parsing itself is handled by drivers, which are short classes implementing <code>Driver</code> interface.
+    The parsing of values is handled by drivers, which are short classes implementing the <code>Driver</code> interface.
     The main function is in the
     <a href="cz/cuni/mff/yaclpplib/driver/Driver.html#parse-cz.cuni.mff.yaclpplib.OptionValue-">
         <code>parse(OptionValue value)</code></a> method, which takes an OptionValue instance
@@ -99,7 +103,7 @@
     <li><a href="cz/cuni/mff/yaclpplib/implementation/drivers/HashDriverLocator.html"><code>HashDriverLocator</code></a>
         - which stores all miscellaneous drivers</li>
     <li><a href="cz/cuni/mff/yaclpplib/implementation/drivers/DriverCache.html"><code>DriverCache</code></a>
-        - which abstracts all other locators and tries to use each of them</li>
+        - which covers other locators and tries to use each of them in order, also caching the results</li>
 </ul>
 <p>
     The main argument parser implementation then checks, what type the parsed option has and asks a driver cache
@@ -110,7 +114,8 @@
     <a href="cz/cuni/mff/yaclpplib/implementation/OptionHandler.html">OptionHandlers</a>
 </h1>
 <p>
-    <code>OptionHandlers</code> are classes responsible for accessing and modifying annotated fields.
+    <code>OptionHandlers</code> are classes responsible for accessing and modifying annotated fields and methods,
+    and also covers certain "behaviours" of options.
     All the relevant classes are in the <code>yaclpplib.implementation.options</code> package.
     These are the classes that set values of fields annotated with <code>Option</code> or call methods with the same
     annotations. The methods are described by <code>OptionHandler</code> interface and common implementation
@@ -132,8 +137,19 @@
     special case, creating a new decorator may solve your problem.
 </p>
 <p>
-    <b>Warning: the order of wrapping decorators matters as some of them consume or change the value.</b>
+    For example, multiple option occurrences for an option of array type is implemented using decorators. The underlying
+    (decorated) handler takes e.g. a <code>String[]</code> array, the decorator, <code>ArrayOption</code> behaves like a <code>String</code> option.
+    It aggregates the values given and an the end (in the <code>finish()</code>) method, it passes the array to the decorated handler.
+    The ArrayOption is therefore the only place we need to take care about arrays.
 </p>
+<p>Similarly, the RangeOption takes care of the range checking, BooleanOption does the trick with boolean fields
+    (like "--verbose") not requiring value (otherwise we would have to pass "--verbose=true", because fields always
+    have to get a value). BoxedOption wraps primitive types, so we need to check only boxed types elsewhere.</p>
+<p>
+    <b>Warning: the order of wrapping decorators matters as some of them consume or change the value, and the order defines semantics of handling different combinations.</b>
+</p>
+<p>The rationale behind decorators is that these quirks have "stacked" behavior - they change some properties on the way
+    up (value policy, type, etc.), and appropriately alters the value on the way down (arrays).</p>
 <h1>
     <a href="cz/cuni/mff/yaclpplib/ArgumentParser.html">ArgumentParser</a>
 </h1>
@@ -152,9 +168,19 @@
     of mistakes in the code, not values found in runtime.
 </p>
 <p>
+    As a part of the configuration stage, user can request a positional arguments, which gives him a list, which will
+    be populated by positional arguments later. Internally, the unhandled exception handler is changed from a simple
+    lambda throwing an exception to an adder to this list.
+    This API gives us the information, whether the user wants positional arguments before they try to parse options (so
+    we can throw exceptions eagerly), but also requires user to call only one API call to make everything work.
+</p>
+<p>
     The second stage is parsing itself. This is done by calling <code>parse()</code> method. This method can throw
     <code>RuntimeException</code>, which is done to allow user calling the library without surrounding the code
-    with try-catch block, as some users may want to let the exception end the program.
+    with try-catch block, as some users may want to let the exception end the program. Also, a great part of the
+    exceptions happen only when users use (or do not use) a specific feature - MissingMandatoryOptionException,
+    IllegalOptionValue, UnhandledArgumentException) etc., so it would result in many collapsed catch blocks with
+    a comment "cannot happen". Remember InterruptedException?
 </p>
 <p>
     The <code>parse()</code> methods goes through the list of string tokens given in the argument (which should
@@ -164,10 +190,14 @@
     Then, since the type is known by the handler, the driver locator is called and the driver used to parse the token.
     The parsed token is then given to the handler so it can set up the value.
 </p>
+<p>This method may look complex, but it is an inherent complexity. You need to parse the option to have its name, only
+    then you can look if it takes a value (optionally or always). But only after then you know, how you should have
+    parsed it before&hellip; So we introduced another parsing step, <code>OptionValue#completeValue</code>, which can
+    take another token as an value, if it wishes to do so.</p>
 <p>
     After the token list is processed, every field or method with <code>Mandatory</code> annotation is checked,
     whether it was really encountered. Then, every method annotated with <code>AfterParse</code> is called and
-    all RuntimeExceptions are forwarded to user. This end the parsing.
+    all RuntimeExceptions are forwarded to user. This ends the parsing.
 </p>
 <p>
     Most of the parts are separated into methods or even special classes
