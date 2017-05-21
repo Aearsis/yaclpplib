@@ -3,6 +3,9 @@ package cz.cuni.mff.yaclpplib.driver;
 import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.OptionValue;
 
+/**
+ * Driver for a single character, because a string one would allow more.
+ */
 public class CharacterDriver implements Driver<Character> {
 
     @Override

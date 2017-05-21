@@ -6,17 +6,20 @@ import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 /**
  * Boolean options are often used without specifying the value, such as --verbose.<br/>
  *
- * This decorator is doing the trick.
+ * This decorator is doing the trick. <br/>
  *
- * Valid, behaving-as-expected variants:
- *  --verbose
- *  -q
- *  --verbose=true
- *  -qfalse
- *
+ * Valid, behaving-as-expected variants: <br/>
+ * <ul>
+ * <li>--verbose</li>
+ * <li>-q</li>
+ * <li>--verbose=true</li>
+ * <li>-qfalse</li>
+ * </ul>
  * Valid, but not doing what would you expect:
- *   --verbose true
- *   -q false
+ * <ul>
+ * <li>--verbose true</li>
+ * <li>-q false</li>
+ * </ul>
  * These take the second argument as a positional argument instead.
  */
 public class BooleanOption extends OptionHandlerDecorator {

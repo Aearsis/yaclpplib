@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Driver for various boolean options, to support values such as "1", "y", etc.
+ */
 public class BooleanDriver implements Driver<Boolean> {
 
     private static final Set<String> truthyValues = new HashSet<>(Arrays.asList(

@@ -3,6 +3,9 @@ package cz.cuni.mff.yaclpplib.driver;
 import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.OptionValue;
 
+/**
+ * A driver for nothing. Weird, but needed.
+ */
 public class VoidDriver implements Driver<Void> {
 
     @Override

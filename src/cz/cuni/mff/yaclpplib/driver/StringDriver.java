@@ -3,6 +3,9 @@ package cz.cuni.mff.yaclpplib.driver;
 import cz.cuni.mff.yaclpplib.OptionValue;
 import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 
+/**
+ * We need this to allow null strings.
+ */
 public class StringDriver implements Driver<String> {
 
     @Override
