@@ -3,6 +3,7 @@ package cz.cuni.mff.yaclpplib.implementation;
 import cz.cuni.mff.yaclpplib.*;
 import cz.cuni.mff.yaclpplib.annotation.*;
 import cz.cuni.mff.yaclpplib.implementation.drivers.DriverCache;
+import cz.cuni.mff.yaclpplib.implementation.drivers.DriverLocator;
 import cz.cuni.mff.yaclpplib.implementation.options.*;
 
 import java.lang.reflect.*;
@@ -47,7 +48,7 @@ public class ArgumentParserImpl implements ArgumentParser {
     /**
      * A locator which provides drivers for parsing different types of arguments.
      */
-    private DriverCache driverLocator;
+    private DriverLocator driverLocator;
 
     /**
      * Default handler for unexpected (positional) arguments.
@@ -110,6 +111,9 @@ public class ArgumentParserImpl implements ArgumentParser {
         // Handle all the semantic quirks
         final OptionHandler handler = wrapHandler(rawHandler, member);
 
+        if (!driverLocator.hasDriverFor(handler.getType()))
+            throw new InvalidSetupError("Sorry, the type " + handler.getType().getTypeName() + " cannot be parsed.");
+
         // Register this option for mandatory checking
         mandatoryManager.add(handler, member);
 
@@ -171,16 +175,26 @@ public class ArgumentParserImpl implements ArgumentParser {
      * Returns the driver locator parser currently uses.
      * @return used driver locator
      */
-    public DriverCache getDriverLocator() {
+    public DriverLocator getDriverLocator() {
         return driverLocator;
     }
 
     /**
-     * Sets the driver locator to given locator
+     * Sets the driver locator to given locator.
+     *
      * @param driverLocator new driver locator
      */
-    public void setDriverLocator(DriverCache driverLocator) {
+    public void setDriverLocator(DriverLocator driverLocator) {
         this.driverLocator = driverLocator;
+
+        for (OptionHandler optionHandler : optionHandlerList) {
+            if (!driverLocator.hasDriverFor(optionHandler.getType()))
+                throw new InvalidSetupError("The new Driver Locator cannot handle "
+                        + optionHandler.getType().getTypeName()
+                        + ", which is required for option "
+                        + optionHandler.getAnyOptionName());
+        }
+
     }
 
     @Override
@@ -204,13 +218,8 @@ public class ArgumentParserImpl implements ArgumentParser {
                     InternalOptionValueFactory.tryCreate(optionToken);
 
             // We didn't find a match, therefore it's a plain argument possibly
-            if (!maybeOptionValue.isPresent()) {
-                unexpectedParameterHandler.handle(optionToken);
-                continue;
-            }
-
-            if (!optionHandlerMap.containsKey(maybeOptionValue.get().getName())) {
-                // TODO: Consider (configurable?) warning on weird --positionalargument
+            if (!maybeOptionValue.isPresent()
+             || !optionHandlerMap.containsKey(maybeOptionValue.get().getName())) {
                 unexpectedParameterHandler.handle(optionToken);
                 continue;
             }

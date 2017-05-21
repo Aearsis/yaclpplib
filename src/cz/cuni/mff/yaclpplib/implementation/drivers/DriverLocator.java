@@ -10,7 +10,13 @@ import cz.cuni.mff.yaclpplib.NoSuchDriverError;
  */
 public interface DriverLocator {
     /**
-     * Checks whether this locator has a driver which can convert a string to the given type.
+     * Checks whether this locator has a driver which can convert a string to the given type. <br/>
+     *
+     * This method should return true if and only if the getDriverFor returns a valid Driver. <br/>
+     *
+     * Also, once it returns true for a given type, it should always return true for this type.
+     * In other words, is not expected to "lose" a driver.
+     *
      * @param type demanded type of an option
      * @return true if the locator can provide a driver for the type
      */
