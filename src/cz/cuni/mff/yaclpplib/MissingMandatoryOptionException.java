@@ -35,4 +35,10 @@ public class MissingMandatoryOptionException extends RuntimeException {
         return getOptionNames()[0];
     }
 
+    @Override
+    public String getMessage() {
+        return String.format("Missing mandatory option%s: %s",
+                options.length > 1 ? "s" : "",
+                String.join(",", getOptionNames()));
+    }
 }
