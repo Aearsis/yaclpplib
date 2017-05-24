@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="yaclpplib" default="all">
 
-    <!-- Module yaclpplib -->
+    <property name="version" value="1.0"/>
 
     <dirname property="basedir" file="${ant.file}"/>
 
@@ -65,13 +65,17 @@
         </javac>
     </target>
 
+    <target name="package" depends="compile.production" description="Creates the JAR">
+        <jar basedir="${outdir}" destfile="yaclpplib-${version}.jar" includes="cz/**"/>
+    </target>
+
     <target name="clean" description="cleanup module">
         <delete dir="${outdir}"/>
         <delete dir="${docdir}"/>
         <delete dir="${testdir}"/>
     </target>
 
-    <target name="build" depends="compile, doc" description="Build everything"/>
+    <target name="build" depends="compile, doc, package" description="Build everything"/>
 
     <target name="all" depends="clean, build, test" description="Build from scratch and test"/>
 </project>
