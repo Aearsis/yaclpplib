@@ -135,4 +135,22 @@ public class ArgumentParserImplTest {
 
         parser.parse(new String[] {});
     }
+
+    @Test
+    public void testComposition() throws Exception {
+        final String message = "hander called";
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage(message);
+
+        parser.addOptions(new Options() {
+            Options composited = new Options() {
+                @BeforeParse
+                void foo() {
+                    throw new RuntimeException(message);
+                }
+            };
+        });
+
+        parser.parse(new String[] {});
+    }
 }

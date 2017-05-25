@@ -67,6 +67,7 @@ public class ArgumentParserImpl implements ArgumentParser {
         addMethodOptions(instance);
         addEventHandlerMethods(instance, AfterParse.class, afterParseMethods);
         addEventHandlerMethods(instance, BeforeParse.class, beforeParseMethods);
+        addCompositedOptions(instance);
         return instance;
     }
 
@@ -78,6 +79,35 @@ public class ArgumentParserImpl implements ArgumentParser {
         for (Field field : options.getClass().getDeclaredFields()) {
             if (field.getDeclaredAnnotationsByType(Option.class).length > 0) {
                 addHandler(new FieldOption(this, options, field), field);
+            }
+        }
+    }
+
+    /**
+     * Recursively add composited options.
+     * @param instance an instance of Options possibly containing other Options
+     */
+    private <T extends Options> void addCompositedOptions(T instance) {
+        for (Field field : instance.getClass().getDeclaredFields()) {
+            if (Options.class.isAssignableFrom(field.getType())) {
+                SecurityUtility.makeAccessible(field);
+                try {
+                    Options composited = (Options) field.get(instance);
+                    /* Check if we're not adding an already added instance.
+                     * Happens always, because Java objects contain "this" as a field.
+                     * Also, checking if composited == instance is not sufficient
+                     * because of inner classes (having reference to upper class)
+                     * and cross-linked options.
+                     *
+                     * As we have only one instance of each class, it's OK
+                     * to iterate through list, no need to use sets.
+                     * But we need to compare references, not equality.
+                     */
+                    if (definitions.stream().noneMatch((x) -> x == composited))
+                        addOptions(composited);
+                } catch (IllegalAccessException e) {
+                    throw new InternalError("The SecurityUtility shall fail first.");
+                }
             }
         }
     }
