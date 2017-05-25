@@ -2,7 +2,6 @@ package cz.cuni.mff.yaclpplib.implementation;
 
 import cz.cuni.mff.yaclpplib.*;
 import cz.cuni.mff.yaclpplib.annotation.*;
-import cz.cuni.mff.yaclpplib.implementation.drivers.DriverCache;
 import cz.cuni.mff.yaclpplib.implementation.drivers.DriverLocator;
 import cz.cuni.mff.yaclpplib.implementation.options.*;
 
@@ -43,7 +42,11 @@ public class ArgumentParserImpl implements ArgumentParser {
     /**
      * A list of {@link AfterParse} annotated methods.
      */
-    private final List<AfterParseHandler> afterParseMethods = new ArrayList<>();
+    private final List<ParserEventHandler> afterParseMethods = new ArrayList<>();
+    /**
+     * A list of {@link AfterParse} annotated methods.
+     */
+    private final List<ParserEventHandler> beforeParseMethods = new ArrayList<>();
 
     /**
      * A locator which provides drivers for parsing different types of arguments.
@@ -62,7 +65,8 @@ public class ArgumentParserImpl implements ArgumentParser {
         definitions.add(instance);
         addFieldOptions(instance);
         addMethodOptions(instance);
-        addAfterParseMethods(instance);
+        addEventHandlerMethods(instance, AfterParse.class, afterParseMethods);
+        addEventHandlerMethods(instance, BeforeParse.class, beforeParseMethods);
         return instance;
     }
 
@@ -94,10 +98,10 @@ public class ArgumentParserImpl implements ArgumentParser {
      * Process all methods annotated with {@link AfterParse}, and add them to the afterParseMethods list.
      * @param options the options class being processed
      */
-    private <T extends Options> void addAfterParseMethods(T options) {
+    private <T extends Options> void addEventHandlerMethods(T options, Class annotationClass, List<ParserEventHandler> handlerList) {
         for (Method method : options.getClass().getDeclaredMethods()) {
-            if (method.getDeclaredAnnotation(AfterParse.class) != null) {
-                afterParseMethods.add(new AfterParseHandler(method, options));
+            if (method.getDeclaredAnnotation(annotationClass) != null) {
+                handlerList.add(new ParserEventHandler(method, options));
             }
         }
     }
@@ -202,6 +206,8 @@ public class ArgumentParserImpl implements ArgumentParser {
         // Create a queue from the tokens
         final TokenList tokenList = new TokenList(args);
 
+        callEventHandlers(beforeParseMethods);
+
         while (tokenList.size() > 0) {
             final String optionToken = tokenList.remove();
 
@@ -262,10 +268,13 @@ public class ArgumentParserImpl implements ArgumentParser {
 
         // Check if all mandatory options were present
         mandatoryManager.check();
+        callEventHandlers(afterParseMethods);
+    }
 
+    private void callEventHandlers(List<ParserEventHandler> handlers) {
         // Call all @AfterParse methods
-        for (AfterParseHandler afterParse : afterParseMethods) {
-            afterParse.invoke();
+        for (ParserEventHandler afterParse : handlers) {
+            afterParse.invoke(this);
         }
     }
 

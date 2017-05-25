@@ -7,7 +7,6 @@ import cz.cuni.mff.yaclpplib.annotation.OptionalValue;
 import cz.cuni.mff.yaclpplib.implementation.InternalError;
 import cz.cuni.mff.yaclpplib.implementation.SecurityUtility;
 import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
-import cz.cuni.mff.yaclpplib.implementation.options.MemberOptionHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,11 +19,7 @@ public class MethodOption extends MemberOptionHandler {
     private final Class type;
     private final boolean annotatedOptional;
 
-    private interface MethodCall {
-        void call(Object typedValue) throws IllegalAccessException, InvocationTargetException;
-    }
-
-    private final MethodCall call;
+    private final MethodCall<Object> call;
 
     public MethodOption(ArgumentParser parser, Options definitionClass, Method method) {
         super(parser, definitionClass, method);

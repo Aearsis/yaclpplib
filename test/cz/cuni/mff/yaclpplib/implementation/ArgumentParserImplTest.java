@@ -4,15 +4,22 @@ import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.ArgumentParserFactory;
 import cz.cuni.mff.yaclpplib.InvalidSetupError;
 import cz.cuni.mff.yaclpplib.Options;
+import cz.cuni.mff.yaclpplib.annotation.AfterParse;
+import cz.cuni.mff.yaclpplib.annotation.BeforeParse;
 import cz.cuni.mff.yaclpplib.annotation.Option;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class ArgumentParserImplTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     private ArgumentParserImpl parser;
 
@@ -65,4 +72,67 @@ public class ArgumentParserImplTest {
         });
     }
 
+    @Test
+    public void testBeforeParseWithoutArg() throws Exception {
+        final String message = "hander called";
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage(message);
+
+        parser.addOptions(new Options() {
+            @BeforeParse
+            void foo() {
+                throw new RuntimeException(message);
+            }
+        });
+
+        parser.parse(new String[] {});
+    }
+
+    @Test
+    public void testBeforeParseWithArg() throws Exception {
+        final String message = "hander called";
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage(message);
+
+        parser.addOptions(new Options() {
+            @BeforeParse
+            void foo(ArgumentParser parser) {
+                throw new RuntimeException(message);
+            }
+        });
+
+        parser.parse(new String[] {});
+    }
+
+    @Test
+    public void testAfterParseWithoutArg() throws Exception {
+        final String message = "hander called";
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage(message);
+
+        parser.addOptions(new Options() {
+            @AfterParse
+            void foo() {
+                throw new RuntimeException(message);
+            }
+        });
+
+        parser.parse(new String[] {});
+    }
+
+    @Test
+    public void testAfterParseWithArg() throws Exception {
+        final String message = "hander called";
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage(message);
+
+        parser.addOptions(new Options() {
+            @AfterParse
+            void foo(ArgumentParser parser) {
+                throw new RuntimeException(message);
+            }
+        });
+
+        parser.parse(new String[] {});
+    }
 }
