@@ -4,7 +4,11 @@ import cz.cuni.mff.yaclpplib.*;
 import cz.cuni.mff.yaclpplib.annotation.*;
 import cz.cuni.mff.yaclpplib.implementation.drivers.DriverLocator;
 import cz.cuni.mff.yaclpplib.implementation.options.*;
+import cz.cuni.mff.yaclpplib.validator.ValidatorList;
+import cz.cuni.mff.yaclpplib.validator.ExceptionFactory;
+import cz.cuni.mff.yaclpplib.validator.Validator;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -40,13 +44,17 @@ public class ArgumentParserImpl implements ArgumentParser {
      */
     private final List<OptionHandler> optionHandlerList = new ArrayList<>();
     /**
-     * A list of {@link AfterParse} annotated methods.
+     * {@link Setup} annotated methods.
      */
-    private final List<ParserEventHandler> afterParseMethods = new ArrayList<>();
+    private final ParserEventHandlerCollection setupMethods = new ParserEventHandlerCollection();
     /**
-     * A list of {@link AfterParse} annotated methods.
+     * {@link BeforeParse} annotated methods.
      */
-    private final List<ParserEventHandler> beforeParseMethods = new ArrayList<>();
+    private final ParserEventHandlerCollection afterParseMethods = new ParserEventHandlerCollection();
+    /**
+     * {@link AfterParse} annotated methods.
+     */
+    private final ParserEventHandlerCollection beforeParseMethods = new ParserEventHandlerCollection();
 
     /**
      * A locator which provides drivers for parsing different types of arguments.
@@ -60,15 +68,23 @@ public class ArgumentParserImpl implements ArgumentParser {
         throw new UnhandledArgumentException(value);
     };
 
+    private final ValidatorList validators = new ValidatorList();
+
     @Override
     public <T extends Options> T addOptions(T instance) {
         definitions.add(instance);
         addFieldOptions(instance);
         addMethodOptions(instance);
+        callSetupHandlers(instance);
         addEventHandlerMethods(instance, AfterParse.class, afterParseMethods);
         addEventHandlerMethods(instance, BeforeParse.class, beforeParseMethods);
         addCompositedOptions(instance);
         return instance;
+    }
+
+    @Override
+    public <T extends InvalidArgumentsException> void addValidator(Validator validator, ExceptionFactory<T> exceptionFactory) {
+        validators.add(validator, exceptionFactory);
     }
 
     /**
@@ -127,14 +143,30 @@ public class ArgumentParserImpl implements ArgumentParser {
     /**
      * Process all methods annotated with {@link AfterParse}, and add them to the afterParseMethods list.
      * @param options the options class being processed
+     * @param handlerList a list to add handlers to
      */
-    private <T extends Options> void addEventHandlerMethods(T options, Class annotationClass, List<ParserEventHandler> handlerList) {
+    private <T extends Options, A extends Annotation> void addEventHandlerMethods(T options, Class<A> annotationClass, ParserEventHandlerCollection handlerList) {
         for (Method method : options.getClass().getDeclaredMethods()) {
             if (method.getDeclaredAnnotation(annotationClass) != null) {
-                handlerList.add(new ParserEventHandler(method, options));
+                handlerList.add(new ParserEventHandler(method, options, this));
             }
         }
     }
+
+    private <T extends Options> void callSetupHandlers(T options) {
+        for (Method method : options.getClass().getDeclaredMethods()) {
+            if (method.getDeclaredAnnotation(Setup.class) != null) {
+                try {
+                    ParserEventHandler.getInvokeMethodCall(method, options, this).call(null);
+                } catch (IllegalAccessException e) {
+                    throw new InvalidSetupError("Setup method must be accessible.");
+                } catch (InvocationTargetException e) {
+                    throw new InvalidSetupError("Setup method thrown an exception.", e.getCause());
+                }
+            }
+        }
+    }
+
 
     /**
      * Add new option - a field or method.
@@ -232,79 +264,97 @@ public class ArgumentParserImpl implements ArgumentParser {
     }
 
     @Override
-    public void parse(String[] args) throws UnhandledArgumentException {
+    public void parse(String[] args) throws InvalidArgumentsException {
         // Create a queue from the tokens
         final TokenList tokenList = new TokenList(args);
+        ArrayList<InvalidArgumentsException> validationExceptions = new ArrayList<>();
 
-        callEventHandlers(beforeParseMethods);
+        beforeParseMethods.invoke().forEach(validationExceptions::add);
 
         while (tokenList.size() > 0) {
-            final String optionToken = tokenList.remove();
+            try {
+                final String optionToken = tokenList.remove();
 
-            if (optionToken.equals("--")) {
-                // The delimiter, rest are positional arguments
-                while (tokenList.size() > 0) {
-                    unexpectedParameterHandler.handle(tokenList.remove());
+                if (optionToken.equals("--")) {
+                    // The delimiter, rest are positional arguments
+                    while (tokenList.size() > 0) {
+                        unexpectedParameterHandler.handle(tokenList.remove());
+                    }
+                    break;
                 }
-                break;
+
+                // Try to create an option value from the token
+                final Optional<InternalOptionValue> maybeOptionValue =
+                        InternalOptionValueFactory.tryCreate(optionToken);
+
+                // We didn't find a match, therefore it's a plain argument possibly
+                if (!maybeOptionValue.isPresent()
+                        || !optionHandlerMap.containsKey(maybeOptionValue.get().getName())) {
+                    unexpectedParameterHandler.handle(optionToken);
+                    continue;
+                }
+
+                // We have an option value now, complete the instances
+                final InternalOptionValue optionValue = maybeOptionValue.get();
+                final OptionHandler handler = optionHandlerMap.get(optionValue.getName());
+
+                final ValuePolicy valuePolicy = handler.getValuePolicy();
+
+                // It can have a second part, add it if needed
+                if (tokenList.size() > 0) {
+                    optionValue.completeValue(tokenList, valuePolicy);
+                }
+
+                mandatoryManager.encountered(handler);
+
+                // Let's try to find a driver to parse it
+                final Class<?> type = handler.getType();
+
+                // Invalid cases
+                if (valuePolicy == ValuePolicy.MANDATORY && !optionValue.hasValue()) {
+                    throw new MissingOptionValue(optionValue);
+                }
+                if (valuePolicy == ValuePolicy.NEVER && optionValue.hasValue()) {
+                    throw new InvalidOptionValue("Parameter " + optionValue.getName() + " cannot have an associated value.");
+                }
+
+                // Do the parsing
+                final Object typedValue = optionValue.hasValue()
+                        ? driverLocator.getDriverFor(type).parse(optionValue)
+                        : null;
+                handler.setValue(typedValue, optionValue.getName());
+            } catch (InvalidArgumentsException e) {
+                validationExceptions.add(e);
             }
-
-            // Try to create an option value from the token
-            final Optional<InternalOptionValue> maybeOptionValue =
-                    InternalOptionValueFactory.tryCreate(optionToken);
-
-            // We didn't find a match, therefore it's a plain argument possibly
-            if (!maybeOptionValue.isPresent()
-             || !optionHandlerMap.containsKey(maybeOptionValue.get().getName())) {
-                unexpectedParameterHandler.handle(optionToken);
-                continue;
-            }
-
-            // We have an option value now, complete the instances
-            final InternalOptionValue optionValue = maybeOptionValue.get();
-            final OptionHandler handler = optionHandlerMap.get(optionValue.getName());
-
-            final ValuePolicy valuePolicy = handler.getValuePolicy();
-
-            // It can have a second part, add it if needed
-            if (tokenList.size() > 0) {
-                optionValue.completeValue(tokenList, valuePolicy);
-            }
-
-            mandatoryManager.encountered(handler);
-
-            // Let's try to find a driver to parse it
-            final Class<?> type = handler.getType();
-
-            // Invalid cases
-            if (valuePolicy == ValuePolicy.MANDATORY && !optionValue.hasValue()) {
-                throw new MissingOptionValue(optionValue);
-            }
-            if (valuePolicy == ValuePolicy.NEVER && optionValue.hasValue()) {
-                throw new InvalidOptionValue("Parameter " + optionValue.getName() + " cannot have an associated value.");
-            }
-
-            // Do the parsing
-            final Object typedValue = optionValue.hasValue()
-                                        ? driverLocator.getDriverFor(type).parse(optionValue)
-                                        : null;
-            handler.setValue(typedValue, optionValue.getName());
         }
 
         // Finish all the option arrays we were filling
         for (OptionHandler handler : optionHandlerList) {
-            handler.finish();
+            try {
+                handler.finish();
+            } catch (InvalidArgumentsException e) {
+                validationExceptions.add(e);
+            }
         }
 
-        // Check if all mandatory options were present
-        mandatoryManager.check();
-        callEventHandlers(afterParseMethods);
-    }
+        afterParseMethods.invoke().forEach(validationExceptions::add);
 
-    private void callEventHandlers(List<ParserEventHandler> handlers) {
-        // Call all @AfterParse methods
-        for (ParserEventHandler afterParse : handlers) {
-            afterParse.invoke(this);
+        try {
+            mandatoryManager.check();
+        } catch (InvalidArgumentsException e) {
+            validationExceptions.add(e);
+        }
+
+        // Call defined validators
+        validators.getExceptions()
+                .forEach(validationExceptions::add);
+
+        if (validationExceptions.size() > 0) {
+            if (validationExceptions.size() == 1) {
+                throw validationExceptions.get(0);
+            } else {
+                throw new AggregatedInvalidArgumentsException(validationExceptions.stream().distinct());
+            }
         }
     }
 

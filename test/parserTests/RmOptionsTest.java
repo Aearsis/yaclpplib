@@ -24,35 +24,35 @@ public class RmOptionsTest {
     }
 
     @Test
-    public void testEnumShort() {
+    public void testEnumShort() throws Exception {
         parser.parse("-I".split(" "));
 
         assertEquals("Prompt should be set to once.", RmOptions.Prompt.ONCE, options.prompt);
     }
 
     @Test
-    public void testEnumLongNoValue() {
+    public void testEnumLongNoValue() throws Exception {
         parser.parse("--interactive".split(" "));
 
         assertEquals("Prompt should be set to always.", RmOptions.Prompt.ALWAYS, options.prompt);
     }
 
     @Test
-    public void testEnumLongValue() {
+    public void testEnumLongValue() throws Exception {
         parser.parse("--interactive=NEVER".split(" "));
 
         assertEquals("Prompt should be set to never.", RmOptions.Prompt.NEVER, options.prompt);
     }
 
     @Test
-    public void testPrivateField() {
+    public void testPrivateField() throws Exception {
         parser.parse("--one-file-system".split(" "));
 
         assertEquals("One file system should be true now.", true, options.isOneFileSystem());
     }
 
     @Test
-    public void testMultiple() {
+    public void testMultiple() throws Exception {
         parser.parse("-f -R --dir unexpected --interactive=ONCE --verbose=false unexpected".split(" "));
 
         assertEquals("Force should be set to true", true, options.force);

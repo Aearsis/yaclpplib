@@ -3,7 +3,7 @@ package cz.cuni.mff.yaclpplib;
 /**
  * Exception thrown when the value cannot be parsed into desired type.
  */
-public class InvalidOptionValue extends RuntimeException {
+public class InvalidOptionValue extends InvalidArgumentsException {
 
     InvalidOptionValue() {
     }

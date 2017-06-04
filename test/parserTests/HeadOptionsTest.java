@@ -2,6 +2,7 @@ package parserTests;
 
 import cz.cuni.mff.yaclpplib.ArgumentParser;
 import cz.cuni.mff.yaclpplib.ArgumentParserFactory;
+import cz.cuni.mff.yaclpplib.InvalidArgumentsException;
 import org.junit.Before;
 import org.junit.Test;
 import showcase.HeadOptions;
@@ -33,7 +34,7 @@ public class HeadOptionsTest {
         assertEquals("Positional argument is damaged.", "positional", plainArguments.get(0));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = InvalidArgumentsException.class)
     public void testAfterParse() throws Exception {
         parser.parse("-n -1".split(" "));
     }

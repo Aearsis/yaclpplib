@@ -1,6 +1,8 @@
 package cz.cuni.mff.yaclpplib;
 
 import cz.cuni.mff.yaclpplib.annotation.Help;
+import cz.cuni.mff.yaclpplib.validator.ExceptionFactory;
+import cz.cuni.mff.yaclpplib.validator.Validator;
 
 import java.util.List;
 
@@ -19,7 +21,20 @@ public interface ArgumentParser {
     <T extends Options> T addOptions(T instance) throws InvalidSetupError;
 
     /**
+     * Register a validator to validate parsed options after parsing.
+     *
+     * The parser will call the exceptionFactory to create an exception to throw.
+     *
+     * If there are more failing validators, the messages will be aggregated
+     * into an instance of {@link cz.cuni.mff.yaclpplib.implementation.AggregatedInvalidArgumentsException}.
+     */
+    <T extends InvalidArgumentsException> void addValidator(Validator validator, ExceptionFactory<T> exceptionFactory);
+
+    /**
      * <p>Read the arguments, fill all argument classes. </p>
+     *
+     * <p>This method will throw an InvalidArgumentsException, whenever the options passed are invalid.
+     * It should be sufficient to catch it and print its message.t </p>
      *
      * <p>It is generally possible to call this method multiple times, but with certain limitations:</p>
      * <ul>
@@ -28,6 +43,7 @@ public interface ArgumentParser {
      * </ul>
      *
      * @param args array of arguments given to main method
+     * @throws InvalidArgumentsException When the options are invalid (invalid value, validator failed etc.)
      * @throws UnhandledArgumentException When you don't request positional arguments and they are present
      * @throws InvalidOptionValue When a value cannot be parsed into the type of option
      * @throws MissingOptionValue When an option is unexpectedly missing a value
@@ -35,7 +51,7 @@ public interface ArgumentParser {
      * @throws MissingMandatoryOptionException When a @Mandatory option is missing
      * @throws RuntimeException from your own {@link cz.cuni.mff.yaclpplib.annotation.AfterParse} methods
      */
-    void parse(String[] args) throws UnhandledArgumentException;
+    void parse(String[] args) throws InvalidArgumentsException;
 
     /**
      * Get a nicely formatted, structured help about available arguments.

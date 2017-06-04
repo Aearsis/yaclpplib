@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * Thrown by the library whenever a {@link Mandatory} option is not present on the command line.
  */
-public class MissingMandatoryOptionException extends RuntimeException {
+public class MissingMandatoryOptionException extends InvalidArgumentsException {
 
     final private OptionHandler[] options;
 
@@ -39,6 +39,6 @@ public class MissingMandatoryOptionException extends RuntimeException {
     public String getMessage() {
         return String.format("Missing mandatory option%s: %s",
                 options.length > 1 ? "s" : "",
-                String.join(",", getOptionNames()));
+                String.join(", ", getOptionNames()));
     }
 }

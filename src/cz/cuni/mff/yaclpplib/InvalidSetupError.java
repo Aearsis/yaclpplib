@@ -5,10 +5,13 @@ package cz.cuni.mff.yaclpplib;
  */
 public class InvalidSetupError extends Error {
 
-    public InvalidSetupError() {
-    }
+    public InvalidSetupError() { }
 
     public InvalidSetupError(String message) {
         super(message);
+    }
+
+    public InvalidSetupError(String message, Throwable cause) {
+        super(message, cause);
     }
 }

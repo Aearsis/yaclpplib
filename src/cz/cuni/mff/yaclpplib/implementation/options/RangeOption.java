@@ -1,6 +1,7 @@
 package cz.cuni.mff.yaclpplib.implementation.options;
 
 import cz.cuni.mff.yaclpplib.IllegalOptionValue;
+import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.InvalidSetupError;
 import cz.cuni.mff.yaclpplib.annotation.Range;
 import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
@@ -28,7 +29,7 @@ public class RangeOption extends OptionHandlerDecorator {
     }
 
     @Override
-    public void setValue(Object typedValue, String optionName) {
+    public void setValue(Object typedValue, String optionName) throws IllegalOptionValue, InvalidOptionValue {
         final long value = ((Number) typedValue).longValue();
 
         if (value < minimumValue || value > maximumValue) {

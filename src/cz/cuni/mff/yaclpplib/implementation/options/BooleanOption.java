@@ -1,5 +1,7 @@
 package cz.cuni.mff.yaclpplib.implementation.options;
 
+import cz.cuni.mff.yaclpplib.IllegalOptionValue;
+import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
 import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 
@@ -29,7 +31,7 @@ public class BooleanOption extends OptionHandlerDecorator {
     }
 
     @Override
-    public void setValue(Object typedValue, String optionName) {
+    public void setValue(Object typedValue, String optionName) throws IllegalOptionValue, InvalidOptionValue {
         super.setValue(typedValue != null ? typedValue : true, optionName);
     }
 

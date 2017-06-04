@@ -1,8 +1,6 @@
 package cz.cuni.mff.yaclpplib.implementation;
 
-import cz.cuni.mff.yaclpplib.ArgumentParser;
-import cz.cuni.mff.yaclpplib.OptionValue;
-import cz.cuni.mff.yaclpplib.Options;
+import cz.cuni.mff.yaclpplib.*;
 
 public interface OptionHandler {
 
@@ -50,11 +48,11 @@ public interface OptionHandler {
      * @param typedValue a value of option, in the type the option wants
      * @param optionName any name of the option (for error messages)
      */
-    void setValue(Object typedValue, String optionName);
+    void setValue(Object typedValue, String optionName) throws IllegalOptionValue, InvalidOptionValue;
 
     /**
      * Called after parsing all options given in a single parse.
      */
-    void finish();
+    void finish() throws InvalidArgumentsException;
 
 }

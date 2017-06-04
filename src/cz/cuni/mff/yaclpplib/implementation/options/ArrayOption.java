@@ -1,5 +1,7 @@
 package cz.cuni.mff.yaclpplib.implementation.options;
 
+import cz.cuni.mff.yaclpplib.IllegalOptionValue;
+import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
 
 import java.lang.reflect.Array;
@@ -25,7 +27,7 @@ public class ArrayOption extends OptionHandlerDecorator {
     }
 
     @Override
-    public void finish() {
+    public void finish() throws IllegalOptionValue, InvalidOptionValue {
         final Object array = Array.newInstance(getType(), buffer.size());
         for (int i = 0; i < buffer.size(); ++i) {
             Array.set(array, i, buffer.get(i));

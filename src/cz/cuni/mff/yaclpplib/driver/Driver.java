@@ -6,7 +6,7 @@ import cz.cuni.mff.yaclpplib.InvalidOptionValue;
 /**
  * Driver for a type of argument.
  */
-public interface Driver<T extends Object> {
+public interface Driver<T> {
 
     /**
      * <p>Tries to parse a value read from command line.</p>

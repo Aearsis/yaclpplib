@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static cz.cuni.mff.yaclpplib.validator.Utils.*;
+
 public class TimeOptions implements Options {
 
     @Option("-f")
@@ -36,12 +38,6 @@ public class TimeOptions implements Options {
     @Help("(Used together with -o.) Do not overwrite but append.")
     private boolean append = false;
 
-    @AfterParse
-    public void validateAppendArgument() {
-        if (append && outputStream == System.out)
-             throw new IllegalOptionValue("Append can be used only in conjunction with -o.");
-    }
-
     @Option("-v")
     @Option("--verbose")
     @Help("Give very verbose output about all the program knows about.")
@@ -54,8 +50,12 @@ public class TimeOptions implements Options {
         System.out.println("0.0");
     }
 
-    public TimeOptions() {
-
+    @Setup
+    private void setupValidators(ArgumentParser parser) {
+        parser.addValidator(imply(
+                () -> append,
+                () -> !outputStream.equals(System.out)
+        ), message("Append (-a) can be used only in conjunction with -o."));
     }
 
     public static void main(String[] args) {
@@ -64,7 +64,12 @@ public class TimeOptions implements Options {
 
         final List<String> positional = parser.requestPositionalArguments();
 
-        parser.parse(args);
+        try {
+            parser.parse(args);
+        } catch (InvalidArgumentsException e) {
+            System.err.println(e.getMessage());
+            return;
+        }
 
         for (String s : positional) {
             System.out.println(s);

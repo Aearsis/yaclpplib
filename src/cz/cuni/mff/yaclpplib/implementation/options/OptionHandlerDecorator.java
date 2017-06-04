@@ -1,7 +1,6 @@
 package cz.cuni.mff.yaclpplib.implementation.options;
 
-import cz.cuni.mff.yaclpplib.ArgumentParser;
-import cz.cuni.mff.yaclpplib.Options;
+import cz.cuni.mff.yaclpplib.*;
 import cz.cuni.mff.yaclpplib.implementation.OptionHandler;
 import cz.cuni.mff.yaclpplib.implementation.ValuePolicy;
 
@@ -17,12 +16,12 @@ abstract public class OptionHandlerDecorator implements OptionHandler {
     }
 
     @Override
-    public void setValue(Object typedValue, String optionName) {
+    public void setValue(Object typedValue, String optionName) throws IllegalOptionValue, InvalidOptionValue {
         decorated.setValue(typedValue, optionName);
     }
 
     @Override
-    public void finish() {
+    public void finish() throws InvalidArgumentsException {
         decorated.finish();
     }
 

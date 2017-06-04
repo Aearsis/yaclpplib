@@ -24,7 +24,12 @@ public class MakeOptions implements Options {
         final MakeOptions mo = parser.addOptions(new MakeOptions());
 
         final List<String> positional = parser.requestPositionalArguments();
-        parser.parse(args);
+        try {
+            parser.parse(args);
+        } catch (InvalidArgumentsException e) {
+            System.err.println(e.getMessage());
+            return;
+        }
 
         for (String s : positional)
             System.out.println(s);

@@ -98,7 +98,12 @@ public class RmOptions implements Options {
         RmOptions ro = parser.addOptions(new RmOptions());
 
         List<String> files = parser.requestPositionalArguments();
-        parser.parse(args);
+        try {
+            parser.parse(args);
+        } catch (InvalidArgumentsException e) {
+            System.err.println(e.getMessage());
+            return;
+        }
 
         for(String file : files) {
             System.out.println(file);

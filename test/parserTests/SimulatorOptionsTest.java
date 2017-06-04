@@ -20,46 +20,46 @@ public class SimulatorOptionsTest {
     }
 
     @Test(expected = SimulatorOptions.UserException.class)
-    public void testNoForceSelected() {
+    public void testNoForceSelected() throws Exception {
         parser.parse("-i 5 --count=100 -s EXPLOSION input1".split(" "));
     }
 
     @Test(expected = SimulatorOptions.UserException.class)
-    public void testMissingInput() {
+    public void testMissingInput() throws Exception {
         parser.parse("-i 5 -c --count=100 -s EXPLOSION".split(" "));
     }
 
     @Test(expected = IllegalOptionValue.class)
-    public void testOutOfRangeNegative() {
+    public void testOutOfRangeNegative() throws Exception {
         parser.parse("-i 5 -r --count=-3 -s EXPLOSION input1".split(" "));
     }
 
     @Test(expected = IllegalOptionValue.class)
-    public void testOutOfRangeHigh() {
+    public void testOutOfRangeHigh() throws Exception {
         parser.parse("-i 5 -c --count=1000000 -s EXPLOSION input1".split(" "));
     }
 
     @Test(expected = MissingMandatoryOptionException.class)
-    public void testMissingMandatory() {
+    public void testMissingMandatory() throws Exception {
         parser.parse("-c --count=10000 -s EXPLOSION input1".split(" "));
     }
 
     @Test
-    public void testEmptyDebug() {
+    public void testEmptyDebug() throws Exception {
         parser.parse("-i 5 -c --count=1000 --debug -s EXPLOSION input1".split(" "));
 
         assertEquals(options.debugLevel, 10);
     }
 
     @Test
-    public void testValueDebug() {
+    public void testValueDebug() throws Exception {
         parser.parse("-i 5 -c --count=1000 --debug=20 -s explosion input1".split(" "));
 
         assertEquals(options.debugLevel, 20);
     }
 
     @Test
-    public void testValidInput() {
+    public void testValidInput() throws Exception {
         parser.parse(("-i 10 -c -r --count=50 -s directional -s EXPLOSION -m 2.50 -d 0.1 " +
                 "--output=logfile input1 input2 input3").split(" "));
 

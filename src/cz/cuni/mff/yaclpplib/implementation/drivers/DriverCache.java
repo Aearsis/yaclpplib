@@ -19,7 +19,7 @@ public class DriverCache implements DriverLocator {
 
     /**
      * Adds a new locator to the cache
-     * @param locator
+     * @param locator newly added locator
      */
     public void addDriverLocator(DriverLocator locator) {
         locators.add(locator);

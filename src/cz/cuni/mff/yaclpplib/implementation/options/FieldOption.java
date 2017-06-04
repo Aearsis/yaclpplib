@@ -23,7 +23,7 @@ public class FieldOption extends MemberOptionHandler {
     }
 
     @Override
-    public void setValue(Object typedValue, String optionName) {
+    public void setValue(Object typedValue, String optionName) throws InvalidOptionValue {
         try {
             field.set(getDefinitionClass(), typedValue);
         } catch (IllegalAccessException e) {
